@@ -20,6 +20,7 @@
     - Example: `"Nuclear fuel" > 500`
 * **Operations**, an array of operations updating a given *State* by applying various transformations to it. *Operations* can be expressed in JSON or YML.
     - Example: `"Nuclear fuel" = 650`
+* **Story bundle**, a single JSON file containing all the story. This file isn't intended to be read by humans, it is instead generated automatically from the various *Story* components.
 
 ## Components
 A storyline is composed of three different resources:
@@ -89,6 +90,10 @@ When a new *Reader* joins the story, his *State* is initialised to the following
     - Resource name as a key
     - Resource value as defined by their `default` in the config.
 
+## Compilation
+Any valid *Story* can be compiled into a *Story bundle*.
+TBD.
+
 ## Storylines and Events
 ### Storylines
 Within the *storylines/* folder, the *Story writer* will put all his *Storylines* and *Events*.
@@ -130,3 +135,31 @@ Here are the possible keys:
         + `weight`, an integer, defaults to 1. Any value higher than 1 will mean this event has more probability to appear to the user (10 means this event counts for 10 in the lottery)
 * `actions`, an object of available actions for the *Reader*. The only time when this object can be empty is for end events, to finish the story. Each action key is the name that will be displayed. Within this key:
     - `operations`, a list of operations that will be applied if this action is chosen. See "Conditions & operations" below for details.
+
+## Conditions and operations
+### Conditions
+*Conditions* are a way to express a conditional test on the current `State`.
+
+A *Condition* is formed of three components in this order: `lhs` (left hand side), `operator`, `rhs` (right hand side).
+
+#### `lhs`, `rhs` in *Conditions*
+Both `lhs` and `rhs` must be either a constant value (strings must be enclosed in quotes) or a dotted value from `State`:
+
+* Any value mapping to an existing state item will be replaced with this value
+* Any missing value in the dotted chain after the first `.` will interrupt the parsing and return null (`storylines.nonexisting.something` will return `null`, so will `storylines.nonexisting`).
+* First level values can use a single-letter notation, mapping to the name of the extended key. Valid values are `g` for `global`, `r` for `resources` and `s` for `storylines`.
+* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r` or `s`) will throw an error when compiling the *Story*
+
+#### `operator` in *Conditions*
+Operator must be one of the following value:
+
+* `==`, the equal operator. Using a single `=` sign will throw an error when compiling the `Story`.
+* `>`, greater than
+* `<`, less than
+* `>=`, greater than or equal to
+* `<=`, less than or equal to
+* `!=`, different
+* `in`, contains.
+    - For objects, will test if the `lhs` key exists within `rhs`
+    - For arrays, will test if `lhs` is included in `rhs`
+
