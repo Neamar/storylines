@@ -8,7 +8,7 @@
 * **Story**, a self-contained narrative, organized in multiple *Storylines*. A *Story* has a title, a description and a list of *Resources* used in the story.
     - Example: "Starship adventures"
 * **Storyline**, a potentially non-contiguous part of a *Story*, containing multiple *Events* linked together by their content and forming a complete narrative arc.
-    - Example: "Alien onboard!"
+    - Example: "alien_onboard"
 * **Event**, a *Storyline* component contributing to the narrative arc for its *Storyline*. An *Event* is always only part of one and only one *Storyline*.
     - Example: "Noise in the cargo room"
 * **Resource**, a name and value visible to the user during the Story, representing where he is in his current Story. *Resources* can be impacted by *Events*. *Resources* are defined within a *Story*, and can't change (their associated values, however, can).
@@ -80,15 +80,17 @@ When a new *Reader* joins the story, his *State* is initialised to the following
         "Resource1": 100,
         "Resource2": "ABC"
     },
-    "storylines": {}
+    "storylines": {
+        "Storyline1": {}
+    }
 }
 ```
 
 * An empty `global` key
-* An empty `storylines` key
-* A `resources` object, containing, for each resource defined in `storyline.config`:
+* A `resources` object, containing for each resource defined in `storyline.config`:
     - Resource name as a key
     - Resource value as defined by their `default` in the config.
+* A `storylines` key, containing an empty object for each *Storyline* defined in *storylines/*
 
 ## Compilation
 Any valid *Story* can be compiled into a *Story bundle*.
@@ -99,7 +101,7 @@ TBD.
 Within the *storylines/* folder, the *Story writer* will put all his *Storylines* and *Events*.
 
 Every *Storyline* is a folder within the *storylines/* main folder.
-A storyline name **must** be slugified (no special characters, and spaces replaced by the `_` symbol).
+A storyline name **must** be slugified (no special characters, must start with an alpha character, all lower cased, spaces replaced by the `_` symbol).
 
 ### Events
 In a *Storyline* folder (`/storylines/{storyline-slug}/`, the *Story writer* will create as many *Events* files as he wants.
@@ -142,6 +144,14 @@ Here are the possible keys:
 
 A *Condition* is formed of three components in this order: `lhs` (left hand side), `operator`, `rhs` (right hand side).
 
+> Example *Conditions*:
+> 
+> * `storylines.alien_onboard.started == true`
+> * `storylines.alien_onboard.has_destroyed_starship == false`
+> * `resources.crew >= 150`
+> * `global.alarm_level <= 2`
+> * `"First Lieutenant" in global.officers`
+
 #### `lhs`, `rhs` in *Conditions*
 Both `lhs` and `rhs` must be either a constant value (strings must be enclosed in quotes) or a dotted value from `State`:
 
@@ -151,7 +161,7 @@ Both `lhs` and `rhs` must be either a constant value (strings must be enclosed i
 * Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r` or `s`) will throw an error when compiling the *Story*
 
 #### `operator` in *Conditions*
-Operator must be one of the following value:
+`operator` must be one of the following value:
 
 * `==`, the equal operator. Using a single `=` sign will throw an error when compiling the `Story`.
 * `>`, greater than
@@ -163,3 +173,48 @@ Operator must be one of the following value:
     - For objects, will test if the `lhs` key exists within `rhs`
     - For arrays, will test if `lhs` is included in `rhs`
 
+### Operations
+*Operations* are a way to change the current `State`.
+
+An *Operation* is formed of three components in this order: `lhs`, `operator`, `rhs`.
+
+> Example *Operations*:
+> 
+> * `storylines.alien_onboard.started = true`
+> * `resources.crew -= 20`
+> * `global.alarm_level += 1`
+> * `"First Lieutenant" APPEND TO global.officers`
+
+#### `lhs` in *Operations*
+`lhs` must be a dotted value from `State`.
+
+* Accessing a value in a non-existing path (e.g. `storylines.nonexisting.something`) will throw a Runtime error.
+* Accessing a non-existing variable (`storylines.existing.nonexisting`) will create this value and assign it for the first time. The `=` operator is the only valid one in this situation, otherwise a Runtime exception is thrown.
+* First level values can use a single-letter notation, mapping to the name of the extended key. Valid values are `g` for `global`, `r` for `resources` and `s` for `storylines`.
+* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r` or `s`) will throw an error when compiling the *Story*
+
+
+#### `rhs` in *Operations*
+`rhs` must be either a constant value (strings must be enclosed in quotes) or a dotted value from `State`:
+
+* Any value mapping to an existing state item will be replaced with this value
+* Any missing value in the dotted chain after the first `.` will interrupt the parsing and return null (`storylines.nonexisting.something` will return `null`, so will `storylines.nonexisting`).
+* First level values can use a single-letter notation, mapping to the name of the extended key. Valid values are `g` for `global`, `r` for `resources` and `s` for `storylines`.
+* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r` or `s`) will throw an error when compiling the *Story*
+
+#### `operator` in *Operations*
+`operator` must be one of the following value:
+
+* `=`, direct assignment, set `lhs` to `rhs`. Can be used to initialize a dotted path in the *State*.
+* `+=`, add `rhs` to `lhs`
+    - If `lhs` is a scalar, use mathematical addition
+    - If `lhs` is a string, use concatenation
+    - If `lhs` is anything else, will throw a Runtime exception
+* `-=`, subtract `rhs` to `lhs`
+    - If `lhs` is a scalar, use mathematical addition
+    - If `lhs` is a string, use concatenation
+    - If `lhs` is anything else, will throw a Runtime exception
+* `*=`, multiply `lhs` by `rhs`. Only valid for scalars, will throw a Runtime exception otherwise.
+* `/=`, divide `lhs` by `rhs`. Only valid for scalars, will throw a Runtime exception otherwise.
+* `APPEND TO`, append `rhs` to the `lhs` list. Only valid for arrays, will throw a Runtime exception otherwise
+* `REMOVE FROM`, remove `rhs` from `lhs` if present in the list. Only remove once, do nothing if `rhs` is not in `lhs`. Only valid for arrays, will throw a Runtime exception otherwise
