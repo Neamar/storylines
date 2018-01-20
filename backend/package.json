@@ -1,0 +1,19 @@
+{
+  "name": "storylines-backend",
+  "version": "1.0.0",
+  "description": "Will you go down a hole or up a hill?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neamar/storylines.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neamar/storylines/issues"
+  },
+  "homepage": "https://github.com/Neamar/storylines#readme"
+}
