@@ -12,6 +12,7 @@
 * **Resource**, a name and a value that are visible to the user during the course of the Story, representing where he is in his current Story. *Resources* can be impacted by *Events*. *Resources* are defined within a *Story*, and can't change (their associated values, howevever, can).
     - Example: "Nuclear fuel: 250 units"
 * **State**, a key value mapping (where keys are strings and values can be strings, integers, float, arrays and values [recursively]) completely defining where a reader currently is in his *Story* (and therefore, in his *Storylines*). A *State* has to be JSON-serialisable.
+    - Example: `{"resources": {"Nuclear fuel": 250}}`
 * **Conditions**, an array of boolean conditionals linked together with the "AND" operator. The conditions are applied on a *State* and can reference *State* elements or constant values. *Conditions* can be expressed in JSON or YML.
     - Example: `"Nuclear fuel" > 500`
 * **Operations**, an array of operations updating a given *State* by applying various transformations to it. *Operations* can be expressed in JSON or YML.
