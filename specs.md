@@ -16,3 +16,37 @@
     - Example: `"Nuclear fuel" > 500`
 * "Operations", an array of operations updating a given *State* by applying various transformations to it. *Operations* can be expressed in JSON or YML.
     - Example: `"Nuclear fuel" = 650`
+
+## Components
+A storyline is composed of three different resources:
+
+* A `storyline.config` file;
+* An `assets` folder, which can be empty;
+* A `storylines` folder, which can be empty
+
+### `storyline.config`
+This file is a [Front-Matter](https://jekyllrb.com/docs/frontmatter/) YML file.
+
+A valid file must contain the following keys:
+
+```yml
+---
+version: 1
+story_title: "Title for your story"
+resources:
+    "Resource1":
+        description: "Resource description"
+        format: "%s"
+    "Resource2": 
+        description: "Resource description"
+        format: "%s¥"
+---
+
+Description for your story
+```
+
+### `assets/` folder
+This folder should contain all the required assets for your storyline---images, music, etc.
+
+### `storylines/` folder
+This folder will contain all the various storylines that make up your story.
