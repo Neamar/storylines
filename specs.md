@@ -4,6 +4,7 @@
 
 ## Glossary
 * **Reader**, a user somewhere reading and interatcing with the story
+* **Story writer**, a user writing the story for consumption by *Readers*.
 * **Story**, a self-contained narrative, organized in multiple *Storylines*. A *Story* has a title, a description and a list of *Resources* used in the story.
     - Example: "Starship adventures"
 * **Storyline**, a potentially non-contiguous part of a *Story*, containing multiple *Events* linked together by their content and forming a complete narrative arc.
@@ -30,9 +31,9 @@ A storyline is composed of three different resources:
 ### `storyline.config`
 This file is a [Front-Matter](https://jekyllrb.com/docs/frontmatter/) YML file.
 
-A valid file must contain the following keys:
+A valid file **must** contain the following keys:
 
-```yml
+```yaml
 ---
 version: 1
 story_title: "Title for your story"
@@ -49,12 +50,12 @@ resources:
         default: "ABC"
 ---
 
-Description of your story
+Potentially multiline description of your story
 ```
 
-In the rest of this document, the term "config" means the values defined in this file.
+In this document, the term "config" means the values defined in this file.
 
-* **version**: integer, constant, must always be 1.
+* **version**: integer, constant, **must** always be 1.
 * **story_title**, string, your story name
 * **resources**, object, a list of all your resources. Keys will be used when generating the state, the value define:
     - **description**, string, more information about what this resource is about
@@ -68,7 +69,7 @@ This folder should contain all the required assets for your storyline---images, 
 ### `storylines/` folder
 This folder will contain all the various *Storylines* that make up your story.
 
-### Initialisation
+## Initialisation
 When a new *Reader* joins the story, his *State* is initialised to the following JSON:
 
 ```json
@@ -87,3 +88,34 @@ When a new *Reader* joins the story, his *State* is initialised to the following
 * A `resources` object, containing, for each resource defined in `storyline.config`:
     - Resource name as a key
     - Resource value as defined by their `default` in the config.
+
+## Storylines and Events
+### Storylines
+Within the *storylines/* folder, the *Story writer* will put all his *Storylines* and *Events*.
+
+Every *Storyline* is a folder within the *storylines/* main folder.
+A storyline name **must** be slugified (no special characters, and spaces replaced by the `_` symbol).
+
+### Events
+In a *Storyline* folder (`/storylines/{storyline-slug}/`, the *Story writer* will create as many *Events* files as he wants.
+An event file **must** contain the following keys:
+
+```yaml
+---
+triggers:
+    hard:
+        - [[CONDITION]]
+    soft:
+        - [[CONDITION]]
+actions:
+    "Action name 1":
+        operations:
+            - [[OPERATION]]
+    "Action name 2":
+        operations:
+            - [[OPERATION]]
+---
+
+Potentially multiline description of your event
+```
+
