@@ -34,11 +34,19 @@ describe("helpers", () => {
       });
     });
 
-    test('should parse arrays', () => {
+    test('should parse empty arrays', () => {
       expect(helpers.parseYmlCode('"something" == []')).toEqual({
         lhs: "something",
         operator: "==",
         rhs: []
+      });
+    });
+
+    test('should parse arrays', () => {
+      expect(helpers.parseYmlCode('"something" == ["test"]')).toEqual({
+        lhs: "something",
+        operator: "==",
+        rhs: ["test"]
       });
     });
 
