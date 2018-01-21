@@ -6,7 +6,7 @@ module.exports.isSlug = function isSlug(potentialSlug) {
 };
 
 
-module.exports.parseYmlCode = function parseYmlCode(codeString) {
+module.exports.parseYmlCode = function parseYmlCode(codeString, shorthands) {
   return {
     lhs: [],
     operator: '',
