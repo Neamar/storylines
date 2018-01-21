@@ -78,6 +78,11 @@ class Storylines {
 
   applyOperation(operation) {
     let lhs = this.resolveStatePath(operation.lhs, true);
+
+    if(lhs.missingOnLastLevel && operation.operator !== '=') {
+      throw new Error("Can't apply compound operator on undefined");
+    }
+
     let rhs = this.resolveValue(operation.rhs);
 
     switch(operation.operator) {

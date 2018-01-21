@@ -14,10 +14,10 @@ describe("Storylines", () => {
     story_description: 'description'
   };
 
-  function getGeneralFooEqualBarState() {
+  function getGeneralFooEqualBarState(value) {
     return {
       general: {
-        foo: "bar"
+        foo: value || "bar"
       }
     };
   }
@@ -116,6 +116,19 @@ describe("Storylines", () => {
     });
 
     describe("applyOperation()", () => {
+      it("should fail on any operator when missing a value before the last one", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        function deferred() {
+          stubStoryline.applyOperation({
+            lhs: ['@', 'g', 'fizz'],
+            operator: '=',
+            rhs: 'buzz'
+          });
+        }
+        expect(deferred).toThrow(/Trying to access non-existing path in state/i);
+      });
+
       it("should work on = operator", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
@@ -140,17 +153,92 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('general.fizz', "buzz");
       });
 
-      it("should fail on = operator when missing a value before the last one", () => {
+      it("should work on += operator", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '+=',
+          rhs: 'baz'
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', "barbaz");
+      });
+
+      it("should fail on += operator when accessing non existing final value", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
-            lhs: ['@', 'g', 'fizz'],
-            operator: '=',
+            lhs: ['@', 'general', 'fizz'],
+            operator: '+=',
             rhs: 'buzz'
           });
         }
-        expect(deferred).toThrow(/Trying to access non-existing path in state/i);
+
+        expect(deferred).toThrow(/Can't apply compound operator on undefined/i);
+      });
+
+      it("should work on -= operator", () => {
+        stubStoryline.state = getGeneralFooEqualBarState(10);
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '-=',
+          rhs: 2
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', 8);
+      });
+
+      it("should fail on -= operator when accessing non existing final value", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        function deferred() {
+          stubStoryline.applyOperation({
+            lhs: ['@', 'general', 'fizz'],
+            operator: '-=',
+            rhs: 3
+          });
+        }
+
+        expect(deferred).toThrow(/Can't apply compound operator on undefined/i);
+      });
+
+      it("should work on *= operator", () => {
+        stubStoryline.state = getGeneralFooEqualBarState(10);
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '*=',
+          rhs: 2
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', 20);
+      });
+
+      it("should work on /= operator", () => {
+        stubStoryline.state = getGeneralFooEqualBarState(10);
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '/=',
+          rhs: 2
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', 5);
+      });
+
+      it("should work on %= operator", () => {
+        stubStoryline.state = getGeneralFooEqualBarState(10);
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '%=',
+          rhs: 7
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', 3);
       });
     });
   });
