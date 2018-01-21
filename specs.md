@@ -27,7 +27,7 @@ A storyline is composed of three different resources:
 
 * A `storyline.config.yml` file;
 * An `assets` folder, which can be empty;
-* A `storylines` folder, which can be empty
+* A `storylines` folder, which can be empty.
 
 ### `storyline.config.yml`
 This file is a [Front-Matter](https://jekyllrb.com/docs/frontmatter/) YML file.
@@ -39,12 +39,12 @@ A valid file **must** contain the following keys:
 version: 1
 story_title: "Title for your story"
 resources:
-    "Resource1":
+    "resource1":
         description: "Resource description"
         format: "%s"
         display_name: "Resource 1"
         default: 100
-    "Resource2": 
+    "resource2": 
         description: "Resource description"
         format: "%s¥"
         display_name: "Resource 2"
@@ -71,14 +71,14 @@ This folder should contain all the required assets for your storyline---images, 
 This folder will contain all the various *Storylines* that make up your story.
 
 ## Initialisation
-When a new *Reader* joins the story, his *State* is initialised to the following JSON:
+When a new *Reader* starts the story, his *State* is initialised to the following JSON:
 
 ```json
 {
     "global": {},
     "resources": {
-        "Resource1": 100,
-        "Resource2": "ABC"
+        "resource1": 100,
+        "resource2": "ABC"
     },
     "storylines": {
         "Storyline1": {}
@@ -89,12 +89,17 @@ When a new *Reader* joins the story, his *State* is initialised to the following
 * An empty `global` key
 * A `resources` object, containing for each resource defined in `storyline.config.yml`:
     - Resource name as a key
-    - Resource value as defined by their `default` in the config.
+    - Initial Resource value as defined by their `default` in the config.
 * A `storylines` key, containing an empty object for each *Storyline* defined in *storylines/*
 
 ## Compilation
 Any valid *Story* can be compiled into a *Story bundle*.
-TBD.
+
+To do so, run `npm run compile path/to/story/`.
+
+If there is any error, the script will fail and explain why the story can't be compiled.
+
+Otherwise, a JSON object fully describing the story will be returned in stdout.
 
 ## Storylines and Events
 ### Storylines
@@ -141,7 +146,7 @@ Here are the possible keys:
 * `actions`, an object of available actions for the *Reader*. The only time when this object can be empty is for end events, to finish the story. Each action key is the name that will be displayed. Within this key:
     - `operations`, a list of operations that will be applied if this action is chosen. See "Conditions & operations" below for details.
 
-## Conditions and operations
+## Conditions & operations
 ### Conditions
 *Conditions* are a way to express a conditional test on the current `State`.
 
@@ -231,6 +236,9 @@ A *Story bundle* is generated automatically from the story config and storylines
 
 It is one big JSON containing all the data properly formatted.
 
-All the keys from the config are first-level keys in the *Story bundle* (`version`, `story_title`, ...). The config FrontMatter content is stored under `story_description`.
+All the keys from the *Story Config* are first-level keys in the *Story bundle* (`version`, `story_title`, ...). The config FrontMatter content is stored under `story_description`.
 
 In addition, a key named `events` holds an array of all the storylines. Similarly to the config, every event YML file is converted to JSON (with shorthand modifiers replaced), with an additional `storyline` key containing the current storyline slug, and `event` key containing the current event slug; The event FrontMatter content is stored under `description`.
+Conditions and operations are parsend and stored in a structure containing `lhs`, `operator` and `rhs`. Items accessing the state are stored as an array, with the first item being an `@` to differentiate them from standard arrays: `['@', 'global', 'foo']`.
+
+Finally, a key named `default_state` contains the default state documented above for the current story.
