@@ -44,8 +44,16 @@ TEST
       expect(() => event.validateEvent({})).toThrow(/Missing storyline slug/i);
     });
 
+    test('should ensure storyline is a slug', () => {
+      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/Storyline name must be a slug: not a slug/i);
+    });
+
     test('should ensure event slug is present', () => {
       expect(() => event.validateEvent({storyline: 'storyline_slug'})).toThrow(/Missing event slug: storyline_slug\//i);
+    });
+
+    test('should ensure event is a slug', () => {
+      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/Event name must be a slug: not a slug\//i);
     });
 
     test('should ensure description is present', () => {
@@ -82,6 +90,30 @@ TEST
         };
 
         expect(() => event.validateEvent(e)).toThrow(/Soft triggers must include conditions: storyline_slug\/event_slug/i);
+      });
+
+      test('should ensure soft triggers weight property is numeric', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          soft: {
+            conditions: [],
+            weight: false
+          }
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/Soft triggers weight must be numeric: storyline_slug\/event_slug/i);
+      });
+
+      test('should accept soft triggers weight numeric property', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          soft: {
+            conditions: [],
+            weight: 15
+          }
+        };
+
+        expect(event.validateEvent(e)).toHaveProperty('triggers.soft.weight', 15);
       });
 
       test('should parse enclosed soft conditions', () => {
