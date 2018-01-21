@@ -20,6 +20,10 @@
     <script src="./storylines.js"></script>
     <script>
 "use strict";
+function startStory(story) {
+  var storyline = new Storylines(story, window.displayEvent);
+}
+
 fetch('./story.json')
   .then(r => r.json())
   .then(function(story) {

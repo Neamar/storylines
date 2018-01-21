@@ -1,5 +1,5 @@
 class Storylines {
-  constructor(story) {
+  constructor(story, displayEvent) {
     this.story = story;
     this.events = story.events;
     this.resources = story.resources;
@@ -8,6 +8,12 @@ class Storylines {
 
     // Clone default state
     this.state = Object.assign({}, story.default_state);
+
+    // Save functions to interact with UI
+    this.displayEvent = displayEvent;
+
+    // Start game
+    this.nextEvent();
   }
 
   listAvailableEvents(triggerType) {
@@ -44,6 +50,6 @@ class Storylines {
   }
 
   moveToEvent(event) {
-    displayEvent(event);
+    this.displayEvent(event);
   }
 }

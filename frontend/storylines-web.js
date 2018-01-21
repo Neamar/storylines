@@ -1,6 +1,6 @@
 "use strict";
 
-function displayEvent(event) {
+window.displayEvent = function displayEvent(event) {
   let eventHTML = `
 <div class="jumbotron">
   <p>${event.description}</p>
@@ -16,4 +16,5 @@ function displayEvent(event) {
 `;
 
   document.getElementById('event').innerHTML = eventHTML;
-}
+};
+
