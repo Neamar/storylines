@@ -1,5 +1,5 @@
 class Storylines {
-  constructor(story, displayEvent) {
+  constructor(story, displayEvent, displayResources) {
     this.story = story;
     this.events = story.events;
     this.resources = story.resources;
@@ -11,9 +11,15 @@ class Storylines {
 
     // Save functions to interact with UI
     this.displayEvent = displayEvent;
+    this.displayResources = displayResources;
 
     // Start game
+    this.updateResourcesUI();
     this.nextEvent();
+  }
+
+  updateResourcesUI() {
+    this.displayResources(this.resources, this.state.resources);
   }
 
   listAvailableEvents(triggerType) {

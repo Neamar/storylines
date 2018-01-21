@@ -11,7 +11,7 @@
     },
     "energy": {
       "description": "Energy available",
-      "format": "%s",
+      "format": "%sMJ",
       "display_name": "Energy",
       "default": 2000
     },
@@ -28,7 +28,7 @@
     },
     "resources": {
       "crew": 30,
-      "default": 2000,
+      "energy": 2000,
       "morale": 100
     },
     "storylines": {

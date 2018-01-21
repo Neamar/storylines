@@ -11,6 +11,12 @@
     <title>Storylines</title>
   </head>
   <body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-bottom">
+      <a class="navbar-brand" href="#">Storylines</a>
+      <span class="navbar-text" id="resources">
+      </span>
+    </nav>
+
     <h1>Storylines</h1>
 
     <div id="event">
@@ -21,7 +27,7 @@
     <script>
 "use strict";
 function startStory(story) {
-  var storyline = new Storylines(story, window.displayEvent);
+  var storyline = new Storylines(story, window.displayEvent, window.displayResources);
 }
 
 
