@@ -14,6 +14,12 @@
       "format": "%s",
       "display_name": "Energy",
       "default": 2000
+    },
+    "morale": {
+      "description": "Crew Morale",
+      "format": "%s",
+      "display_name": "Morale",
+      "default": 100
     }
   },
   "default_state": {
@@ -22,7 +28,8 @@
     },
     "resources": {
       "crew": 30,
-      "default": 2000
+      "default": 2000,
+      "morale": 100
     },
     "storylines": {
       "red_planet": {}
@@ -35,10 +42,78 @@
       "triggers": {
         "hard": [
           {
-            "lhs": ["@", "global", "current_turn"]
+            "lhs": ["@", "global", "current_turn"],
+            "operator": "==",
+            "rhs": 0
+          }
+        ]
+      },
+      "description": "Welcome onboard, captain.\nWe're ready to go boldly explore when no man has gone before. Do you want to make an announcement to the crew, or should we get started immediately?",
+      "actions": {
+        "Make an announcement": {
+          "operations": [
+            {
+              "lhs": ["@", "storylines", "red_planet", "announcement"],
+              "operator": "=",
+              "rhs": true
+            },
+            {
+              "lhs": ["@", "resources", "morale"],
+              "operator": "+=",
+              "rhs": 10
+            }
+          ]
+        },
+        "Let's go!": [
+          {
+            "lhs": ["@", "storylines", "red_planet", "leaving"],
+            "operator": "=",
+            "rhs": true
           }
         ]
       }
+    },
+    {
+      "story": "red_planet",
+      "event": "announcement",
+      "triggers": {
+        "hard": [
+          {
+            "lhs": ["@", "storylines", "red_planet", "announcement"],
+            "operator": "==",
+            "rhs": true
+          }
+        ]
+      },
+      "description": "« This is your captain speaking. We're about to embark in a dangerous journey, that will... »\n\nYou pour yourself into the words. As you finish, you notice tears in your First Lieutenant eyes. He wipes them out shamefully, clears his throat and yell to the crew: « Come on, time to go! Time and tide wait for no man... »",
+      "actions": {
+        "Let's go!": [
+          {
+            "lhs": ["@", "storylines", "red_planet", "announcement"],
+            "operator": "=",
+            "rhs": false
+          },
+          {
+            "lhs": ["@", "storylines", "red_planet", "leaving"],
+            "operator": "=",
+            "rhs": true
+          }
+        ]
+      }
+    },
+    {
+      "story": "red_planet",
+      "event": "leaving",
+      "triggers": {
+        "hard": [
+          {
+            "lhs": ["@", "storylines", "red_planet", "leaving"],
+            "operator": "==",
+            "rhs": true
+          }
+        ]
+      },
+      "description": "The spaceship thrusts into the unknown. Soon, you'll be the most well known capitain of mankind. The one that pushed the boundaries and expanded humanity's horizon. Good job."
     }
   ]
 }
