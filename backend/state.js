@@ -3,7 +3,9 @@
 
 module.exports.generateDefaultState = function generateDefaultState(resources, storylineSlugs) {
   return {
-    global: {},
+    global: {
+      current_turn: 0,
+    },
     resources: {},
     storylines: {}
   };
