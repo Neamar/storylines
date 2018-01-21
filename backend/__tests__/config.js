@@ -47,6 +47,10 @@ TEST
       expect(() => config.validateConfig({version: 1, story_title: "TEST"})).toThrow(/Missing story description/i);
     });
 
+    test('should ensure resources is present (can be empty)', () => {
+      expect(() => config.validateConfig({version: 1, story_title: "TEST", story_description: "TEST"})).toThrow(/Missing resources definition/i);
+    });
+
     test('should work with the most basic config', () => {
       expect(config.validateConfig(getBasicConfig())).toEqual(getBasicConfig());
     });

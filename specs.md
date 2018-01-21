@@ -27,7 +27,7 @@ A storyline is composed of three different resources:
 
 * A `storyline.config.yml` file;
 * An `assets` folder, which can be empty;
-* A `storylines` folder, which can be empty
+* A `storylines` folder, which can be empty.
 
 ### `storyline.config.yml`
 This file is a [Front-Matter](https://jekyllrb.com/docs/frontmatter/) YML file.
@@ -234,3 +234,5 @@ It is one big JSON containing all the data properly formatted.
 All the keys from the config are first-level keys in the *Story bundle* (`version`, `story_title`, ...). The config FrontMatter content is stored under `story_description`.
 
 In addition, a key named `events` holds an array of all the storylines. Similarly to the config, every event YML file is converted to JSON (with shorthand modifiers replaced), with an additional `storyline` key containing the current storyline slug, and `event` key containing the current event slug; The event FrontMatter content is stored under `description`.
+
+Finally, a key named `default_state` contains the default state documented abovbe for the current story.

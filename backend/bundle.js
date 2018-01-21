@@ -2,6 +2,7 @@
 const configTools = require("./config");
 const storylineTools = require("./storyline");
 const eventTools = require("./event");
+const stateTools = require("./state");
 
 
 module.exports = function bundle(storyPath, storyConfigFile, storylinesFolder) {
@@ -12,7 +13,6 @@ module.exports = function bundle(storyPath, storyConfigFile, storylinesFolder) {
 
   // Build story config
   storyConfig = configTools.getConfig(storyPath, storyConfigFile);
-
 
   // Build all events
   var storylinesSlugs = storylineTools.getStorylinesSlugs(storyPath, storylinesFolder);
@@ -26,7 +26,6 @@ module.exports = function bundle(storyPath, storyConfigFile, storylinesFolder) {
     storyEvents = storyEvents.concat(storylineEvents);
   });
 
-
   // Sort events for consistency
   storyEvents = storyEvents.sort((e1, e2) => {
     if(e1.storyline === e2.storyline) {
@@ -35,9 +34,11 @@ module.exports = function bundle(storyPath, storyConfigFile, storylinesFolder) {
     return e1.storyline > e2.storyline ? -1 : 1;
   });
 
-
-  // Build story bundle
+  // Add events to bundle
   storyConfig.events = storyEvents;
+
+  // Generate default state
+  storyConfig.default_state = stateTools.generateDefaultState(storyConfig.resources, storylinesSlugs);
 
   return storyConfig;
 };
