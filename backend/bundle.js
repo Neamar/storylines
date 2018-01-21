@@ -10,7 +10,6 @@ module.exports = function bundle(storyPath, storyConfigFile, storylinesFolder) {
   var storyEvents = [];
   var storyConfig;
 
-
   // Build story config
   storyConfig = configTools.getConfig(storyPath, storyConfigFile);
 
