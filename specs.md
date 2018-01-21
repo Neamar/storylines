@@ -105,6 +105,9 @@ A storyline name **must** be slugified (no special characters, must start with a
 
 ### Events
 In a *Storyline* folder (`/storylines/{storyline-slug}/`, the *Story writer* will create as many *Events* files as he wants.
+
+The event file name **must** be a proper slug (no special characters, must start with an alpha character, all lower cased, spaces replaced by the `_` symbol).
+
 An event file **must** contain the following keys:
 
 ```yaml
