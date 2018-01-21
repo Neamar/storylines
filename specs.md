@@ -25,11 +25,11 @@
 ## Components
 A storyline is composed of three different resources:
 
-* A `storyline.config` file;
+* A `storyline.config.yml` file;
 * An `assets` folder, which can be empty;
 * A `storylines` folder, which can be empty
 
-### `storyline.config`
+### `storyline.config.yml`
 This file is a [Front-Matter](https://jekyllrb.com/docs/frontmatter/) YML file.
 
 A valid file **must** contain the following keys:
@@ -58,7 +58,7 @@ In this document, the term "config" means the values defined in this file.
 
 * `version` integer, constant, **must** always be 1.
 * `story_title`, string, your story name
-* `resources`, object, a list of all your resources. Keys will be used when generating the state, the value define:
+* `resources`, object, a list of all your resources. Keys will be used when generating the state and must be slugified (no spaces, no special characters), the value define:
     - `description`, string, more information about what this resource is about
     - `format`, string, a placeholder with a `%s` token in it. This will be used every time the value is presented to the *Reader*, to format the resource appropriately. A *format* without a `%s` is invalid.
     - `display_name`, string, the name used when displaying the resource to the user
@@ -87,7 +87,7 @@ When a new *Reader* joins the story, his *State* is initialised to the following
 ```
 
 * An empty `global` key
-* A `resources` object, containing for each resource defined in `storyline.config`:
+* A `resources` object, containing for each resource defined in `storyline.config.yml`:
     - Resource name as a key
     - Resource value as defined by their `default` in the config.
 * A `storylines` key, containing an empty object for each *Storyline* defined in *storylines/*

@@ -7,7 +7,7 @@
     "compile": "node backend/compile.js",
     "lint": "jshint backend/",
     "style": "jscs .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "front-matter": "^2.3.0"
   },
   "devDependencies": {
+    "jest": "^22.1.4",
     "jscs": "^3.0.7",
     "jshint": "^2.9.5"
   }
