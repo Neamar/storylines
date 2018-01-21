@@ -148,8 +148,9 @@ A *Condition* is formed of three components in this order: `lhs` (left hand side
 > 
 > * `storylines.alien_onboard.started == true`
 > * `storylines.alien_onboard.has_destroyed_starship == false`
+> * `sl.has_destroyed_starship == false`
 > * `resources.crew >= 150`
-> * `global.alarm_level <= 2`
+> * `g.alarm_level <= 2`
 > * `"First Lieutenant" in global.officers`
 
 #### `lhs`, `rhs` in *Conditions*
@@ -157,8 +158,9 @@ Both `lhs` and `rhs` must be either a constant value (strings must be enclosed i
 
 * Any value mapping to an existing state item will be replaced with this value
 * Any missing value in the dotted chain after the first `.` will interrupt the parsing and return null (`storylines.nonexisting.something` will return `null`, so will `storylines.nonexisting`).
-* First level values can use a single-letter notation, mapping to the name of the extended key. Valid values are `g` for `global`, `r` for `resources` and `s` for `storylines`.
-* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r` or `s`) will throw an error when compiling the *Story*
+* First level value can use a single-letter notation, mapping to the name of the extended key. Valid values are `g` for `global`, `r` for `resources` and `s` for `storylines`. Those shorthand values will be replaced at compile time.
+* First level value can use the shorthand `sl` to access the current storyline (will be replaced by `storylines.{slug}` at compile time)
+* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r`, `s` or `sl`) will throw an error when compiling the *Story*
 
 #### `operator` in *Conditions*
 `operator` must be one of the following value:
@@ -191,7 +193,8 @@ An *Operation* is formed of three components in this order: `lhs`, `operator`, `
 * Accessing a value in a non-existing path (e.g. `storylines.nonexisting.something`) will throw a Runtime error.
 * Accessing a non-existing variable (`storylines.existing.nonexisting`) will create this value and assign it for the first time. The `=` operator is the only valid one in this situation, otherwise a Runtime exception is thrown.
 * First level values can use a single-letter notation, mapping to the name of the extended key. Valid values are `g` for `global`, `r` for `resources` and `s` for `storylines`.
-* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r` or `s`) will throw an error when compiling the *Story*
+* First level value can use the shorthand `sl` to access the current storyline (will be replaced by `storylines.{slug}` at compile time)
+* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r`, `s` or `sl`) will throw an error when compiling the *Story*
 
 
 #### `rhs` in *Operations*
@@ -200,7 +203,8 @@ An *Operation* is formed of three components in this order: `lhs`, `operator`, `
 * Any value mapping to an existing state item will be replaced with this value
 * Any missing value in the dotted chain after the first `.` will interrupt the parsing and return null (`storylines.nonexisting.something` will return `null`, so will `storylines.nonexisting`).
 * First level values can use a single-letter notation, mapping to the name of the extended key. Valid values are `g` for `global`, `r` for `resources` and `s` for `storylines`.
-* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r` or `s`) will throw an error when compiling the *Story*
+* First level value can use the shorthand `sl` to access the current storyline (will be replaced by `storylines.{slug}` at compile time)
+* Accessing a non-existing first level component (anything different than `global`, `resources`, `storylines`, `g`, `r`, `s` or `sl`) will throw an error when compiling the *Story*
 
 #### `operator` in *Operations*
 `operator` must be one of the following value:
