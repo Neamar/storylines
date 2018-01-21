@@ -4,6 +4,7 @@
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
   "scripts": {
+    "local": "node frontend.js",
     "compile": "node backend/compile.js",
     "lint": "jshint backend/",
     "style": "jscs .",
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/Neamar/storylines#readme",
   "dependencies": {
+    "express": "^4.16.2",
     "front-matter": "^2.3.0"
   },
   "devDependencies": {
