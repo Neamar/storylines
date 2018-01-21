@@ -1,7 +1,7 @@
 # Storylines
-Choose-our-own-adventure style storytelling, with compelling characters and difficult choices.
+Choose-your-own-adventure style storytelling, with compelling characters and difficult choices.
 
-*Storylines* is an engine to create your own adventures. Whether it's fantasy, science fiction, post-apocalyptical, steampunk, superhero or horror,
+*Storylines* is an engine to create your own adventures. Whether it's fantasy, science fiction, post-apocalyptic, steampunk, superhero or horror.
 
 Roleplaying for adults.
 
