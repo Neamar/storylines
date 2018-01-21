@@ -21,5 +21,9 @@
   "homepage": "https://github.com/Neamar/storylines#readme",
   "dependencies": {
     "front-matter": "^2.3.0"
+  },
+  "devDependencies": {
+    "jscs": "^3.0.7",
+    "jshint": "^2.9.5"
   }
 }
