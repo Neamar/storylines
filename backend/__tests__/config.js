@@ -111,10 +111,8 @@ TEST
         display_name: "TEST",
         default: 2
       };
-
       expect(config.validateConfig(c)).toEqual(c);
     });
-
   });
 
   describe("getConfig()", function() {
