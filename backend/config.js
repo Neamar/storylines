@@ -45,7 +45,7 @@ function validateResource(resource) {
   helpers.validateKeyType(resource, "description", "string", "Missing resource description");
   helpers.validateKeyType(resource, "format", "string", "Missing resource format");
   if(resource.format.indexOf("%s") === -1) {
-    throw new Error("Invalid resource format; must contain a %s/i");
+    throw new Error("Invalid resource format; must contain a %s");
   }
   helpers.validateKeyType(resource, "display_name", "string", "Missing resource display_name");
   helpers.validateKeyType(resource, "default", null, "Missing resource default value");
