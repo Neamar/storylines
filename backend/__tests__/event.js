@@ -28,10 +28,10 @@ triggers:
 TEST
 `, 'storyline_slug', 'event_slug');
 
-      expect(e.triggers.soft.conditions[0]).toBe('g.test == true');
-      expect(e.description).toBe('TEST');
-      expect(e.event).toBe('event_slug');
-      expect(e.storyline).toBe('storyline_slug');
+      expect(e).toHaveProperty('description', 'TEST');
+      expect(e).toHaveProperty('event', 'event_slug');
+      expect(e).toHaveProperty('storyline', 'storyline_slug');
+      expect(e).toHaveProperty('triggers.soft.conditions.0', 'g.test == true');
     });
   });
 

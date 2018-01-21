@@ -1,8 +1,6 @@
 "use strict";
 
-const configTools = require("./config");
-const storylineTools = require("./storyline");
-const eventTools = require("./event");
+const bundle = require("./bundle.js");
 
 
 if(process.argv.length !== 3) {
@@ -15,27 +13,5 @@ const STORY_CONFIG_FILE = '/storyline.config';
 const STORYLINES_FOLDER = '/storylines';
 
 
-// Story components
-var storyEvents = [];
-var storyConfig;
-
-
-// Build story config
-storyConfig = configTools.getConfig(STORY_PATH, STORY_CONFIG_FILE);
-
-
-// Build all events
-var storylinesSlugs = storylineTools.getStorylinesSlugs(STORY_PATH, STORYLINES_FOLDER);
-storylinesSlugs.forEach(function(storylineSlug) {
-  var eventsSlugs = storylineTools.getEventsSlugs(STORY_PATH, STORYLINES_FOLDER, storylineSlug);
-
-  var storylineEvents = eventsSlugs.map(function(eventSlug) {
-    return eventTools.getEvent(STORY_PATH, storylineSlug, eventSlug);
-  });
-
-  storyEvents = storyEvents.concat(storylineEvents);
-});
-
-
-// Build story bundle
-storyConfig.events = storyEvents;
+var b = bundle(STORY_PATH, STORY_CONFIG_FILE, STORYLINES_FOLDER);
+console.log(JSON.stringify(b));
