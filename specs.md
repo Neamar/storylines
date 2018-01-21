@@ -104,9 +104,9 @@ Every *Storyline* is a folder within the *storylines/* main folder.
 A storyline name **must** be slugified (no special characters, must start with an alpha character, all lower cased, spaces replaced by the `_` symbol).
 
 ### Events
-In a *Storyline* folder (`/storylines/{storyline-slug}/`, the *Story writer* will create as many *Events* files as he wants.
+In a *Storyline* folder (`/storylines/{storyline-slug}/`), the *Story writer* will create as many *Events* files as he wants.
 
-The event file name **must** be a proper slug (no special characters, must start with an alpha character, all lower cased, spaces replaced by the `_` symbol).
+The event file name **must** be a proper slug (no special characters, must start with an alpha character, all lower cased, spaces replaced by the `_` symbol). Extension for event file is `.md`.
 
 An event file **must** contain the following keys:
 
