@@ -178,7 +178,7 @@ TEST
     describe("Actions validation", () => {
       test('should ensure actions contains an operations key', () => {
         var e = getBasicEvent();
-        e.action = {
+        e.actions = {
           OK: {}
         };
 
@@ -187,13 +187,77 @@ TEST
 
       test('should ensure actions operations is an array', () => {
         var e = getBasicEvent();
-        e.action = {
+        e.actions = {
           OK: {
             operations: false
           }
         };
 
         expect(() => event.validateEvent(e)).toThrow(/Actions operations must be an array: storyline_slug\/event_slug/i);
+      });
+
+      test('should parse enclosed operations', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {
+            operations: [
+              'global.something = true',
+              'resources.foo += 150'
+            ]
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.actions = {
+          OK: {
+            operations: [
+              {
+                lhs: ['@', 'global', 'something'],
+                operator: '=',
+                rhs: true
+              },
+              {
+                lhs: ['@', 'resources', 'foo'],
+                operator: '+=',
+                rhs: 150
+              },
+            ]
+          }
+        };
+
+        expect(event.validateEvent(e)).toEqual(expected);
+      });
+
+      test('should replace shorthands', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {
+            operations: [
+              'sl.something = "ABC"',
+              'r.foo *= 5'
+            ]
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.triggers = {
+          soft: {
+            conditions: [
+              {
+                lhs: ['@', 'storylines', 'storyline_slug'],
+                operator: '==',
+                rhs: "ABC"
+              },
+              {
+                lhs: ['@', 'resources', 'foo'],
+                operator: '*=',
+                rhs: 5
+              },
+            ]
+          }
+        };
+
+        expect(event.validateEvent(e)).toEqual(expected);
       });
     });
   });
