@@ -13,16 +13,21 @@ describe("Storylines", () => {
     story_title: 'title',
     story_description: 'description'
   };
+
+  function getGeneralFooEqualBarState() {
+    return {
+      general: {
+        foo: "bar"
+      }
+    };
+  }
+
   var stubStoryline = new Storylines(stubStory, stubDisplayEvent, stubDisplayResources);
 
   describe("Conditions and operations", () => {
     describe("resolveStatePath()", () => {
       it("should return parent object and key when statePath exists", () => {
-        stubStoryline.state = {
-          general: {
-            foo: "bar"
-          }
-        };
+        stubStoryline.state = getGeneralFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(['@', 'general', 'foo']);
 
@@ -51,21 +56,13 @@ describe("Storylines", () => {
       });
 
       it("should throw when throwOnMissing is true", () => {
-        stubStoryline.state = {
-          general: {
-            foo: "bar"
-          }
-        };
+        stubStoryline.state = getGeneralFooEqualBarState();
 
         expect(() => stubStoryline.resolveStatePath(['@', 'missing', 'foo'], true)).toThrow(/Trying to access non-existing path/i);
       });
 
       it("should stop with current situation when throwOnMissing is false", () => {
-        stubStoryline.state = {
-          general: {
-            foo: "bar"
-          }
-        };
+        stubStoryline.state = getGeneralFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(['@', 'missing', 'foo']);
 
@@ -100,23 +97,60 @@ describe("Storylines", () => {
       });
 
       it("should resolve state access", () => {
-        stubStoryline.state = {
-          general: {
-            foo: "bar"
-          }
-        };
+        stubStoryline.state = getGeneralFooEqualBarState();
 
         expect(stubStoryline.resolveValue(['@', 'general', 'foo'])).toEqual("bar");
       });
 
-      it("should resolve invalid state access to undefined", () => {
-        stubStoryline.state = {
-          general: {
-            foo: "bar"
-          }
-        };
+      it("should resolve invalid state access (last level) to undefined", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
 
         expect(stubStoryline.resolveValue(['@', 'general', 'fizz'])).toBeUndefined();
+      });
+
+      it("should resolve invalid state access (before last level) to undefined", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        expect(stubStoryline.resolveValue(['@', 'buzz', 'fizz'])).toBeUndefined();
+      });
+    });
+
+    describe("applyOperation()", () => {
+      it("should work on = operator", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '=',
+          rhs: 'baz'
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', "baz");
+      });
+
+      it("should work on = operator when creating a new value", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'fizz'],
+          operator: '=',
+          rhs: 'buzz'
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.fizz', "buzz");
+      });
+
+      it("should fail on = operator when missing a value before the last one", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        function deferred() {
+          stubStoryline.applyOperation({
+            lhs: ['@', 'g', 'fizz'],
+            operator: '=',
+            rhs: 'buzz'
+          });
+        }
+        expect(deferred).toThrow(/Trying to access non-existing path in state/i);
       });
     });
   });

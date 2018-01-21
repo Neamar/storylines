@@ -77,8 +77,7 @@ class Storylines {
   }
 
   applyOperation(operation) {
-    // Throw if missing and operator different from "="
-    let lhs = this.resolveStatePath(operation.lhs, operation.operator === '=');
+    let lhs = this.resolveStatePath(operation.lhs, true);
     let rhs = this.resolveValue(operation.rhs);
 
     switch(operation.operator) {
@@ -130,7 +129,7 @@ class Storylines {
       var path = shiftableStatePath.shift();
       if(!(path in value)) {
         if(throwOnMissing) {
-          throw new Error("Trying to access non-existing path in state: " + statePath.join("."));
+          throw new Error("Trying to access non-existing path in state: " + statePath.slice(1).join("."));
         }
         return {
           parent: value,
