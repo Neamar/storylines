@@ -5,6 +5,8 @@
   "main": "backend/compile.js",
   "scripts": {
     "compile": "node backend/compile.js",
+    "lint": "jshint backend/",
+    "style": "jscs .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
