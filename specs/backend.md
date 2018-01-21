@@ -58,7 +58,7 @@ In this document, the term "config" means the values defined in this file.
 
 * `version` integer, constant, **must** always be 1.
 * `story_title`, string, your story name
-* `resources`, object, a list of all your resources. The eys will be used when generating the state and must be slugified (no spaces, no special characters), the values describe:
+* `resources`, object, a list of all your resources. The keys will be used when generating the state and must be slugified (no spaces, no special characters), the values describe:
     - `description`, string, more information about what this resource is about
     - `format`, string, a placeholder containing a `%s` token. This will be used every time the value is presented to the *Reader*, to format it appropriately. A *format* without a `%s` is invalid.
     - `display_name`, string, the name used when displaying the resource to the user
@@ -242,4 +242,3 @@ In addition, a key named `events` holds an array of all the storylines. Similarl
 Conditions and operations are parsend and stored in a structure containing `lhs`, `operator` and `rhs`. Items accessing the state are stored as an array, with the first item being an `@` to differentiate them from standard arrays: `['@', 'global', 'foo']`.
 
 Finally, a key named `default_state` contains the default state documented above for the current story.
-=======
