@@ -2,6 +2,8 @@
 const fs = require('fs');
 const frontMatter = require('front-matter');
 
+const helpers = require('./helpers');
+
 /**
  * Retrieve the YML for a given event from disk
  * @return raw file content
@@ -36,9 +38,10 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
  * @return event object
  * @throws on invalid event
  */
-function validateEvent(jsonifiedYml) {
-  // TODO
-  return jsonifiedYml;
+function validateEvent(eventObject) {
+  helpers.validateKeyType(eventObject, "storyline", "slug", "Missing storyline slug.");
+  helpers.validateKeyType(eventObject, "event", "slug", "Missing event slug.");
+  return eventObject;
 }
 
 

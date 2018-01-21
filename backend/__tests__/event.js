@@ -9,7 +9,7 @@ describe("event file", () => {
 
   describe("readEvent()", () => {
     test('should read event from disk', () => {
-      var r = event.readEvent(__dirname + '/mocks', 'test_storyline_1', 'event_1_1.md');
+      var r = event.readEvent(__dirname + '/mocks', 'test_storyline_1', 'event_1_1');
 
       expect(r).toContain("triggers");
       expect(r).toContain("g.test");
@@ -46,15 +46,15 @@ TEST
     });
 
     test('should ensure storyline is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/Storyline name must be a slug: not a slug/i);
+      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/'storyline' must be a slug:/i);
     });
 
     test('should ensure event slug is present', () => {
-      expect(() => event.validateEvent({storyline: 'storyline_slug'})).toThrow(/Missing event slug: storyline_slug\//i);
+      expect(() => event.validateEvent({storyline: 'storyline_slug'})).toThrow(/Missing event/i);
     });
 
     test('should ensure event is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/Event name must be a slug: not a slug\//i);
+      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/'event' must be a slug:\//i);
     });
 
     test('should ensure description is present', () => {
@@ -303,7 +303,7 @@ TEST
 
   describe("getEvent()", function() {
     test('should read and parse event from disk', () => {
-      expect(event.getEvent(__dirname + '/mocks', 'test_storyline_1', 'event_1_1')).toEqual({
+      expect(event.getEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1')).toEqual({
         event: "event_1_1",
         storyline: "test_storyline_1",
         description: "Potentially multiline, markdown description of your event",
