@@ -3,6 +3,10 @@ const event = require('../event');
 
 
 describe("event file", () => {
+  function getBasicEvent() {
+    return {description: "Description", event: 'event_slug', storyline: 'storyline_slug'};
+  }
+
   describe("readEvent()", () => {
     test('should read event from disk', () => {
       var r = event.readEvent(__dirname + '/mocks', 'test_storyline_1', 'event_1_1.md');
@@ -36,9 +40,6 @@ TEST
   });
 
   describe("validateEvent()", function() {
-    function getBasicEvent() {
-      return {description: "Description", event: 'event_slug', storyline: 'storyline_slug'};
-    }
 
     test('should ensure storyline slug is present', () => {
       expect(() => event.validateEvent({})).toThrow(/Missing storyline slug/i);
@@ -115,7 +116,33 @@ TEST
 
         expect(event.validateEvent(e)).toHaveProperty('triggers.soft.weight', 15);
       });
+    });
 
+    describe("Actions validation", () => {
+      test('should ensure actions contains an operations key', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {}
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/Actions must contain an operations key: storyline_slug\/event_slug/i);
+      });
+
+      test('should ensure actions operations is an array', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {
+            operations: false
+          }
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/Actions operations must be an array: storyline_slug\/event_slug/i);
+      });
+    });
+  });
+
+  describe("parseEvent()", () => {
+    describe("Trigger parsing", () => {
       test('should parse enclosed soft conditions', () => {
         var e = getBasicEvent();
         e.triggers = {
@@ -139,7 +166,7 @@ TEST
           }
         };
 
-        expect(event.validateEvent(e)).toEqual(expected);
+        expect(event.parseEvent(e)).toEqual(expected);
       });
 
       test('should parse enclosed hard conditions', () => {
@@ -171,7 +198,7 @@ TEST
           }
         };
 
-        expect(event.validateEvent(e)).toEqual(expected);
+        expect(event.parseEvent(e)).toEqual(expected);
       });
 
       test('should replace shorthands', () => {
@@ -203,31 +230,11 @@ TEST
           }
         };
 
-        expect(event.validateEvent(e)).toEqual(expected);
+        expect(event.parseEvent(e)).toEqual(expected);
       });
     });
 
-    describe("Actions validation", () => {
-      test('should ensure actions contains an operations key', () => {
-        var e = getBasicEvent();
-        e.actions = {
-          OK: {}
-        };
-
-        expect(() => event.validateEvent(e)).toThrow(/Actions must contain an operations key: storyline_slug\/event_slug/i);
-      });
-
-      test('should ensure actions operations is an array', () => {
-        var e = getBasicEvent();
-        e.actions = {
-          OK: {
-            operations: false
-          }
-        };
-
-        expect(() => event.validateEvent(e)).toThrow(/Actions operations must be an array: storyline_slug\/event_slug/i);
-      });
-
+    describe("Actions parsing", () => {
       test('should parse enclosed operations', () => {
         var e = getBasicEvent();
         e.actions = {
@@ -257,7 +264,7 @@ TEST
           }
         };
 
-        expect(event.validateEvent(e)).toEqual(expected);
+        expect(event.parseEvent(e)).toEqual(expected);
       });
 
       test('should replace shorthands', () => {
@@ -289,7 +296,7 @@ TEST
           }
         };
 
-        expect(event.validateEvent(e)).toEqual(expected);
+        expect(event.parseEvent(e)).toEqual(expected);
       });
     });
   });
