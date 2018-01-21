@@ -77,11 +77,31 @@ class Storylines {
   }
 
   applyOperation(operation) {
+    // Throw if missing and operator different from "="
     let lhs = this.resolveStatePath(operation.lhs, operation.operator === '=');
     let rhs = this.resolveValue(operation.rhs);
 
     switch(operation.operator) {
-
+      case '=':
+        lhs.parent[lhs.key] = rhs;
+        break;
+      case '+=':
+        lhs.parent[lhs.key] += rhs;
+        break;
+      case '-=':
+        lhs.parent[lhs.key] -= rhs;
+        break;
+      case '*=':
+        lhs.parent[lhs.key] *= rhs;
+        break;
+      case '/=':
+        lhs.parent[lhs.key] /= rhs;
+        break;
+      case '%=':
+        lhs.parent[lhs.key] %= rhs;
+        break;
+      default:
+        throw new Error("Invalid operator " + operation.operator);
     }
   }
 
