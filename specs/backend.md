@@ -75,7 +75,9 @@ When a new *Reader* starts the story, his *Character*'s *State* is initialised t
 
 ```json
 {
-    "global": {},
+    "global": {
+        "current_turn": 0
+    },
     "resources": {
         "resource1": 100,
         "resource2": "ABC"
@@ -86,7 +88,7 @@ When a new *Reader* starts the story, his *Character*'s *State* is initialised t
 }
 ```
 
-* An empty `global` key
+* A `global` key containing `{"current_turn": 0}`
 * A `resources` object, containing for each resource defined in `storyline.config.yml`:
     - Resource name as a key
     - Initial Resource value as defined by their `default` in the config.
