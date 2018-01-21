@@ -1,13 +1,13 @@
 "use strict";
 const fs = require('fs');
-
+const frontMatter = require('front-matter');
 
 /**
- * Retrieve the YML event for a given event from disk
+ * Retrieve the YML for a given event from disk
  * @return raw file content
  */
 function readEvent(storyPath, storylineSlug, eventSlug) {
-  return fs.readFileSync(`${storyPath}/${storylineSlug}/${eventSlug}`).toString();
+  return fs.readFileSync(`${storyPath}/${storylineSlug}/${eventSlug}.md`).toString();
 }
 
 
@@ -16,23 +16,62 @@ function readEvent(storyPath, storylineSlug, eventSlug) {
  * @param eventContent raw file content
  * @return event object
  */
-function buildEvent(eventContent) {
-  // TODO
-  return {};
+function buildEvent(eventContent, storylineSlug, eventSlug) {
+  if(!frontMatter.test(eventContent)) {
+    throw new Error("Event must be a valid FrontMatter file.");
+  }
+
+  var fm = frontMatter(eventContent);
+  var event = fm.attributes;
+  event.description = fm.body.trim();
+  event.event = eventSlug;
+  event.storyline = storylineSlug;
+  return event;
 }
 
 
 /**
- * Retrieve the config for a given story
- * @return a complete config
+ * Ensure content is correct
+ * @param jsonifiedYml YML content from the file
+ * @return event object
+ * @throws on invalid event
+ */
+function validateEvent(jsonifiedYml) {
+  // TODO
+  return jsonifiedYml;
+}
+
+
+/**
+ * Parse content (conditions and operations)
+ * @param jsonifiedYml YML content from the file
+ * @return event object
+ * @throws on invalid event
+ */
+function parseEvent(jsonifiedYml) {
+  // TODO
+  return jsonifiedYml;
+}
+
+
+/**
+ * Retrieve the event for a given story in a given storyline
+ * @return a complete event
  */
 function getEvent(storyPath, storylineSlug, eventSlug) {
-  var configContent = readEvent(storyPath, storylineSlug, eventSlug);
+  var eventContent = readEvent(storyPath, storylineSlug, eventSlug);
 
-  return buildEvent(configContent);
+  var jsonifiedYml = buildEvent(eventContent, storylineSlug, eventSlug);
+
+  var event = validateEvent(jsonifiedYml);
+  event = parseEvent(event);
+
+  return event;
 }
 
 
 module.exports.getEvent = getEvent;
 module.exports.readEvent = readEvent;
 module.exports.buildEvent = buildEvent;
+module.exports.validateEvent = validateEvent;
+module.exports.parseEvent = parseEvent;

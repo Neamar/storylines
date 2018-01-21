@@ -19,7 +19,7 @@ describe("storyline file", () => {
     test('should read events from disk', () => {
       var events = storyline.getEventsSlugs(__dirname + '/mocks', 'storylines', 'test_storyline_1');
 
-      expect(events).toEqual(['event_1_1.md', 'event_1_2.md']);
+      expect(events).toEqual(['event_1_1', 'event_1_2']);
     });
 
     test('should throw if specified storyline folder does not exist', () => {
