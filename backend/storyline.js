@@ -17,7 +17,7 @@ function getStorylinesSlugs(storyPath, storylinesFolder) {
  * @return an array of each storyline slug
  */
 function getEventsSlugs(storyPath, storylinesFolder, storylineSlug) {
-  // TODO, using fs.readdirSync()
+  // TODO, using fs.readdirSync() and listing all .md files
   return [];
 }
 

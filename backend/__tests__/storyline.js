@@ -11,7 +11,19 @@ describe("storyline file", () => {
     });
 
     test('should throw if storylines folder is missing', () => {
-      expect(() => storyline.getStorylinesSlugs(__dirname + '/mocks', 'invalid_storylines')).toThow(/Missing storylines folder/);
+      expect(() => storyline.getStorylinesSlugs(__dirname + '/mocks', 'invalid_storylines')).toThow(/Missing storylines folder: invalid_storylines\∕/i);
+    });
+  });
+
+  describe("getEventsSlugs()", () => {
+    test('should read events from disk', () => {
+      var events = storyline.getEventsSlugs(__dirname + '/mocks', 'storylines', 'test_storyline_1');
+
+      expect(events).toEqual(['event_1_1.md', 'event_1_2.md']);
+    });
+
+    test('should throw if specified storyline folder does not exist', () => {
+      expect(() => storyline.getEventsSlugs(__dirname + '/mocks', 'storylines', 'invalid_storyline')).toThow(/Missing storyline folder: invalid_storyline\∕/i);
     });
   });
 });

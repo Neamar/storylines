@@ -36,15 +36,15 @@ TEST
     }
 
     test('should ensure version is present and equal to 1', () => {
-      expect(() => config.validateConfig({})).toThrow(/Missing version number/);
+      expect(() => config.validateConfig({})).toThrow(/Missing version number/i);
     });
 
     test('should ensure story_title is present', () => {
-      expect(() => config.validateConfig({version: 1})).toThrow(/Missing story title/);
+      expect(() => config.validateConfig({version: 1})).toThrow(/Missing story title/i);
     });
 
     test('should ensure story_description is present', () => {
-      expect(() => config.validateConfig({version: 1, story_title: "TEST"})).toThrow(/Missing story description/);
+      expect(() => config.validateConfig({version: 1, story_title: "TEST"})).toThrow(/Missing story description/i);
     });
 
     test('should work with the most basic config', () => {
@@ -54,17 +54,17 @@ TEST
     test('should ensure resources are correct slugs', () => {
       var c = getBasicConfig();
       c.resources["My resource"] = {};
-      expect(() => config.validateConfig(c)).toThrow(/Invalid resource slug/);
+      expect(() => config.validateConfig(c)).toThrow(/Invalid resource slug/i);
 
       c = getBasicConfig();
       c.resources.ÀCôté = {};
-      expect(() => config.validateConfig(c)).toThrow(/Invalid resource slug/);
+      expect(() => config.validateConfig(c)).toThrow(/Invalid resource slug/i);
     });
 
     test('should ensure resources have a description', () => {
       var c = getBasicConfig();
       c.resources.Resource1 = {};
-      expect(() => config.validateConfig(c)).toThrow(/Missing resource description/);
+      expect(() => config.validateConfig(c)).toThrow(/Missing resource description/i);
     });
 
     test('should ensure resources have a format', () => {
@@ -72,7 +72,7 @@ TEST
       c.resources.Resource1 = {
         description: "TEST"
       };
-      expect(() => config.validateConfig(c)).toThrow(/Missing resource format/);
+      expect(() => config.validateConfig(c)).toThrow(/Missing resource format/i);
     });
 
     test('should ensure resources have a format containing a %s', () => {
@@ -81,7 +81,7 @@ TEST
         description: "TEST",
         format: "INVALID"
       };
-      expect(() => config.validateConfig(c)).toThrow(/Invalid resource format; must contain a %s/);
+      expect(() => config.validateConfig(c)).toThrow(/Invalid resource format; must contain a %s/i);
     });
 
     test('should ensure resources have a display_name', () => {
@@ -90,7 +90,7 @@ TEST
         description: "TEST",
         format: "%s"
       };
-      expect(() => config.validateConfig(c)).toThrow(/Missing resource display_name/);
+      expect(() => config.validateConfig(c)).toThrow(/Missing resource display_name/i);
     });
 
     test('should ensure resources have a default value', () => {
@@ -100,7 +100,7 @@ TEST
         format: "%s",
         display_name: "TEST"
       };
-      expect(() => config.validateConfig(c)).toThrow(/Missing resource default value&/);
+      expect(() => config.validateConfig(c)).toThrow(/Missing resource default value/i);
     });
 
     test('should work with a valid resource', () => {
