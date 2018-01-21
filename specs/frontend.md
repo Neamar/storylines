@@ -39,6 +39,7 @@ If no actions are available, see "Special case: actionless events".
 Upon clicking an action, the selected action operations are applied, updating the user *State*.
 
 The engine then push into the *State* `history` key an array containing the event slug and the action taken. Note that this key is not available from the *Events*.
+The engine also increments `global.current_turn` by 1.
 
 The UI for *Resources* is updated.
 
