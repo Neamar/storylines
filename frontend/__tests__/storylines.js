@@ -90,5 +90,34 @@ describe("Storylines", () => {
         expect(r).toHaveProperty('missingOnLastLevel', true);
       });
     });
+
+    describe("resolveValue()", () => {
+      it("should resolve standard types", () => {
+        expect(stubStoryline.resolveValue(true)).toEqual(true);
+        expect(stubStoryline.resolveValue(123)).toEqual(123);
+        expect(stubStoryline.resolveValue("ABC")).toEqual("ABC");
+        expect(stubStoryline.resolveValue([1, "A"])).toEqual([1, "A"]);
+      });
+
+      it("should resolve state access", () => {
+        stubStoryline.state = {
+          general: {
+            foo: "bar"
+          }
+        };
+
+        expect(stubStoryline.resolveValue(['@', 'general', 'foo'])).toEqual("bar");
+      });
+
+      it("should resolve invalid state access to undefined", () => {
+        stubStoryline.state = {
+          general: {
+            foo: "bar"
+          }
+        };
+
+        expect(stubStoryline.resolveValue(['@', 'general', 'fizz'])).toBeUndefined();
+      });
+    });
   });
 });
