@@ -40,7 +40,11 @@ Upon clicking an action, the selected action operations are applied, updating th
 
 The engine then push into the *State* `history` key an array containing the event slug and the action taken. Note that this key is not available from the *Events*.
 
+The UI for *Resources* is updated.
+
+The engine then moves back to "Picking an event".
 
 ### Special case: actionless events
+Some events don't have any actions.
 
-## End of story
+Those are "final" events, ending the story.
