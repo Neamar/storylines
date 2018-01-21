@@ -241,4 +241,4 @@ All the keys from the *Story Config* are first-level keys in the *Story bundle* 
 In addition, a key named `events` holds an array of all the storylines. Similarly to the config, every event YML file is converted to JSON (with shorthand modifiers replaced), with an additional `storyline` key containing the current storyline slug, and `event` key containing the current event slug; The event FrontMatter content is stored under `description`.
 Conditions and operations are parsend and stored in a structure containing `lhs`, `operator` and `rhs`. Items accessing the state are stored as an array, with the first item being an `@` to differentiate them from standard arrays: `['@', 'global', 'foo']`.
 
-Finally, a key named `default_state` contains the default state documented abovbe for the current story.
+Finally, a key named `default_state` contains the default state documented above for the current story.
