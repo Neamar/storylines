@@ -4,6 +4,7 @@
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
   "scripts": {
+    "compile": "node backend/compile.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
