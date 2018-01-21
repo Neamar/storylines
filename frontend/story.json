@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "story_title": "In a galaxy far, far away...",
+  "story_description": "... to boldly go where no man has gone before",
+  "resources": {
+    "crew": {
+      "description": "Crew in your spaceship",
+      "format": "%s",
+      "display_name": "Crew",
+      "default": 30
+    },
+    "energy": {
+      "description": "Energy available",
+      "format": "%s",
+      "display_name": "Energy",
+      "default": 2000
+    }
+  },
+  "default_state": {
+    "global": {
+      "turn": 0
+    },
+    "resources": {
+      "crew": 30,
+      "default": 2000
+    },
+    "storylines": {
+      "red_planet": {}
+    }
+  },
+  "events": [
+    {
+      "story": "red_planet"
+    }
+  ]
+}
