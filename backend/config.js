@@ -2,6 +2,10 @@
 const fs = require('fs');
 const frontMatter = require('front-matter');
 
+const helpers = require('./helpers');
+
+const SUPPORTED_VERSIONS = [1.0, ];
+
 /**
  * Retrieve the YML config for a given story from disk
  * @return raw file content
@@ -27,6 +31,14 @@ function buildStoryConfig(configContent) {
   return config;
 }
 
+function validateKeyType(object, keyName, keyType, msgNotFound) {
+  var objectKeyType = typeof object[keyName];
+  if(objectKeyType == 'undefined') {
+    throw new Error("In 'config.js/validateKeyType': " + msgNotFound)
+  } else if(objectKeyType != keyType) {
+    throw new Error("In 'config.js/validateKeyType': " + keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
+  }
+}
 
 /**
  * Ensure content is correct
@@ -34,9 +46,22 @@ function buildStoryConfig(configContent) {
  * @return config object
  * @throws on invalid config
  */
-function validateConfig(jsonifiedYml) {
-  // TODO
-  return jsonifiedYml;
+function validateConfig(config) {
+  validateKeyType(config, "version", "number", "Missing version number");
+
+  if (SUPPORTED_VERSIONS.indexOf(config.version) == -1) {
+    throw new Error("In 'config.js/validateConfig': Unsupported version. Version should be one of '" + SUPPORTED_VERSIONS.join() + "', not '"  + config.version  + "'" );
+  }
+
+  validateKeyType(config, "story_title", "string", "Missing story title.");
+  validateKeyType(config, "story_description", "string", "Missing story description.");
+  validateKeyType(config, "resources", "object", "Missing resources definition.");
+
+  var badSlugs = Object.keys(config.resources).filter(resource => !(helpers.isSlug(resource)))
+  if(badSlugs.length > 0) {
+    throw new Error("Invalid resource slug: '" + badSlugs.join() + "'");
+  }
+  return config;
 }
 
 

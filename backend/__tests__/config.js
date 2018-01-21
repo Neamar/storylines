@@ -35,27 +35,48 @@ TEST
       return {version: 1, story_title: "TEST", story_description: "TEST", resources: {}};
     }
 
-    test('should ensure version is present and equal to 1', () => {
+    test('should ensure version is present', () => {
       expect(() => config.validateConfig({})).toThrow(/Missing version number/i);
+    });
+
+    test('should ensure version is a number', () => {
+      expect(() => config.validateConfig({version: "this should throw an error"})).toThrow(/version should be of type 'number', not/i);
+    });
+
+    test('should ensure version is supported', () => {
+      // For now, version 2 is unsupported
+      expect(() => config.validateConfig({version: 2})).toThrow(/Unsupported version. Version should be one of/i);
     });
 
     test('should ensure story_title is present', () => {
       expect(() => config.validateConfig({version: 1})).toThrow(/Missing story title/i);
     });
 
+    test('should ensure story_title is a string', () => {
+      expect(() => config.validateConfig({version: 1, story_title: 1})).toThrow(/story_title should be of type 'string', not/i);
+    });
+
     test('should ensure story_description is present', () => {
       expect(() => config.validateConfig({version: 1, story_title: "TEST"})).toThrow(/Missing story description/i);
+    });
+
+    test('should ensure story_description is a string', () => {
+      expect(() => config.validateConfig({version: 1, story_title: "TEST", story_description: 1})).toThrow(/story_description should be of type 'string', not/i);
     });
 
     test('should ensure resources is present (can be empty)', () => {
       expect(() => config.validateConfig({version: 1, story_title: "TEST", story_description: "TEST"})).toThrow(/Missing resources definition/i);
     });
 
+    test('should ensure resources is an object', () => {
+      expect(() => config.validateConfig({version: 1, story_title: "TEST", story_description: "TEST", resources: "this should throw an error"})).toThrow(/resources should be of type 'object', not/i);
+    });
+
     test('should work with the most basic config', () => {
       expect(config.validateConfig(getBasicConfig())).toEqual(getBasicConfig());
     });
 
-    test('should ensure resources are correct slugs', () => {
+    test('should ensure resources keys are correct slugs', () => {
       var c = getBasicConfig();
       c.resources["My resource"] = {};
       expect(() => config.validateConfig(c)).toThrow(/Invalid resource slug/i);
