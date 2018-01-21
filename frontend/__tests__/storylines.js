@@ -18,7 +18,16 @@ describe("Storylines", () => {
   describe("Conditions and operations", () => {
     describe("resolveStatePath()", () => {
       it("should return parent object and key when statePath exists", () => {
+        stubStoryline.state = {
+          general: {
+            foo: "bar"
+          }
+        };
 
+        var r = stubStoryline.resolveStatePath(['@', 'general', 'foo']);
+
+        expect(r).toHaveProperty('parent', stubStoryline.state.general);
+        expect(r).toHaveProperty('key', 'foo');
       });
     });
   });

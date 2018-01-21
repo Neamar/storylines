@@ -104,7 +104,7 @@ class Storylines {
     }
 
     // Clone the array, as we're going to destroy it
-    let shiftableStatePath = statePath.slice(0);
+    let shiftableStatePath = statePath.slice(1);
     let value = this.state;
     while(true) {
       var path = shiftableStatePath.shift();
@@ -115,14 +115,14 @@ class Storylines {
         return null;
       }
 
+      value = value[path];
+
       if(shiftableStatePath.length === 1) {
         return {
           parent: value,
           key: shiftableStatePath[0]
         };
       }
-
-      value = value[path];
     }
   }
 }
