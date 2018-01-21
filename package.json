@@ -8,7 +8,7 @@
     "compile": "node backend/compile.js",
     "lint": "jshint backend/",
     "style": "jscs .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,8 @@
   "homepage": "https://github.com/Neamar/storylines#readme",
   "dependencies": {
     "express": "^4.16.2",
-    "front-matter": "^2.3.0"
+    "front-matter": "^2.3.0",
+    "jest": "^22.1.4"
   },
   "devDependencies": {
     "jscs": "^3.0.7",
