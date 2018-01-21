@@ -68,7 +68,8 @@
     "afterEach",
     "before",
     "beforeEach",
-    "Set"
+    "Set",
+    "expect"
   ],
   "indent"        : 2,
   "maxstatements" : 70,

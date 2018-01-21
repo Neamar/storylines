@@ -112,15 +112,23 @@ class Storylines {
         if(throwOnMissing) {
           throw new Error("Trying to access non-existing path in state: " + statePath.join("."));
         }
-        return null;
+        return {
+          parent: value,
+          key: path,
+          missing: true,
+          missingOnLastLevel: false
+        };
       }
 
       value = value[path];
 
       if(shiftableStatePath.length === 1) {
+        var exists = (shiftableStatePath[0] in value);
         return {
           parent: value,
-          key: shiftableStatePath[0]
+          key: shiftableStatePath[0],
+          missing: !exists,
+          missingOnLastLevel: !exists
         };
       }
     }
