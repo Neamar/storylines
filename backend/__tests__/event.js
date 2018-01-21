@@ -48,7 +48,6 @@ TEST
       expect(() => event.validateEvent({storyline: 'storyline_slug'})).toThrow(/Missing event slug: storyline_slug\//i);
     });
 
-// triggers: {soft: {conditions: ['g.test == true']}}
     test('should ensure description is present', () => {
       expect(() => event.validateEvent({event: 'event_slug', storyline: 'storyline_slug'})).toThrow(/Missing event description: storyline_slug\/event_slug/i);
     });
@@ -57,31 +56,145 @@ TEST
       expect(event.validateEvent(getBasicEvent())).toEqual(getBasicEvent());
     });
 
-    test('should ensure triggers only contain hard or soft constraints', () => {
-      var e = getBasicEvent();
-      e.triggers = {
-        'nonexisting': {}
-      };
+    describe("Trigger validation", () => {
+      test('should ensure triggers only contain hard or soft constraints', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          nonexisting: {}
+        };
 
-      expect(() => event.validateEvent(e)).toThrow(/Triggers must be either hard or soft: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers must be either hard or soft: storyline_slug\/event_slug/i);
+      });
+
+      test('should ensure hard triggers have a conditions property', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          hard: {}
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/Hard triggers must include conditions: storyline_slug\/event_slug/i);
+      });
+
+      test('should ensure soft triggers have a conditions property', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          soft: {}
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/Soft triggers must include conditions: storyline_slug\/event_slug/i);
+      });
+
+      test('should parse enclosed soft conditions', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          soft: {
+            conditions: [
+              'global.something == true'
+            ]
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.triggers = {
+          soft: {
+            conditions: [
+              {
+                lhs: ['@', 'global', 'something'],
+                operator: '==',
+                rhs: true
+              }
+            ]
+          }
+        };
+
+        expect(event.validateEvent(e)).toEqual(expected);
+      });
+
+      test('should parse enclosed hard conditions', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          hard: {
+            conditions: [
+              'global.something == true',
+              'resources.foo >= 150'
+            ]
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.triggers = {
+          hard: {
+            conditions: [
+              {
+                lhs: ['@', 'global', 'something'],
+                operator: '==',
+                rhs: true
+              },
+              {
+                lhs: ['@', 'resources', 'foo'],
+                operator: '>=',
+                rhs: 150
+              },
+            ]
+          }
+        };
+
+        expect(event.validateEvent(e)).toEqual(expected);
+      });
+
+      test('should replace shorthands', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          soft: {
+            conditions: [
+              'sl.something == true',
+              'r.foo == true'
+            ]
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.triggers = {
+          soft: {
+            conditions: [
+              {
+                lhs: ['@', 'storylines', 'storyline_slug'],
+                operator: '==',
+                rhs: true
+              },
+              {
+                lhs: ['@', 'resources', 'foo'],
+                operator: '>=',
+                rhs: 150
+              },
+            ]
+          }
+        };
+
+        expect(event.validateEvent(e)).toEqual(expected);
+      });
     });
 
-    test('should ensure hard triggers have a conditions property', () => {
-      var e = getBasicEvent();
-      e.triggers = {
-        'hard': {}
-      };
+    describe("Actions validation", () => {
+      test('should ensure actions contains an operations key', () => {
+        var e = getBasicEvent();
+        e.action = {
+          OK: {}
+        };
 
-      expect(() => event.validateEvent(e)).toThrow(/Hard triggers must have include conditions: storyline_slug\/event_slug/i);
-    });
+        expect(() => event.validateEvent(e)).toThrow(/Actions must contain an operations key: storyline_slug\/event_slug/i);
+      });
 
-    test('should ensure soft triggers have a conditions property', () => {
-      var e = getBasicEvent();
-      e.triggers = {
-        'soft': {}
-      };
+      test('should ensure actions operations is an array', () => {
+        var e = getBasicEvent();
+        e.action = {
+          OK: {
+            operations: false
+          }
+        };
 
-      expect(() => event.validateEvent(e)).toThrow(/Soft triggers must have include conditions: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Actions operations must be an array: storyline_slug\/event_slug/i);
+      });
     });
   });
 
