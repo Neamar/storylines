@@ -2,7 +2,7 @@
   "name": "storylines-backend",
   "version": "1.0.0",
   "description": "Will you go down a hole or up a hill?",
-  "main": "compile.js",
+  "main": "backend/compile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
