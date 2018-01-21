@@ -3,9 +3,12 @@
 const configTools = require("./config");
 const storylineTools = require("./storyline");
 const eventTools = require("./event");
+
+
 if(process.argv.length !== 3) {
   throw new Error("Invalid call. Usage: node compile.js path/to/story");
 }
+
 
 const STORY_PATH = process.argv[2];
 const STORY_CONFIG_FILE = '/storyline.config';
@@ -19,7 +22,6 @@ var storyConfig;
 
 // Build story config
 storyConfig = configTools.getConfig(STORY_PATH, STORY_CONFIG_FILE);
-
 
 
 // Build all events
