@@ -1,4 +1,4 @@
-# "Storylines" specification
+# "Storylines" backend specification
 
 > This page specifies how to build a storyline from scratch, or update an existing one. You should not use them as documentation, but more as an up-to-date resource of what can be achieved using the engine.
 
