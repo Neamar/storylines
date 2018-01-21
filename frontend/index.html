@@ -13,7 +13,7 @@
   <body>
     <h1>Storylines</h1>
 
-    <div class="event">
+    <div id="event">
     </div>
 
     <script src="./storylines-web.js"></script>
@@ -24,11 +24,11 @@ function startStory(story) {
   var storyline = new Storylines(story, window.displayEvent);
 }
 
+
+// Download the story, and start!
 fetch('./story.json')
   .then(r => r.json())
-  .then(function(story) {
-
-  });
+  .then(startStory);
 
 
     </script>
