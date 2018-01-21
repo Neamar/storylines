@@ -82,19 +82,19 @@ TEST
       expect(() => config.validateConfig(c)).toThrow(/Invalid resource slug/i);
 
       c = getBasicConfig();
-      c.resources.ÀCôté = {};
+      c.resources.àcôté = {};
       expect(() => config.validateConfig(c)).toThrow(/Invalid resource slug/i);
     });
 
     test('should ensure resources have a description', () => {
       var c = getBasicConfig();
-      c.resources.Resource1 = {};
+      c.resources.resource1 = {};
       expect(() => config.validateConfig(c)).toThrow(/Missing resource description/i);
     });
 
     test('should ensure resources have a format', () => {
       var c = getBasicConfig();
-      c.resources.Resource1 = {
+      c.resources.resource1 = {
         description: "TEST"
       };
       expect(() => config.validateConfig(c)).toThrow(/Missing resource format/i);
@@ -102,7 +102,7 @@ TEST
 
     test('should ensure resources have a format containing a %s', () => {
       var c = getBasicConfig();
-      c.resources.Resource1 = {
+      c.resources.resource1 = {
         description: "TEST",
         format: "INVALID"
       };
@@ -111,7 +111,7 @@ TEST
 
     test('should ensure resources have a display_name', () => {
       var c = getBasicConfig();
-      c.resources.Resource1 = {
+      c.resources.resource1 = {
         description: "TEST",
         format: "%s"
       };
@@ -120,7 +120,7 @@ TEST
 
     test('should ensure resources have a default value', () => {
       var c = getBasicConfig();
-      c.resources.Resource1 = {
+      c.resources.resource1 = {
         description: "TEST",
         format: "%s",
         display_name: "TEST"
@@ -130,7 +130,7 @@ TEST
 
     test('should work with a valid resource', () => {
       var c = getBasicConfig();
-      c.resources.Resource1 = {
+      c.resources.resource1 = {
         description: "TEST",
         format: "%s",
         display_name: "TEST",
@@ -147,13 +147,13 @@ TEST
         story_title: "Title for your story",
         story_description: "Potentially multiline, markdown description of your story",
         resources: {
-          Resource1: {
+          resource1: {
             description: "Resource description",
             format: "%s",
             display_name: "Resource 1",
             default: 100
           },
-          Resource2: {
+          resource2: {
             description: "Resource description",
             format: "%s¥",
             display_name: "Resource 2",

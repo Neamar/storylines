@@ -33,13 +33,23 @@ function buildStoryConfig(configContent) {
 
 function validateKeyType(object, keyName, keyType, msgNotFound) {
   var objectKeyType = typeof object[keyName];
-  if(objectKeyType == 'undefined') {
-    throw new Error("In 'config.js/validateKeyType': " + msgNotFound)
-  } else if(objectKeyType != keyType) {
+  if(objectKeyType === 'undefined') {
+    throw new Error("In 'config.js/validateKeyType': " + msgNotFound);
+  }
+  else if((keyType !== null) && (objectKeyType !== keyType)) {
     throw new Error("In 'config.js/validateKeyType': " + keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
   }
 }
 
+function validateResource(resource) {
+  validateKeyType(resource, "description", "string", "Missing resource description");
+  validateKeyType(resource, "format", "string", "Missing resource format");
+  if(resource.format.indexOf("%s") === -1) {
+    throw new Error("In 'config.js/validateResource': Invalid resource format; must contain a %s/i");
+  }
+  validateKeyType(resource, "display_name", "string", "Missing resource display_name");
+  validateKeyType(resource, "default", null, "Missing resource default value");
+}
 /**
  * Ensure content is correct
  * @param jsonifiedYml YML content from the file
@@ -49,18 +59,23 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
 function validateConfig(config) {
   validateKeyType(config, "version", "number", "Missing version number");
 
-  if (SUPPORTED_VERSIONS.indexOf(config.version) == -1) {
-    throw new Error("In 'config.js/validateConfig': Unsupported version. Version should be one of '" + SUPPORTED_VERSIONS.join() + "', not '"  + config.version  + "'" );
+  if(SUPPORTED_VERSIONS.indexOf(config.version) === -1) {
+    throw new Error("In 'config.js/validateConfig': Unsupported version. Version should be one of '" + SUPPORTED_VERSIONS.join() + "', not '"  + config.version  + "'");
   }
 
   validateKeyType(config, "story_title", "string", "Missing story title.");
   validateKeyType(config, "story_description", "string", "Missing story description.");
   validateKeyType(config, "resources", "object", "Missing resources definition.");
 
-  var badSlugs = Object.keys(config.resources).filter(resource => !(helpers.isSlug(resource)))
+  var badSlugs = Object.keys(config.resources).filter(resource => !(helpers.isSlug(resource)));
   if(badSlugs.length > 0) {
     throw new Error("Invalid resource slug: '" + badSlugs.join() + "'");
   }
+
+  Object.values(config.resources).forEach(function(resource) {
+    validateResource(resource);
+  });
+
   return config;
 }
 
