@@ -15,6 +15,13 @@ class Storylines {
 
     // Start game
     this.updateResourcesUI();
+  }
+
+  start() {
+    if(this.currentEvent) {
+      throw new Error("Storyline already started!");
+    }
+
     this.nextEvent();
   }
 
@@ -35,13 +42,13 @@ class Storylines {
   }
 
   nextEvent() {
-    var hardEvents = this.listAvailableHardEvents();
+    let hardEvents = this.listAvailableHardEvents();
     if(hardEvents.length > 0) {
       this.moveToEvent(hardEvents[0]);
       return;
     }
 
-    var softEvents = this.listAvailableSoftEvents();
+    let softEvents = this.listAvailableSoftEvents();
     if(softEvents.length > 0) {
       return;
     }
@@ -56,6 +63,70 @@ class Storylines {
   }
 
   moveToEvent(event) {
+    this.currentEvent = event;
     this.displayEvent(event);
   }
+
+  respondToEvent(action) {
+    if(!(action in this.currentEvent.action)) {
+      throw new Error(`Action ${action} is not available in event ${this.currentEvent.event}`);
+    }
+
+    let operations = this.currentEvent.action.operations;
+    operations.forEach(o => this.applyOperation(o));
+  }
+
+  applyOperation(operation) {
+    let lhs = this.resolveStatePath(operation.lhs, operation.operator === '=');
+    let rhs = this.resolveValue(operation.rhs);
+
+    switch(operation.operator) {
+
+    }
+  }
+
+
+  // Resolve any value (potentially a dotted state access) to its primitive value.
+  // "ABC" => ABC
+  // ["@", "global", "something"] == this.state.global.something
+  resolveValue(value) {
+    if(!value[0] || value[0] !== '@') {
+      return value;
+    }
+
+    let r = this.resolveStatePath(value, false);
+    return r.parent[r.key];
+  }
+
+  resolveStatePath(statePath, throwOnMissing) {
+    if(statePath[0] !== '@') {
+      throw new Error("Must be a state access! " + statePath.join("."));
+    }
+
+    // Clone the array, as we're going to destroy it
+    let shiftableStatePath = statePath.slice(0);
+    let value = this.state;
+    while(true) {
+      var path = shiftableStatePath.shift();
+      if(!(path in value)) {
+        if(throwOnMissing) {
+          throw new Error("Trying to access non-existing path in state: " + statePath.join("."));
+        }
+        return null;
+      }
+
+      if(shiftableStatePath.length === 1) {
+        return {
+          parent: value,
+          key: shiftableStatePath[0]
+        };
+      }
+
+      value = value[path];
+    }
+  }
+}
+
+if(module && module.exports) {
+  module.exports = Storylines;
 }
