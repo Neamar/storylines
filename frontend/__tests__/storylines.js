@@ -141,6 +141,23 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('general.foo', "baz");
       });
 
+      it("should work on = operator when rhs is a state access", () => {
+        stubStoryline.state = {
+          general: {
+            foo: 1,
+            bar: 2
+          }
+        };
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '=',
+          rhs: ['@', 'general', 'bar'],
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', 2);
+      });
+
       it("should work on = operator when creating a new value", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
@@ -177,6 +194,23 @@ describe("Storylines", () => {
         }
 
         expect(deferred).toThrow(/Can't apply compound operator on undefined/i);
+      });
+
+      it("should work on += operator when rhs is a state access", () => {
+        stubStoryline.state = {
+          general: {
+            foo: 1,
+            bar: 2
+          }
+        };
+
+        stubStoryline.applyOperation({
+          lhs: ['@', 'general', 'foo'],
+          operator: '+=',
+          rhs: ['@', 'general', 'bar'],
+        });
+
+        expect(stubStoryline.state).toHaveProperty('general.foo', 3);
       });
 
       it("should work on -= operator", () => {
