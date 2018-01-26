@@ -112,9 +112,9 @@ class Storylines {
 
   // Resolve any value (potentially a dotted state access) to its primitive value.
   // "ABC" => ABC
-  // ["@", "global", "something"] == this.state.global.something
+  // {_type: "state", data:["global", "something"]} == this.state.global.something
   resolveValue(value) {
-    if(!value[0] || value[0] !== '@') {
+    if(!value._type || value._type !== 'state') {
       return value;
     }
 
@@ -123,18 +123,18 @@ class Storylines {
   }
 
   resolveStatePath(statePath, throwOnMissing) {
-    if(statePath[0] !== '@') {
+    if(statePath._type !== 'state') {
       throw new Error("Must be a state access! " + statePath.join("."));
     }
 
     // Clone the array, as we're going to destroy it
-    let shiftableStatePath = statePath.slice(1);
+    let shiftableStatePath = statePath.data.slice(0);
     let value = this.state;
     while(true) {
       var path = shiftableStatePath.shift();
       if(!(path in value)) {
         if(throwOnMissing) {
-          throw new Error("Trying to access non-existing path in state: " + statePath.slice(1).join("."));
+          throw new Error("Trying to access non-existing path in state: " + statePath.data.join("."));
         }
         return {
           parent: value,

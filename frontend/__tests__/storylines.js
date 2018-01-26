@@ -3,6 +3,13 @@ const Storylines = require('../../frontend/storylines.js');
 
 
 describe("Storylines", () => {
+  function buildState(state) {
+    return {
+      _type: "state",
+      data: state
+    };
+  }
+
   var stubDisplayEvent = () => {};
   var stubDisplayResources = () => {};
   var stubStory = {
@@ -29,7 +36,7 @@ describe("Storylines", () => {
       it("should return parent object and key when statePath exists", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
-        var r = stubStoryline.resolveStatePath(['@', 'general', 'foo']);
+        var r = stubStoryline.resolveStatePath(buildState(['general', 'foo']));
 
         expect(r).toHaveProperty('parent', stubStoryline.state.general);
         expect(r).toHaveProperty('key', 'foo');
@@ -47,7 +54,7 @@ describe("Storylines", () => {
           }
         };
 
-        var r = stubStoryline.resolveStatePath(['@', 'general', 'foo', 'bar', 'fizz']);
+        var r = stubStoryline.resolveStatePath(buildState(['general', 'foo', 'bar', 'fizz']));
 
         expect(r).toHaveProperty('parent', stubStoryline.state.general.foo.bar);
         expect(r).toHaveProperty('key', 'fizz');
@@ -58,13 +65,13 @@ describe("Storylines", () => {
       it("should throw when throwOnMissing is true", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
-        expect(() => stubStoryline.resolveStatePath(['@', 'missing', 'foo'], true)).toThrow(/Trying to access non-existing path/i);
+        expect(() => stubStoryline.resolveStatePath(buildState(['missing', 'foo'], true)).toThrow(/Trying to access non-existing path/i));
       });
 
       it("should stop with current situation when throwOnMissing is false", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
-        var r = stubStoryline.resolveStatePath(['@', 'missing', 'foo']);
+        var r = stubStoryline.resolveStatePath(buildState(['missing', 'foo']));
 
         expect(r).toHaveProperty('parent', stubStoryline.state);
         expect(r).toHaveProperty('key', 'missing');
@@ -79,7 +86,7 @@ describe("Storylines", () => {
           }
         };
 
-        var r = stubStoryline.resolveStatePath(['@', 'general', 'fizz']);
+        var r = stubStoryline.resolveStatePath(buildState(['general', 'fizz']));
 
         expect(r).toHaveProperty('parent', stubStoryline.state.general);
         expect(r).toHaveProperty('key', 'fizz');
@@ -99,19 +106,19 @@ describe("Storylines", () => {
       it("should resolve state access", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
-        expect(stubStoryline.resolveValue(['@', 'general', 'foo'])).toEqual("bar");
+        expect(stubStoryline.resolveValue(buildState(['general', 'foo']))).toEqual("bar");
       });
 
       it("should resolve invalid state access (last level) to undefined", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
-        expect(stubStoryline.resolveValue(['@', 'general', 'fizz'])).toBeUndefined();
+        expect(stubStoryline.resolveValue(buildState(['general', 'fizz']))).toBeUndefined();
       });
 
       it("should resolve invalid state access (before last level) to undefined", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
-        expect(stubStoryline.resolveValue(['@', 'buzz', 'fizz'])).toBeUndefined();
+        expect(stubStoryline.resolveValue(buildState(['buzz', 'fizz']))).toBeUndefined();
       });
     });
 
@@ -121,7 +128,7 @@ describe("Storylines", () => {
 
         function deferred() {
           stubStoryline.applyOperation({
-            lhs: ['@', 'g', 'fizz'],
+            lhs: buildState(['g', 'fizz']),
             operator: '=',
             rhs: 'buzz'
           });
@@ -133,7 +140,7 @@ describe("Storylines", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '=',
           rhs: 'baz'
         });
@@ -150,9 +157,9 @@ describe("Storylines", () => {
         };
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '=',
-          rhs: ['@', 'general', 'bar'],
+          rhs: buildState(['general', 'bar']),
         });
 
         expect(stubStoryline.state).toHaveProperty('general.foo', 2);
@@ -162,7 +169,7 @@ describe("Storylines", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'fizz'],
+          lhs: buildState(['general', 'fizz']),
           operator: '=',
           rhs: 'buzz'
         });
@@ -174,7 +181,7 @@ describe("Storylines", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '+=',
           rhs: 'baz'
         });
@@ -187,7 +194,7 @@ describe("Storylines", () => {
 
         function deferred() {
           stubStoryline.applyOperation({
-            lhs: ['@', 'general', 'fizz'],
+            lhs: buildState(['general', 'fizz']),
             operator: '+=',
             rhs: 'buzz'
           });
@@ -205,9 +212,9 @@ describe("Storylines", () => {
         };
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '+=',
-          rhs: ['@', 'general', 'bar'],
+          rhs: buildState(['general', 'bar']),
         });
 
         expect(stubStoryline.state).toHaveProperty('general.foo', 3);
@@ -217,7 +224,7 @@ describe("Storylines", () => {
         stubStoryline.state = getGeneralFooEqualBarState(10);
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '-=',
           rhs: 2
         });
@@ -230,7 +237,7 @@ describe("Storylines", () => {
 
         function deferred() {
           stubStoryline.applyOperation({
-            lhs: ['@', 'general', 'fizz'],
+            lhs: buildState(['general', 'fizz']),
             operator: '-=',
             rhs: 3
           });
@@ -243,7 +250,7 @@ describe("Storylines", () => {
         stubStoryline.state = getGeneralFooEqualBarState(10);
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '*=',
           rhs: 2
         });
@@ -255,7 +262,7 @@ describe("Storylines", () => {
         stubStoryline.state = getGeneralFooEqualBarState(10);
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '/=',
           rhs: 2
         });
@@ -267,7 +274,7 @@ describe("Storylines", () => {
         stubStoryline.state = getGeneralFooEqualBarState(10);
 
         stubStoryline.applyOperation({
-          lhs: ['@', 'general', 'foo'],
+          lhs: buildState(['general', 'foo']),
           operator: '%=',
           rhs: 7
         });
