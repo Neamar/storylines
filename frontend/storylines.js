@@ -76,6 +76,10 @@ class Storylines {
     operations.forEach(o => this.applyOperation(o));
   }
 
+  testConditions(conditions) {
+    return conditions.every(c => this.testCondition(c));
+  }
+
   testCondition(condition) {
     let lhs = this.resolveValue(condition.lhs);
     let rhs = this.resolveValue(condition.rhs);

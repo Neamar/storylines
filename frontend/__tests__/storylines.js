@@ -470,5 +470,38 @@ describe("Storylines", () => {
         expect(deferred).toThrow(/Invalid operator ===/i);
       });
     });
+
+    describe("testConditions()", () => {
+      it("should return true if all conditions pass", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+        expect(stubStoryline.testConditions([
+          {
+            lhs: buildState(['general', 'foo']),
+            operator: "==",
+            rhs: "bar"
+          },
+          {
+            lhs: true,
+            operator: "==",
+            rhs: true
+          }
+        ])).toBeTruthy();
+      });
+      it("should return false if one condition fails", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+        expect(stubStoryline.testConditions([
+          {
+            lhs: buildState(['general', 'foo']),
+            operator: "==",
+            rhs: "bar"
+          },
+          {
+            lhs: true,
+            operator: "==",
+            rhs: false
+          }
+        ])).toBeFalsy();
+      });
+    });
   });
 });
