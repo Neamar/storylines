@@ -30,7 +30,14 @@ class Storylines {
   }
 
   listAvailableEvents(triggerType) {
-    return this.events;
+    return this.events.filter(e => {
+      // Discard if event doesn't have any triggers of this type
+      if(!e.triggers[triggerType]) {
+        return false;
+      }
+
+      // Otherwise, return true if all conditions pass
+    });
   }
 
   listAvailableHardEvents() {
@@ -41,6 +48,12 @@ class Storylines {
     return this.listAvailableEvents("soft");
   }
 
+  /**
+   * Displays the next event.
+   * If there is at least one hard trigger matching, use it.
+   * Otherwise pick one of the soft events
+   * If still empty, set a value on the state informing no events are currently available.
+   */
   nextEvent() {
     let hardEvents = this.listAvailableHardEvents();
     if(hardEvents.length > 0) {
@@ -62,11 +75,17 @@ class Storylines {
     throw new Error("No more events available, no listeners on no_events_available.");
   }
 
+  /**
+   * Switch the display to the specified event
+   */
   moveToEvent(event) {
     this.currentEvent = event;
     this.displayEvent(event);
   }
 
+  /**
+   * Pick an action on the current event
+   */
   respondToEvent(action) {
     if(!(action in this.currentEvent.action)) {
       throw new Error(`Action ${action} is not available in event ${this.currentEvent.event}`);
@@ -76,10 +95,18 @@ class Storylines {
     operations.forEach(o => this.applyOperation(o));
   }
 
+  /**
+  * Return true if all the specified conditions pass
+  * (logical AND)
+  */
   testConditions(conditions) {
     return conditions.every(c => this.testCondition(c));
   }
 
+  /**
+  * Test the specified condition, which can use the state,
+  * and returns a boolean.
+  */
   testCondition(condition) {
     let lhs = this.resolveValue(condition.lhs);
     let rhs = this.resolveValue(condition.rhs);
@@ -102,6 +129,9 @@ class Storylines {
     }
   }
 
+  /**
+   * Apply an operation to update the Reader's state
+   */
   applyOperation(operation) {
     let lhs = this.resolveStatePath(operation.lhs, true);
 
@@ -135,6 +165,9 @@ class Storylines {
     }
   }
 
+  /**
+   * Return true if the specified value contains an access to the current state (and false for constant values)
+   */
   isStateAccess(value) {
     if(!value._type || value._type !== 'state') {
       return false;
@@ -143,10 +176,11 @@ class Storylines {
     return true;
   }
 
-
-  // Resolve any value (potentially a dotted state access) to its primitive value.
-  // "ABC" => ABC
-  // {_type: "state", data:["global", "something"]} == this.state.global.something
+  /*
+   * Resolve any value (potentially a dotted state access) to its primitive value.
+   * "ABC" => ABC
+   * {_type: "state", data:["global", "something"]} == this.state.global.something
+   */
   resolveValue(value) {
     if(!this.isStateAccess(value)) {
       return value;
@@ -156,6 +190,11 @@ class Storylines {
     return r.parent[r.key];
   }
 
+  /**
+   * Given a path within the state, find the associated value
+   * By default, return null for missing value,
+   * unless `throwOnMissing` is defined
+   */
   resolveStatePath(statePath, throwOnMissing) {
     if(!this.isStateAccess(statePath)) {
       throw new Error("Must be a state access! " + statePath.join("."));
