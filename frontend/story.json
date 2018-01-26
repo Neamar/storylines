@@ -42,7 +42,7 @@
       "triggers": {
         "hard": [
           {
-            "lhs": ["@", "global", "current_turn"],
+            "lhs": {"_type": "state", "data":["global", "current_turn"]},
             "operator": "==",
             "rhs": 0
           }
@@ -53,12 +53,12 @@
         "Make an announcement": {
           "operations": [
             {
-              "lhs": ["@", "storylines", "red_planet", "announcement"],
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
               "operator": "=",
               "rhs": true
             },
             {
-              "lhs": ["@", "resources", "morale"],
+              "lhs": {"_type": "state", "data":["resources", "morale"]},
               "operator": "+=",
               "rhs": 10
             }
@@ -66,7 +66,7 @@
         },
         "Let's go!": [
           {
-            "lhs": ["@", "storylines", "red_planet", "leaving"],
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
             "operator": "=",
             "rhs": true
           }
@@ -79,7 +79,7 @@
       "triggers": {
         "hard": [
           {
-            "lhs": ["@", "storylines", "red_planet", "announcement"],
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
             "operator": "==",
             "rhs": true
           }
@@ -89,12 +89,12 @@
       "actions": {
         "Let's go!": [
           {
-            "lhs": ["@", "storylines", "red_planet", "announcement"],
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
             "operator": "=",
             "rhs": false
           },
           {
-            "lhs": ["@", "storylines", "red_planet", "leaving"],
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
             "operator": "=",
             "rhs": true
           }
@@ -107,7 +107,7 @@
       "triggers": {
         "hard": [
           {
-            "lhs": ["@", "storylines", "red_planet", "leaving"],
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
             "operator": "==",
             "rhs": true
           }
