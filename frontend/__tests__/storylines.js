@@ -295,6 +295,144 @@ describe("Storylines", () => {
 
         expect(stubStoryline.state).toHaveProperty('general.foo', 3);
       });
+
+
+      it("should fail on unknown operator", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        function deferred() {
+          stubStoryline.applyOperation({
+            lhs: buildState(['general', 'foo']),
+            operator: '&=',
+            rhs: 3
+          });
+        }
+
+        expect(deferred).toThrow(/Invalid operator &=/i);
+      });
+    });
+
+    describe("testCondition()", () => {
+      it("should return false on any operator when missing a value", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        function deferred() {
+          stubStoryline.testCondition({
+            lhs: buildState(['g', 'fizz']),
+            operator: '==',
+            rhs: 'bar'
+          });
+        }
+        expect(deferred()).toBeFalsy();
+      });
+
+      it("should apply == operator", () => {
+        expect(stubStoryline.testCondition({
+          lhs: true,
+          operator: "==",
+          rhs: true
+        })).toBeTruthy();
+
+        expect(stubStoryline.testCondition({
+          lhs: true,
+          operator: "==",
+          rhs: false
+        })).toBeFalsy();
+      });
+
+      it("should apply > operator", () => {
+        expect(stubStoryline.testCondition({
+          lhs: 1,
+          operator: ">",
+          rhs: 0
+        })).toBeTruthy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: ">",
+          rhs: 1
+        })).toBeFalsy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: ">",
+          rhs: 0
+        })).toBeFalsy();
+      });
+
+      it("should apply >= operator", () => {
+        expect(stubStoryline.testCondition({
+          lhs: 1,
+          operator: ">=",
+          rhs: 0
+        })).toBeTruthy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: ">=",
+          rhs: 1
+        })).toBeFalsy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: ">=",
+          rhs: 0
+        })).toBeTruthy();
+      });
+
+      it("should apply < operator", () => {
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: "<",
+          rhs: 1
+        })).toBeTruthy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 1,
+          operator: "<",
+          rhs: 0
+        })).toBeFalsy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: "<",
+          rhs: 0
+        })).toBeFalsy();
+      });
+
+      it("should apply >= operator", () => {
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: "<=",
+          rhs: 1
+        })).toBeTruthy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 1,
+          operator: "<=",
+          rhs: 0
+        })).toBeFalsy();
+
+        expect(stubStoryline.testCondition({
+          lhs: 0,
+          operator: "<=",
+          rhs: 0
+        })).toBeTruthy();
+      });
+
+      it("should apply != operator", () => {
+        expect(stubStoryline.testCondition({
+          lhs: true,
+          operator: "!=",
+          rhs: false
+        })).toBeTruthy();
+
+        expect(stubStoryline.testCondition({
+          lhs: true,
+          operator: "!=",
+          rhs: true
+        })).toBeFalsy();
+      });
     });
   });
 });

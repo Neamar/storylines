@@ -77,36 +77,25 @@ class Storylines {
   }
 
   testCondition(condition) {
-    let lhs = this.resolveStatePath(condition.lhs, true);
-
-    if(lhs.missingOnLastLevel && operation.operator !== '=') {
-      throw new Error("Can't apply compound operator on undefined");
-    }
-
+    let lhs = this.resolveValue(condition.lhs);
     let rhs = this.resolveValue(condition.rhs);
 
     switch(condition.operator) {
       case '==':
-        lhs.parent[lhs.key] = rhs;
-        break;
+        return lhs === rhs;
       case '>':
-        lhs.parent[lhs.key] += rhs;
-        break;
-      case '-=':
-        lhs.parent[lhs.key] -= rhs;
-        break;
-      case '*=':
-        lhs.parent[lhs.key] *= rhs;
-        break;
-      case '/=':
-        lhs.parent[lhs.key] /= rhs;
-        break;
-      case '%=':
-        lhs.parent[lhs.key] %= rhs;
-        break;
+        return lhs > rhs;
+      case '>=':
+        return lhs >= rhs;
+      case '<':
+        return lhs < rhs;
+      case '<=':
+        return lhs <= rhs;
+      case '!=':
+        return lhs !== rhs;
       default:
-        throw new Error("Invalid operator " + operation.operator);
-      }
+        throw new Error("Invalid operator " + condition.operator);
+    }
   }
 
   applyOperation(operation) {
