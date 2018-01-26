@@ -60,13 +60,17 @@ class Storylines {
    * If still empty, set a value on the state informing no events are currently available.
    */
   nextEvent() {
+    this.state.global.current_turn += 1;
+
     let hardEvents = this.listAvailableHardEvents();
+    console.log("Matching hard events: ", hardEvents);
     if(hardEvents.length > 0) {
       this.moveToEvent(hardEvents[0]);
       return;
     }
 
     let softEvents = this.listAvailableSoftEvents();
+    console.log("Matching soft events: ", hardEvents);
     if(softEvents.length > 0) {
       return;
     }
@@ -98,6 +102,9 @@ class Storylines {
 
     let operations = this.currentEvent.actions[action].operations;
     this.applyOperations(operations);
+
+    console.log(`Event ${this.currentEvent.event}: selected ${action}`, this.state);
+    this.nextEvent();
   }
 
   /**

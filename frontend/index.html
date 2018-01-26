@@ -26,8 +26,9 @@
     <script src="./storylines.js"></script>
     <script>
 "use strict";
+var storyline;
 function startStory(story) {
-  var storyline = new Storylines(story, window.displayEvent, window.displayResources);
+  storyline = new Storylines(story, window.displayEvent, window.displayResources);
   storyline.start();
 }
 

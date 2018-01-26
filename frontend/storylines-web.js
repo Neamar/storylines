@@ -9,7 +9,7 @@ window.displayEvent = function displayEvent(event, respondToEventCb) {
   <p class="lead">
 `;
 
-  Object.keys(event.actions).forEach(a => {
+  Object.keys(event.actions || []).forEach(a => {
     eventHTML += `<a class="btn btn-primary btn-lg" href="#${a}" role="button">${a}</a> `;
   });
 
@@ -21,7 +21,6 @@ window.displayEvent = function displayEvent(event, respondToEventCb) {
 
   document.querySelectorAll('#event a.btn').forEach((item) => {
     item.addEventListener("click", function() {
-      console.log("Selected action " + this.innerHTML);
       respondToEventCb(this.innerHTML);
     });
   });
