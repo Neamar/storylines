@@ -296,7 +296,6 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('general.foo', 3);
       });
 
-
       it("should fail on unknown operator", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
@@ -337,6 +336,14 @@ describe("Storylines", () => {
           lhs: true,
           operator: "==",
           rhs: false
+        })).toBeFalsy();
+      });
+
+      it("should apply strict equality rules", () => {
+        expect(stubStoryline.testCondition({
+          lhs: 1,
+          operator: "==",
+          rhs: "1"
         })).toBeFalsy();
       });
 
@@ -432,6 +439,35 @@ describe("Storylines", () => {
           operator: "!=",
           rhs: true
         })).toBeFalsy();
+      });
+
+      it("should apply strict difference rules", () => {
+        expect(stubStoryline.testCondition({
+          lhs: 1,
+          operator: "!=",
+          rhs: "1"
+        })).toBeTruthy();
+      });
+
+      it("should work with state access", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+        expect(stubStoryline.testCondition({
+          lhs: buildState(['general', 'foo']),
+          operator: "==",
+          rhs: "bar"
+        })).toBeTruthy();
+      });
+
+      it("should fail on unknown operator", () => {
+        function deferred() {
+          stubStoryline.testCondition({
+            lhs: true,
+            operator: '===',
+            rhs: true
+          });
+        }
+
+        expect(deferred).toThrow(/Invalid operator ===/i);
       });
     });
   });
