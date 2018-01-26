@@ -1,3 +1,6 @@
+var environment;
+
+
 class Storylines {
   constructor(story, displayEvent, displayResources) {
     this.story = story;
@@ -63,20 +66,22 @@ class Storylines {
     this.state.global.current_turn += 1;
 
     let hardEvents = this.listAvailableHardEvents();
-    console.log("Matching hard events: ", hardEvents);
+    this.log("Matching hard events: ", hardEvents);
     if(hardEvents.length > 0) {
       this.moveToEvent(hardEvents[0]);
       return;
     }
 
     let softEvents = this.listAvailableSoftEvents();
-    console.log("Matching soft events: ", hardEvents);
+    this.log("Matching soft events: ", hardEvents);
     if(softEvents.length > 0) {
+      this.moveToEvent(softEvents[0]);
       return;
     }
 
     if(!this.state.global.no_events_available) {
       this.state.global.no_events_available = true;
+      this.state.global.current_turn -= 1;
       this.nextEvent();
       return;
     }
@@ -246,9 +251,19 @@ class Storylines {
       }
     }
   }
+
+  log() {
+    if(environment === "browser") {
+      console.log.apply(console, arguments);
+    }
+  }
 }
+
 
 // Allow for easy testing in the backend
 try {
   module.exports = Storylines;
-} catch(e) {}
+  environment = "node";
+} catch(e) {
+  environment = "browser";
+}

@@ -12,19 +12,6 @@ describe("Storylines", () => {
 
   var stubDisplayEvent = () => {};
   var stubDisplayResources = () => {};
-  var stubStory = {
-    events: [],
-    resources: {
-      'r': {}
-    },
-    story_title: 'title',
-    story_description: 'description',
-    default_state: {
-      global: {
-        current_turn: 0,
-      }
-    }
-  };
 
   function getGlobalFooEqualBarState(value) {
     return {
@@ -37,6 +24,20 @@ describe("Storylines", () => {
   var stubStoryline;
 
   beforeEach(() => {
+    var stubStory = {
+      events: [],
+      resources: {
+        'r': {}
+      },
+      story_title: 'title',
+      story_description: 'description',
+      default_state: {
+        global: {
+          current_turn: 0,
+        }
+      }
+    };
+
     stubStoryline = new Storylines(stubStory, stubDisplayEvent, stubDisplayResources);
   });
 
@@ -651,4 +652,98 @@ describe("Storylines", () => {
       expect(stubStoryline.displayEvent.mock.calls[0][0]).toBe(event);
     });
   });
+
+  describe("nextEvent()", () => {
+    it("should throw when no events are available", () => {
+      stubStoryline.events = [];
+
+      expect(() => stubStoryline.nextEvent()).toThrow(/No more events available/i);
+      expect(stubStoryline.state.global.current_turn).toBe(1);
+      expect(stubStoryline.state.global.no_events_available).toBeTruthy();
+    });
+
+    it("should set no_events_available when no events are available, and search for a new event", () => {
+      stubStoryline.events = [{
+        id: 1,
+        triggers: {
+          soft: [
+            {
+              lhs: buildState(["global", "no_events_available"]),
+              operator: "==",
+              rhs: true
+            }
+          ]
+        }
+      }];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
+      expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
+      expect(stubStoryline.state.global.current_turn).toBe(1);
+      expect(stubStoryline.state.global.no_events_available).toBeTruthy();
+    });
+
+    it("should return hard triggers before soft triggers", () => {
+      stubStoryline.events = [
+      {
+        id: 1,
+        triggers: {
+          soft: [
+            {
+              lhs: true,
+              operator: "==",
+              rhs: true
+            }
+          ]
+        }
+      },
+      {
+        id: 2,
+        triggers: {
+          hard: [
+            {
+              lhs: true,
+              operator: "==",
+              rhs: true
+            }
+          ]
+        }
+      }];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
+      expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
+      expect(stubStoryline.state.global.current_turn).toBe(1);
+      expect(stubStoryline.state.global.no_events_available).toBeFalsy();
+    });
+
+    it("should return soft triggers when there is no matching hard triggers", () => {
+      stubStoryline.events = [
+      {
+        id: 1,
+        triggers: {
+          soft: [
+            {
+              lhs: true,
+              operator: "==",
+              rhs: true
+            }
+          ]
+        }
+      }];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
+      expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
+      expect(stubStoryline.state.global.current_turn).toBe(1);
+      expect(stubStoryline.state.global.no_events_available).toBeFalsy();
+    });
+  });
+
 });
