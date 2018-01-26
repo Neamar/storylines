@@ -37,6 +37,7 @@ class Storylines {
       }
 
       // Otherwise, return true if all conditions pass
+      return this.testConditions(e.triggers[triggerType]);
     });
   }
 

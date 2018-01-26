@@ -29,7 +29,11 @@ describe("Storylines", () => {
     };
   }
 
-  var stubStoryline = new Storylines(stubStory, stubDisplayEvent, stubDisplayResources);
+  var stubStoryline;
+
+  beforeEach(() => {
+    stubStoryline = new Storylines(stubStory, stubDisplayEvent, stubDisplayResources);
+  });
 
   describe("Conditions and operations", () => {
     describe("resolveStatePath()", () => {
@@ -502,6 +506,44 @@ describe("Storylines", () => {
           }
         ])).toBeFalsy();
       });
+    });
+  });
+
+  describe("listAvailableEvents()", () => {
+    it("should skip events without the specified trigger", () => {
+      expect(stubStoryline.listAvailableEvents("fake")).toEqual([]);
+    });
+
+    it("should return all matching events", () => {
+      stubStoryline.state = getGeneralFooEqualBarState();
+
+      stubStoryline.events = [
+        {
+          id: 1,
+          triggers: {
+            soft: [
+              {lhs: true, operator: "==", rhs: true}
+            ]
+          }
+        },
+        {
+          id: 2,
+          triggers: {
+            soft: [
+              {lhs: "bar", operator: "==", rhs: buildState(["general", "foo"])}
+            ]
+          }
+        },
+        {
+          id: 3,
+          triggers: {
+            soft: [
+              {lhs: true, operator: "==", rhs: false}
+            ]
+          }
+        }
+      ];
+      expect(stubStoryline.listAvailableEvents("soft")).toEqual([stubStoryline.events[0], stubStoryline.events[1]]);
     });
   });
 });
