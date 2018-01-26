@@ -315,6 +315,29 @@ describe("Storylines", () => {
       });
     });
 
+    describe("applyOperations()", () => {
+      it("should apply all operations", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+        var operations = [
+          {
+            lhs: buildState(["general", "foo"]),
+            operator: '+=',
+            rhs: "baz"
+          },
+          {
+            lhs: buildState(["general", "bar"]),
+            operator: '=',
+            rhs: "foo"
+          },
+        ];
+
+        stubStoryline.applyOperations(operations);
+
+        expect(stubStoryline.state).toHaveProperty("general.foo", "barbaz");
+        expect(stubStoryline.state).toHaveProperty("general.bar", "foo");
+      });
+    });
+
     describe("testCondition()", () => {
       it("should return false on any operator when missing a value", () => {
         stubStoryline.state = getGeneralFooEqualBarState();

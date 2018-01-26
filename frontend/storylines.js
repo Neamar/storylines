@@ -85,19 +85,19 @@ class Storylines {
    */
   moveToEvent(event) {
     this.currentEvent = event;
-    this.displayEvent(event);
+    this.displayEvent(event, this.respondToEvent.bind(this));
   }
 
   /**
    * Pick an action on the current event
    */
   respondToEvent(action) {
-    if(!(action in this.currentEvent.action)) {
+    if(!(action in this.currentEvent.actions)) {
       throw new Error(`Action ${action} is not available in event ${this.currentEvent.event}`);
     }
 
-    let operations = this.currentEvent.action.operations;
-    operations.forEach(o => this.applyOperation(o));
+    let operations = this.currentEvent.actions[action].operations;
+    this.applyOperations(operations);
   }
 
   /**
@@ -132,6 +132,10 @@ class Storylines {
       default:
         throw new Error("Invalid operator " + condition.operator);
     }
+  }
+
+  applyOperations(operations) {
+    operations.forEach(o => this.applyOperation(o));
   }
 
   /**
@@ -237,6 +241,7 @@ class Storylines {
   }
 }
 
-if(module && module.exports) {
+// Allow for easy testing in the backend
+try {
   module.exports = Storylines;
-}
+} catch(e) {}

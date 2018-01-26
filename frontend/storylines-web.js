@@ -2,7 +2,7 @@
 
 
 // Display an event in the Jumbotron
-window.displayEvent = function displayEvent(event) {
+window.displayEvent = function displayEvent(event, respondToEventCb) {
   let eventHTML = `
 <div class="jumbotron">
   <p>${event.description}</p>
@@ -10,7 +10,7 @@ window.displayEvent = function displayEvent(event) {
 `;
 
   Object.keys(event.actions).forEach(a => {
-    eventHTML += `<a class="btn btn-primary btn-lg" href="#" role="button">${a}</a> `;
+    eventHTML += `<a class="btn btn-primary btn-lg" href="#${a}" role="button">${a}</a> `;
   });
 
   eventHTML += `</p>
@@ -18,6 +18,13 @@ window.displayEvent = function displayEvent(event) {
 `;
 
   document.getElementById('event').innerHTML = eventHTML;
+
+  document.querySelectorAll('#event a.btn').forEach((item) => {
+    item.addEventListener("click", function() {
+      console.log("Selected action " + this.innerHTML);
+      respondToEventCb(this.innerHTML);
+    });
+  });
 };
 
 
