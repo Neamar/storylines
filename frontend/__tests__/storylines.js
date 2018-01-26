@@ -122,6 +122,20 @@ describe("Storylines", () => {
       });
     });
 
+    describe("isStateAccess()", () => {
+      it("should return false for non state access", () => {
+        expect(stubStoryline.isStateAccess("fake value")).toBeFalsy();
+      });
+
+      it("should return false for complex structures that are not state access", () => {
+        expect(stubStoryline.isStateAccess({_type: "or_condition", data: []})).toBeFalsy();
+      });
+
+      it("should return true for state access", () => {
+        expect(stubStoryline.isStateAccess({_type: "state", data: []})).toBeTruthy();
+      });
+    });
+
     describe("applyOperation()", () => {
       it("should fail on any operator when missing a value before the last one", () => {
         stubStoryline.state = getGeneralFooEqualBarState();

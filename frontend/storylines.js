@@ -76,6 +76,39 @@ class Storylines {
     operations.forEach(o => this.applyOperation(o));
   }
 
+  testCondition(condition) {
+    let lhs = this.resolveStatePath(condition.lhs, true);
+
+    if(lhs.missingOnLastLevel && operation.operator !== '=') {
+      throw new Error("Can't apply compound operator on undefined");
+    }
+
+    let rhs = this.resolveValue(condition.rhs);
+
+    switch(condition.operator) {
+      case '==':
+        lhs.parent[lhs.key] = rhs;
+        break;
+      case '>':
+        lhs.parent[lhs.key] += rhs;
+        break;
+      case '-=':
+        lhs.parent[lhs.key] -= rhs;
+        break;
+      case '*=':
+        lhs.parent[lhs.key] *= rhs;
+        break;
+      case '/=':
+        lhs.parent[lhs.key] /= rhs;
+        break;
+      case '%=':
+        lhs.parent[lhs.key] %= rhs;
+        break;
+      default:
+        throw new Error("Invalid operator " + operation.operator);
+      }
+  }
+
   applyOperation(operation) {
     let lhs = this.resolveStatePath(operation.lhs, true);
 
@@ -109,12 +142,20 @@ class Storylines {
     }
   }
 
+  isStateAccess(value) {
+    if(!value._type || value._type !== 'state') {
+      return false;
+    }
+
+    return true;
+  }
+
 
   // Resolve any value (potentially a dotted state access) to its primitive value.
   // "ABC" => ABC
   // {_type: "state", data:["global", "something"]} == this.state.global.something
   resolveValue(value) {
-    if(!value._type || value._type !== 'state') {
+    if(!this.isStateAccess(value)) {
       return value;
     }
 
@@ -123,7 +164,7 @@ class Storylines {
   }
 
   resolveStatePath(statePath, throwOnMissing) {
-    if(statePath._type !== 'state') {
+    if(!this.isStateAccess(statePath)) {
       throw new Error("Must be a state access! " + statePath.join("."));
     }
 
