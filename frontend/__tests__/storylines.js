@@ -581,6 +581,28 @@ describe("Storylines", () => {
         expect(stubStoryline.listAvailableEvents("soft")).toEqual([stubStoryline.events[0], stubStoryline.events[1]]);
       });
     });
+
+    describe("listAvailableHardEvents()", () => {
+      it("should call listAvailableEvents('hard')", () => {
+        stubStoryline.listAvailableEvents = jest.fn();
+
+        stubStoryline.listAvailableHardEvents();
+
+        expect(stubStoryline.listAvailableEvents.mock.calls.length).toBe(1);
+        expect(stubStoryline.listAvailableEvents.mock.calls[0][0]).toBe('hard');
+      });
+    });
+
+    describe("listAvailableSoftEvents()", () => {
+      it("should call listAvailableEvents('soft')", () => {
+        stubStoryline.listAvailableEvents = jest.fn();
+
+        stubStoryline.listAvailableSoftEvents();
+
+        expect(stubStoryline.listAvailableEvents.mock.calls.length).toBe(1);
+        expect(stubStoryline.listAvailableEvents.mock.calls[0][0]).toBe('soft');
+      });
+    });
   });
 
   describe("start()", () => {
