@@ -538,46 +538,71 @@ describe("Storylines", () => {
     });
   });
 
-  describe("listAvailableEvents()", () => {
-    it("should skip events without the specified trigger", () => {
-      stubStoryline.events = [{
-        id: 1,
-        triggers: {}
-      }];
+  describe("Event listing", () => {
+    describe("listAvailableEvents()", () => {
+      it("should skip events without the specified trigger", () => {
+        stubStoryline.events = [{
+          id: 1,
+          triggers: {}
+        }];
 
-      expect(stubStoryline.listAvailableEvents("fake")).toEqual([]);
+        expect(stubStoryline.listAvailableEvents("fake")).toEqual([]);
+      });
+
+      it("should return all matching events", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        stubStoryline.events = [
+          {
+            id: 1,
+            triggers: {
+              soft: [
+                {lhs: true, operator: "==", rhs: true}
+              ]
+            }
+          },
+          {
+            id: 2,
+            triggers: {
+              soft: [
+                {lhs: "bar", operator: "==", rhs: buildState(["general", "foo"])}
+              ]
+            }
+          },
+          {
+            id: 3,
+            triggers: {
+              soft: [
+                {lhs: true, operator: "==", rhs: false}
+              ]
+            }
+          }
+        ];
+        expect(stubStoryline.listAvailableEvents("soft")).toEqual([stubStoryline.events[0], stubStoryline.events[1]]);
+      });
+    });
+  });
+
+  describe("start()", () => {
+    it("should call nextEvent by default", () => {
+      stubStoryline.nextEvent = jest.fn();
+
+      stubStoryline.start();
+
+      expect(stubStoryline.nextEvent.mock.calls.length).toBe(1);
     });
 
-    it("should return all matching events", () => {
-      stubStoryline.state = getGeneralFooEqualBarState();
+    it("should throw if story is already started", () => {
+      stubStoryline.nextEvent = jest.fn();
 
-      stubStoryline.events = [
-        {
-          id: 1,
-          triggers: {
-            soft: [
-              {lhs: true, operator: "==", rhs: true}
-            ]
-          }
-        },
-        {
-          id: 2,
-          triggers: {
-            soft: [
-              {lhs: "bar", operator: "==", rhs: buildState(["general", "foo"])}
-            ]
-          }
-        },
-        {
-          id: 3,
-          triggers: {
-            soft: [
-              {lhs: true, operator: "==", rhs: false}
-            ]
-          }
-        }
-      ];
-      expect(stubStoryline.listAvailableEvents("soft")).toEqual([stubStoryline.events[0], stubStoryline.events[1]]);
+      stubStoryline.start();
+      expect(stubStoryline.nextEvent.mock.calls.length).toBe(1);
+
+      stubStoryline.currentEvent = {};
+      expect(() => stubStoryline.start()).toThrow(/Storyline already started/i);
+      // Call count shouldn't change
+      expect(stubStoryline.nextEvent.mock.calls.length).toBe(1);
+
     });
   });
 });

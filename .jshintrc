@@ -69,7 +69,8 @@
     "before",
     "beforeEach",
     "Set",
-    "expect"
+    "expect",
+    "jest"
   ],
   "indent"        : 2,
   "maxstatements" : 70,
