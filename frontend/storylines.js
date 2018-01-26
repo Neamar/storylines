@@ -29,6 +29,10 @@ class Storylines {
     this.displayResources(this.resources, this.state.resources);
   }
 
+  /**
+  * Return all events currently matching the Reader's state
+  * on triggerType ("soft" or "hard") only.
+  */
   listAvailableEvents(triggerType) {
     return this.events.filter(e => {
       // Discard if event doesn't have any triggers of this type
