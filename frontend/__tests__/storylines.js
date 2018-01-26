@@ -627,4 +627,23 @@ describe("Storylines", () => {
 
     });
   });
+
+  describe("moveToEvent()", () => {
+    it("should save event in currentEvent", () => {
+      var event = {id: 1};
+      stubStoryline.moveToEvent(event);
+
+      expect(stubStoryline.currentEvent).toBe(event);
+    });
+
+    it("should notify displayEvent callback", () => {
+      stubStoryline.displayEvent = jest.fn();
+
+      var event = {id: 1};
+      stubStoryline.moveToEvent(event);
+
+      expect(stubStoryline.displayEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.displayEvent.mock.calls[0][0]).toBe(event);
+    });
+  });
 });
