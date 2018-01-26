@@ -69,7 +69,7 @@ describe("Storylines", () => {
       it("should throw when throwOnMissing is true", () => {
         stubStoryline.state = getGeneralFooEqualBarState();
 
-        expect(() => stubStoryline.resolveStatePath(buildState(['missing', 'foo'], true)).toThrow(/Trying to access non-existing path/i));
+        expect(() => stubStoryline.resolveStatePath(buildState(['missing', 'foo']), true)).toThrow(/Trying to access non-existing path/i);
       });
 
       it("should stop with current situation when throwOnMissing is false", () => {
@@ -96,6 +96,12 @@ describe("Storylines", () => {
         expect(r).toHaveProperty('key', 'fizz');
         expect(r).toHaveProperty('missing', true);
         expect(r).toHaveProperty('missingOnLastLevel', true);
+      });
+
+      it("should throw when trying to access something that isn't a state path", () => {
+        stubStoryline.state = getGeneralFooEqualBarState();
+
+        expect(() => stubStoryline.resolveStatePath("something different")).toThrow(/Must be a state access/i);
       });
     });
 
@@ -534,6 +540,11 @@ describe("Storylines", () => {
 
   describe("listAvailableEvents()", () => {
     it("should skip events without the specified trigger", () => {
+      stubStoryline.events = [{
+        id: 1,
+        triggers: {}
+      }];
+
       expect(stubStoryline.listAvailableEvents("fake")).toEqual([]);
     });
 

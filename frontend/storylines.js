@@ -213,7 +213,7 @@ class Storylines {
    */
   resolveStatePath(statePath, throwOnMissing) {
     if(!this.isStateAccess(statePath)) {
-      throw new Error("Must be a state access! " + statePath.join("."));
+      throw new Error("Must be a state access! " + statePath);
     }
 
     // Clone the array, as we're going to destroy it
