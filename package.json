@@ -4,10 +4,11 @@
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
   "scripts": {
+    "local": "node frontend.js",
     "compile": "node backend/compile.js",
-    "lint": "jshint backend/",
+    "lint": "jshint backend/ frontend/",
     "style": "jscs .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,10 +21,15 @@
   },
   "homepage": "https://github.com/Neamar/storylines#readme",
   "dependencies": {
-    "front-matter": "^2.3.0"
+    "express": "^4.16.2",
+    "front-matter": "^2.3.0",
+    "jest": "^22.1.4"
   },
   "devDependencies": {
     "jscs": "^3.0.7",
     "jshint": "^2.9.5"
+  },
+  "jest": {
+    "collectCoverage": true
   }
 }
