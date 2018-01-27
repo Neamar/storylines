@@ -1,7 +1,7 @@
 machine:
   node:
     version: 8.8.0
-# test:
-#   pre:
-#     - npm run-script lint
-#     - npm run-script style
+test:
+  pre:
+    - npm run-script lint
+    - npm run-script style
