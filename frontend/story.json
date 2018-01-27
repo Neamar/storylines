@@ -64,13 +64,15 @@
             }
           ]
         },
-        "Let's go!": [
-          {
-            "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
-            "operator": "=",
-            "rhs": true
-          }
-        ]
+        "Let's go!": {
+          "operations": [
+            {
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
+              "operator": "=",
+              "rhs": true
+            }
+          ]
+        }
       }
     },
     {
