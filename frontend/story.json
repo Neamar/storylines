@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "story_title": "In a galaxy far, far away...",
+  "story_description": "... to boldly go where no man has gone before",
+  "resources": {
+    "crew": {
+      "description": "Crew in your spaceship",
+      "format": "%s",
+      "display_name": "Crew",
+      "default": 30
+    },
+    "energy": {
+      "description": "Energy available",
+      "format": "%sMJ",
+      "display_name": "Energy",
+      "default": 2000
+    },
+    "morale": {
+      "description": "Crew Morale",
+      "format": "%s",
+      "display_name": "Morale",
+      "default": 100
+    }
+  },
+  "default_state": {
+    "global": {
+      "current_turn": 0
+    },
+    "resources": {
+      "crew": 30,
+      "energy": 2000,
+      "morale": 100
+    },
+    "storylines": {
+      "red_planet": {}
+    }
+  },
+  "events": [
+    {
+      "story": "red_planet",
+      "event": "arrival",
+      "triggers": {
+        "hard": [
+          {
+            "lhs": {"_type": "state", "data":["global", "current_turn"]},
+            "operator": "==",
+            "rhs": 1
+          }
+        ]
+      },
+      "description": "Welcome onboard, captain.\nWe're ready to go boldly explore when no man has gone before. Do you want to make an announcement to the crew, or should we get started immediately?",
+      "actions": {
+        "Make an announcement": {
+          "operations": [
+            {
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
+              "operator": "=",
+              "rhs": true
+            },
+            {
+              "lhs": {"_type": "state", "data":["resources", "morale"]},
+              "operator": "+=",
+              "rhs": 10
+            }
+          ]
+        },
+        "Let's go!": {
+          "operations": [
+            {
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
+              "operator": "=",
+              "rhs": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "story": "red_planet",
+      "event": "announcement",
+      "triggers": {
+        "hard": [
+          {
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
+            "operator": "==",
+            "rhs": true
+          }
+        ]
+      },
+      "description": "« This is your captain speaking. We're about to embark in a dangerous journey, that will... »\n\nYou pour yourself into the words. As you finish, you notice tears in your First Lieutenant eyes. He wipes them out shamefully, clears his throat and yell to the crew: « Come on, time to go! Time and tide wait for no man... »",
+      "actions": {
+        "Let's go!": {
+          "operations": [
+            {
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
+              "operator": "=",
+              "rhs": false
+            },
+            {
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
+              "operator": "=",
+              "rhs": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "story": "red_planet",
+      "event": "leaving",
+      "triggers": {
+        "hard": [
+          {
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
+            "operator": "==",
+            "rhs": true
+          }
+        ]
+      },
+      "description": "The spaceship thrusts into the unknown. Soon, you'll be the most well known capitain of mankind. The one that pushed the boundaries and expanded humanity's horizon. Good job."
+    }
+  ]
+}
