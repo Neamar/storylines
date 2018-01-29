@@ -254,7 +254,6 @@ TEST
       test("should accept missing on_display key", () => {
         var e = getBasicEvent();
         var expected = getBasicEvent();
-        expected.on_display = [];
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
