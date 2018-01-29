@@ -2,7 +2,12 @@ var environment;
 
 
 class Storylines {
-  constructor(story, displayEvent, displayResources) {
+  /**
+   * story: a valid JSON story, as specified in https://github.com/Neamar/storylines/blob/master/specs/backend.md
+   * callbacks: an object with the callbacks that will be used to communicate with the UI.
+   *    Required keys: displayEvent, displayResources
+   */
+  constructor(story, callbacks) {
     this.story = story;
     this.events = story.events;
     this.resources = story.resources;
@@ -13,8 +18,7 @@ class Storylines {
     this.state = Object.assign({}, story.default_state);
 
     // Save functions to interact with UI
-    this.displayEvent = displayEvent;
-    this.displayResources = displayResources;
+    this.callbacks = callbacks;
 
     // Start game
     this.updateResourcesUI();
@@ -29,7 +33,7 @@ class Storylines {
   }
 
   updateResourcesUI() {
-    this.displayResources(this.resources, this.state.resources);
+    this.callbacks.displayResources(this.resources, this.state.resources);
   }
 
   /**
@@ -99,7 +103,7 @@ class Storylines {
       this.applyOperations(event.on_display);
     }
 
-    this.displayEvent(event, this.respondToEvent.bind(this));
+    this.callbacks.displayEvent(event, this.respondToEvent.bind(this));
   }
 
   /**

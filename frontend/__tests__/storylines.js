@@ -38,7 +38,12 @@ describe("Storylines", () => {
       }
     };
 
-    stubStoryline = new Storylines(stubStory, stubDisplayEvent, stubDisplayResources);
+    var stubCallbacks = {
+      displayEvent: stubDisplayEvent,
+      displayResources: stubDisplayResources,
+    };
+
+    stubStoryline = new Storylines(stubStory, stubCallbacks);
   });
 
   describe("Conditions and operations", () => {
@@ -643,13 +648,13 @@ describe("Storylines", () => {
     });
 
     it("should notify displayEvent callback", () => {
-      stubStoryline.displayEvent = jest.fn();
+      stubStoryline.callbacks.displayEvent = jest.fn();
 
       var event = {id: 1};
       stubStoryline.moveToEvent(event);
 
-      expect(stubStoryline.displayEvent.mock.calls.length).toBe(1);
-      expect(stubStoryline.displayEvent.mock.calls[0][0]).toBe(event);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][0]).toBe(event);
     });
 
     it("should apply on_display operations if specified", () => {
