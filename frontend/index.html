@@ -28,7 +28,12 @@
 "use strict";
 var storyline;
 function startStory(story) {
-  storyline = new Storylines(story, window.displayEvent, window.displayResources);
+  var callbacks = {
+    displayEvent: window.displayEvent,
+    displayResources: window.displayResources
+  };
+
+  storyline = new Storylines(story, callbacks);
   storyline.start();
 }
 

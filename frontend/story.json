@@ -92,7 +92,7 @@
           "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
           "operator": "=",
           "rhs": false
-        },
+        }
       ],
       "description": "« This is your captain speaking. We're about to embark in a dangerous journey, that will... »\n\nYou pour yourself into the words. As you finish, you notice tears in your First Lieutenant eyes. He wipes them out shamefully, clears his throat and yell to the crew: « Come on, time to go! Time and tide wait for no man... »",
       "actions": {
