@@ -38,7 +38,30 @@ describe("Storylines", () => {
       }
     };
 
-    stubStoryline = new Storylines(stubStory, stubDisplayEvent, stubDisplayResources);
+    var stubCallbacks = {
+      displayEvent: stubDisplayEvent,
+      displayResources: stubDisplayResources,
+    };
+
+    stubStoryline = new Storylines(stubStory, stubCallbacks);
+  });
+
+  describe("Constructor", () => {
+    it("should require a story parameter", () => {
+      expect(() => new Storylines()).toThrow(/Story is required/i);
+    });
+
+    it("should require a callbacks parameter", () => {
+      expect(() => new Storylines({})).toThrow(/Callbacks object is required/i);
+    });
+
+    it("should require a callbacks.displayEvent property", () => {
+      expect(() => new Storylines({}, {})).toThrow(/Missing required callback: displayEvent/i);
+    });
+
+    it("should require a callbacks.displayResources property", () => {
+      expect(() => new Storylines({}, {displayEvent: function() {}})).toThrow(/Missing required callback: displayResources/i);
+    });
   });
 
   describe("Conditions and operations", () => {
@@ -348,6 +371,15 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty("global.foo", "barbaz");
         expect(stubStoryline.state).toHaveProperty("global.bar", "foo");
       });
+
+      it("should notify displayResources", () => {
+        stubStoryline.callbacks.displayResources = jest.fn();
+        var operations = [];
+
+        stubStoryline.applyOperations(operations);
+
+        expect(stubStoryline.callbacks.displayResources.mock.calls.length).toBe(1);
+      });
     });
 
     describe("testCondition()", () => {
@@ -643,13 +675,27 @@ describe("Storylines", () => {
     });
 
     it("should notify displayEvent callback", () => {
-      stubStoryline.displayEvent = jest.fn();
+      stubStoryline.callbacks.displayEvent = jest.fn();
 
       var event = {id: 1};
       stubStoryline.moveToEvent(event);
 
-      expect(stubStoryline.displayEvent.mock.calls.length).toBe(1);
-      expect(stubStoryline.displayEvent.mock.calls[0][0]).toBe(event);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][0]).toBe(event);
+    });
+
+    it("should apply on_display operations if specified", () => {
+      var event = {id: 1, on_display: [
+        {
+          lhs: buildState(['global', 'on_display']),
+          operator: '=',
+          rhs: true
+        }
+      ]};
+
+      stubStoryline.moveToEvent(event);
+
+      expect(stubStoryline.state).toHaveProperty('global.on_display', true);
     });
   });
 
