@@ -141,6 +141,22 @@ TEST
     });
   });
 
+  describe("on_display operations", () => {
+    test('should accept empty on_display', () => {
+      var e = getBasicEvent();
+      expect(event.validateEvent(e)).toHaveProperty("event", e.event);
+    });
+
+    test('should ensure on_display operations is an array', () => {
+      var e = getBasicEvent();
+      e.on_display = {
+        operations: false
+      };
+
+      expect(() => event.validateEvent(e)).toThrow(/on_display operations must be an array: storyline_slug\/event_slug/i);
+    });
+  });
+
   describe("parseEvent()", () => {
     describe("Trigger parsing", () => {
       test('should parse enclosed soft conditions', () => {
@@ -229,6 +245,39 @@ TEST
             ]
           }
         };
+
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+    });
+
+    describe("on_display parsing", () => {
+      test("should accept missing on_display key", () => {
+        var e = getBasicEvent();
+        var expected = getBasicEvent();
+        expected.on_display = [];
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+
+      test('should parse enclosed operations', () => {
+        var e = getBasicEvent();
+        e.on_display = [
+          'global.something = true',
+          'resources.foo += 150'
+        ];
+
+        var expected = getBasicEvent();
+        expected.on_display = [
+          {
+            lhs: ['@', 'global', 'something'],
+            operator: '=',
+            rhs: true
+          },
+          {
+            lhs: ['@', 'resources', 'foo'],
+            operator: '+=',
+            rhs: 150
+          },
+        ];
 
         expect(event.parseEvent(e)).toEqual(expected);
       });
