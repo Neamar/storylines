@@ -46,6 +46,24 @@ describe("Storylines", () => {
     stubStoryline = new Storylines(stubStory, stubCallbacks);
   });
 
+  describe("Constructor", () => {
+    it("should require a story parameter", () => {
+      expect(() => new Storylines()).toThrow(/Story is required/i);
+    });
+
+    it("should require a callbacks parameter", () => {
+      expect(() => new Storylines({})).toThrow(/Callbacks object is required/i);
+    });
+
+    it("should require a callbacks.displayEvent property", () => {
+      expect(() => new Storylines({}, {})).toThrow(/Missing required callback: displayEvent/i);
+    });
+
+    it("should require a callbacks.displayResources property", () => {
+      expect(() => new Storylines({}, {displayEvent: function() {}})).toThrow(/Missing required callback: displayResources/i);
+    });
+  });
+
   describe("Conditions and operations", () => {
     describe("resolveStatePath()", () => {
       it("should return parent object and key when statePath exists", () => {

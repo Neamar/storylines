@@ -8,6 +8,19 @@ class Storylines {
    *    Required keys: displayEvent, displayResources
    */
   constructor(story, callbacks) {
+    if(!story) {
+      throw new Error("Story is required");
+    }
+    if(!callbacks) {
+      throw new Error("Callbacks object is required");
+    }
+
+    ['displayEvent', 'displayResources'].forEach((k) => {
+      if(!callbacks[k]) {
+        throw new Error("Missing required callback: " + k);
+      }
+    });
+
     this.story = story;
     this.events = story.events;
     this.resources = story.resources;
@@ -16,6 +29,7 @@ class Storylines {
 
     // Clone default state
     this.state = Object.assign({}, story.default_state);
+
 
     // Save functions to interact with UI
     this.callbacks = callbacks;
