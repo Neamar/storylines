@@ -171,6 +171,7 @@ class Storylines {
 
   applyOperations(operations) {
     operations.forEach(o => this.applyOperation(o));
+    this.updateResourcesUI();
   }
 
   /**

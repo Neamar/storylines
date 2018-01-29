@@ -371,6 +371,15 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty("global.foo", "barbaz");
         expect(stubStoryline.state).toHaveProperty("global.bar", "foo");
       });
+
+      it("should notify displayResources", () => {
+        stubStoryline.callbacks.displayResources = jest.fn();
+        var operations = [];
+
+        stubStoryline.applyOperations(operations);
+
+        expect(stubStoryline.callbacks.displayResources.mock.calls.length).toBe(1);
+      });
     });
 
     describe("testCondition()", () => {

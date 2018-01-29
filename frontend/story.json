@@ -56,11 +56,6 @@
               "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
               "operator": "=",
               "rhs": true
-            },
-            {
-              "lhs": {"_type": "state", "data":["resources", "morale"]},
-              "operator": "+=",
-              "rhs": 10
             }
           ]
         },
@@ -88,6 +83,11 @@
         ]
       },
       "on_display": [
+        {
+          "lhs": {"_type": "state", "data":["resources", "morale"]},
+          "operator": "+=",
+          "rhs": 10
+        },
         {
           "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
           "operator": "=",
@@ -119,6 +119,13 @@
           }
         ]
       },
+      "on_display": [
+        {
+          "lhs": {"_type": "state", "data":["resources", "energy"]},
+          "operator": "-=",
+          "rhs": 500
+        }
+      ],
       "description": "The spaceship thrusts into the unknown. Soon, you'll be the most well known capitain of mankind. The one that pushed the boundaries and expanded humanity's horizon. Good job."
     }
   ]
