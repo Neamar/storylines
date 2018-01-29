@@ -94,6 +94,11 @@ class Storylines {
    */
   moveToEvent(event) {
     this.currentEvent = event;
+
+    if(event.on_display) {
+      this.applyOperations(event.on_display);
+    }
+
     this.displayEvent(event, this.respondToEvent.bind(this));
   }
 

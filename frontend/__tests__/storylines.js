@@ -651,6 +651,20 @@ describe("Storylines", () => {
       expect(stubStoryline.displayEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.displayEvent.mock.calls[0][0]).toBe(event);
     });
+
+    it("should apply on_display operations if specified", () => {
+      var event = {id: 1, on_display: [
+        {
+          lhs: buildState(['global', 'on_display']),
+          operator: '=',
+          rhs: true
+        }
+      ]};
+
+      stubStoryline.moveToEvent(event);
+
+      expect(stubStoryline.state).toHaveProperty('global.on_display', true);
+    });
   });
 
   describe("nextEvent()", () => {
