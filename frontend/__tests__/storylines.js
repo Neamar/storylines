@@ -13,12 +13,9 @@ describe("Storylines", () => {
   var stubDisplayEvent = () => {};
   var stubDisplayResources = () => {};
 
-  function getGlobalFooEqualBarState(value) {
+  function getFooEqualBarState(value) {
     return {
-      global: {
-        foo: value || "bar"
-      },
-      viewed_events: new Set()
+      foo: value || "bar"
     };
   }
 
@@ -68,7 +65,7 @@ describe("Storylines", () => {
   describe("Conditions and operations", () => {
     describe("resolveStatePath()", () => {
       it("should return parent object and key when statePath exists", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(buildState(['global', 'foo']));
 
@@ -97,13 +94,13 @@ describe("Storylines", () => {
       });
 
       it("should throw when throwOnMissing is true", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(() => stubStoryline.resolveStatePath(buildState(['missing', 'foo']), true)).toThrow(/Trying to access non-existing path/i);
       });
 
       it("should stop with current situation when throwOnMissing is false", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(buildState(['missing', 'foo']));
 
@@ -129,7 +126,7 @@ describe("Storylines", () => {
       });
 
       it("should throw when trying to access something that isn't a state path", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(() => stubStoryline.resolveStatePath("something different")).toThrow(/Must be a state access/i);
       });
@@ -144,19 +141,19 @@ describe("Storylines", () => {
       });
 
       it("should resolve state access", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['global', 'foo']))).toEqual("bar");
       });
 
       it("should resolve invalid state access (last level) to undefined", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['global', 'fizz']))).toBeUndefined();
       });
 
       it("should resolve invalid state access (before last level) to undefined", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['buzz', 'fizz']))).toBeUndefined();
       });
@@ -178,7 +175,7 @@ describe("Storylines", () => {
 
     describe("applyOperation()", () => {
       it("should fail on any operator when missing a value before the last one", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -191,7 +188,7 @@ describe("Storylines", () => {
       });
 
       it("should work on = operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -220,7 +217,7 @@ describe("Storylines", () => {
       });
 
       it("should work on = operator when creating a new value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'fizz']),
@@ -232,7 +229,7 @@ describe("Storylines", () => {
       });
 
       it("should work on += operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -244,7 +241,7 @@ describe("Storylines", () => {
       });
 
       it("should fail on += operator when accessing non existing final value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -275,7 +272,7 @@ describe("Storylines", () => {
       });
 
       it("should work on -= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -287,7 +284,7 @@ describe("Storylines", () => {
       });
 
       it("should fail on -= operator when accessing non existing final value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -301,7 +298,7 @@ describe("Storylines", () => {
       });
 
       it("should work on *= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -313,7 +310,7 @@ describe("Storylines", () => {
       });
 
       it("should work on /= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -325,7 +322,7 @@ describe("Storylines", () => {
       });
 
       it("should work on %= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -337,7 +334,7 @@ describe("Storylines", () => {
       });
 
       it("should fail on unknown operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -353,7 +350,7 @@ describe("Storylines", () => {
 
     describe("applyOperations()", () => {
       it("should apply all operations", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         var operations = [
           {
             lhs: buildState(["global", "foo"]),
@@ -385,7 +382,7 @@ describe("Storylines", () => {
 
     describe("testCondition()", () => {
       it("should return false on any operator when missing a value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.testCondition({
@@ -522,7 +519,7 @@ describe("Storylines", () => {
       });
 
       it("should work with state access", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testCondition({
           lhs: buildState(['global', 'foo']),
           operator: "==",
@@ -545,7 +542,7 @@ describe("Storylines", () => {
 
     describe("testConditions()", () => {
       it("should return true if all conditions pass", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testConditions([
           {
             lhs: buildState(['global', 'foo']),
@@ -560,7 +557,7 @@ describe("Storylines", () => {
         ])).toBeTruthy();
       });
       it("should return false if one condition fails", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testConditions([
           {
             lhs: buildState(['global', 'foo']),
@@ -589,7 +586,7 @@ describe("Storylines", () => {
       });
 
       it("should return all matching events", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.events = [
           {
