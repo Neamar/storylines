@@ -4,7 +4,22 @@ const event = require('../event');
 
 describe("event file", () => {
   function getBasicEvent() {
-    return {description: "Description", event: 'event_slug', storyline: 'storyline_slug'};
+    return {
+      description: "Description",
+      event: 'event_slug',
+      storyline: 'storyline_slug'
+    };
+  }
+
+  function getBasicExpectedEvent() {
+    return {
+      description: "Description",
+      event: 'event_slug',
+      storyline: 'storyline_slug',
+      repeatable: false,
+      on_display: [],
+      weight: 1
+    };
   }
 
   describe("readEvent()", () => {
@@ -62,7 +77,7 @@ TEST
     });
 
     test('should work with the most basic event', () => {
-      expect(event.validateEvent(getBasicEvent())).toEqual(getBasicEvent());
+      expect(event.validateEvent(getBasicEvent())).toEqual(getBasicExpectedEvent());
     });
 
     describe("Trigger validation", () => {
@@ -193,7 +208,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           soft: {
             conditions: [
@@ -220,7 +235,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           hard: {
             conditions: [
@@ -252,7 +267,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           soft: {
             conditions: [
@@ -277,7 +292,7 @@ TEST
     describe("on_display parsing", () => {
       test("should accept missing on_display key", () => {
         var e = getBasicEvent();
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
@@ -288,7 +303,7 @@ TEST
           'resources.foo += 150'
         ];
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.on_display = [
           {
             lhs: ['@', 'global', 'something'],
@@ -318,7 +333,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.actions = {
           OK: {
             operations: [
@@ -350,7 +365,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           soft: {
             conditions: [
@@ -375,7 +390,7 @@ TEST
     describe("repeatable parsing", () => {
       test("should accept missing repeatable key", () => {
         var e = getBasicEvent();
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
@@ -390,7 +405,7 @@ TEST
         var e = getBasicEvent();
         e.repeatable = true;
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.repeatable = true;
 
         expect(event.parseEvent(e)).toEqual(expected);
@@ -430,5 +445,4 @@ TEST
       });
     });
   });
-
 });
