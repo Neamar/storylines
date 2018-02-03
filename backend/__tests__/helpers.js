@@ -21,6 +21,20 @@ describe("helpers", () => {
     });
   });
 
+  describe("getBooleanArg", () => {
+    test("'true' should return true", () => {
+      expect(helpers.getBooleanArg("true")).toBeTruthy();
+    });
+
+    test("'false' should return true", () => {
+      expect(helpers.getBooleanArg("false")).toBeFalsy();
+    });
+
+    test("(Almost) anything else should throw ('True', 'TRUE', 'False', and 'FALSE' are accepted)", () => {
+      expect(() => helpers.getBooleanArg("FaLSE")).toThrow(/Invalid boolean expression: 'FaLSE'/i);
+    });
+  });
+
   describe("parseYmlCode()", () => {
     test('should parse strings', () => {
       expect(helpers.parseYmlCode('"something" == "something"')).toEqual({
@@ -28,6 +42,10 @@ describe("helpers", () => {
         operator: "==",
         rhs: "something"
       });
+    });
+
+    test('should throw on multiple operators', () => {
+      expect(() => helpers.parseYmlCode('"something" += == "something"')).toThrow(/Too many operator candidates:/i);
     });
 
     test('should parse strings with spaces', () => {
@@ -87,6 +105,14 @@ describe("helpers", () => {
         lhs: "something",
         operator: "==",
         rhs: true
+      });
+    });
+
+    test('should parse floats', () => {
+      expect(helpers.parseYmlCode('"Pi" == 3.1415926')).toEqual({
+        lhs: "Pi",
+        operator: "==",
+        rhs: 3.1415926
       });
     });
 
@@ -175,8 +201,8 @@ describe("helpers", () => {
     });
 
     test('should allow for nested access to the state', () => {
-      expect(helpers.parseYmlCode('global.something.deeper.nested == true')).toEqual({
-        lhs: {_type: "state", data:["global", "something", "deeper", "nested"]},
+      expect(helpers.parseYmlCode('resources.something.deeper.nested == true')).toEqual({
+        lhs: {_type: "state", data:["resources", "something", "deeper", "nested"]},
         operator: "==",
         rhs: true
       });
@@ -206,6 +232,10 @@ describe("helpers", () => {
       });
     });
 
+    test('should require valid first level', () => {
+      expect(() => helpers.parseYmlCode('invalid.something == "something"')).toThrow(/First-Level must be one of/i);
+    });
+
     test('should expand complex shorthands in state access', () => {
       expect(helpers.parseYmlCode('sl.something == true', {sl: 'storylines.current_storyline'})).toEqual({
         lhs: {_type: "state", data:["storylines", "current_storyline", "something"]},
@@ -215,11 +245,41 @@ describe("helpers", () => {
     });
 
     test('should only expand shorthands in first level', () => {
-      expect(helpers.parseYmlCode('global.g.something == "a string"', {g: 'global'})).toEqual({
-        lhs: {_type: "state", data:["global", "g", "something"]},
+      expect(helpers.parseYmlCode('s.g.something == "a string"', {g: 'global'})).toEqual({
+        lhs: {_type: "state", data:["storylines", "g", "something"]},
         operator: "==",
         rhs: "a string"
       });
+    });
+  });
+
+  describe("validateKeyType", () => {
+    test('should work for a simple string case', () => {
+      expect(helpers.validateKeyType({"test": ""}, "test", "string"))
+    });
+
+    test('should work for a simple number case', () => {
+      expect(helpers.validateKeyType({"test": 42}, "test", "number"))
+    });
+
+    test('should work for a simple array case', () => {
+      expect(helpers.validateKeyType({"test": []}, "test", "object"))
+    });
+
+    test('should not work for wrong type', () => {
+      expect(() => helpers.validateKeyType({"test": ""}, "test", "object")).toThrow(/test should be of type 'object', not 'string'/i);
+    });
+
+    test('should throw if the key does not exist', () => {
+      expect(() => helpers.validateKeyType({"test": ""}, "oops", "object")).toThrow();
+    });
+
+    test('should throw the error message if specified', () => {
+      expect(() => helpers.validateKeyType({"test": ""}, "oops", "object", "404 Not Found")).toThrow("404 Not Found");
+    });
+
+    test('should accept string if type is null', () => {
+      expect(helpers.validateKeyType({"test": ""}, "test", null, "404 Not Found"))
     });
   });
 });
