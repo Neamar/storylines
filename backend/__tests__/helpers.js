@@ -12,6 +12,10 @@ describe("helpers", () => {
       expect(helpers.isSlug("invalid slug")).toBeFalsy();
     });
 
+    test('should return true on a single lowercase letter', () => {
+      expect(helpers.isSlug("x")).toBeTruthy();
+    });
+
     test('should return false on a slug starting with a number', () => {
       expect(helpers.isSlug("1slug")).toBeFalsy();
     });
@@ -67,15 +71,15 @@ describe("helpers", () => {
     });
 
     test('should fail on invalid lhs with double quote delimiter in string', () => {
-      expect(() => helpers.parseYmlCode('"something"foo" == true')).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode('"something"foo" == true')).toThrow(/is an invalid string expression/i);
     });
 
     test('should fail on invalid lhs with single quote delimiter in string', () => {
-      expect(() => helpers.parseYmlCode("'something'foo' == true")).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode("'something'foo' == true")).toThrow(/is an invalid string expression/i);
     });
 
     test('should fail on invalid lhs with strings', () => {
-      expect(() => helpers.parseYmlCode('"something" "foo" == true')).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode('"something" "foo" == true')).toThrow(/is an invalid string expression/i);
     });
 
     test('should parse booleans', () => {
@@ -87,7 +91,7 @@ describe("helpers", () => {
     });
 
     test('should fail on invalid lhs with booleans', () => {
-      expect(() => helpers.parseYmlCode('true false == true')).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode('true false == true')).toThrow(/Invalid expression/i);
     });
 
     test('should parse empty arrays', () => {
@@ -106,9 +110,9 @@ describe("helpers", () => {
       });
     });
 
-    test('should parse access to the state with an @', () => {
+    test('should parse access to the state', () => {
       expect(helpers.parseYmlCode('global.something == true')).toEqual({
-        lhs: ["@", "global", "something"],
+        lhs: {_type: "state", data:["global", "something"]},
         operator: "==",
         rhs: true
       });
@@ -116,49 +120,49 @@ describe("helpers", () => {
 
     test('should allow for access to the state on both sides', () => {
       expect(helpers.parseYmlCode('global.something %= global.something_else')).toEqual({
-        lhs: ["@", "global", "something"],
+        lhs: {_type: "state", data:["global", "something"]},
         operator: "%=",
-        rhs: ["@", "global", "something_else"],
+        rhs: {_type: "state", data:["global", "something_else"]},
       });
     });
 
     test('should allow the null keyword', () => {
       expect(helpers.parseYmlCode('global.something = null')).toEqual({
-        lhs: ["@", "global", "something"],
+        lhs: {_type: "state", data:["global", "something"]},
         operator: "=",
         rhs: null,
       });
     });
 
-    test('should parse access to the state with an @ and allow index notation', () => {
+    test('should parse access to the state and allow index notation', () => {
       expect(helpers.parseYmlCode('global.something.0 == true')).toEqual({
-        lhs: ["@", "global", "something", "0"],
+        lhs: {_type: "state", data:["global", "something", "0"]},
         operator: "==",
         rhs: true
       });
     });
 
     test('should fail on invalid state access (space)', () => {
-      expect(() => helpers.parseYmlCode('global.something something == true')).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode('global.something something == true')).toThrow(/Invalid expression/i);
     });
 
     test('should fail on invalid state access (character)', () => {
-      expect(() => helpers.parseYmlCode('global.àcôté == true')).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode('global.àcôté == true')).toThrow(/Invalid expression/i);
     });
 
     test('should fail on invalid state access (non alpha first char)', () => {
-      expect(() => helpers.parseYmlCode('global.1test == true')).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode('global.1test == true')).toThrow(/Invalid expression/i);
     });
 
     test('should fail on invalid lhs with index notation', () => {
-      expect(() => helpers.parseYmlCode('global.something[1] == true')).toThrow(/Invalid lhs/i);
+      expect(() => helpers.parseYmlCode('global.something[1] == true')).toThrow(/Invalid expression/i);
     });
 
     test('should parse advanced operators', () => {
       expect(helpers.parseYmlCode('"First Lieutenant" IN global.crew.officers')).toEqual({
         lhs: "First Lieutenant",
         operator: "IN",
-        rhs: ["@", "global", "crew", "officers"]
+        rhs: {_type: "state", data:["global", "crew", "officers"]},
       });
     });
 
@@ -166,53 +170,53 @@ describe("helpers", () => {
       expect(helpers.parseYmlCode('"+= ==" NOT IN global.crew.officers')).toEqual({
         lhs: "+= ==",
         operator: "NOT IN",
-        rhs: ["@", "global", "crew", "officers"]
+        rhs: {_type: "state", data:["global", "crew", "officers"]},
       });
     });
 
-    test('should allow for nested access to the state with an @', () => {
+    test('should allow for nested access to the state', () => {
       expect(helpers.parseYmlCode('global.something.deeper.nested == true')).toEqual({
-        lhs: ["@", "global", "something", "deeper", "nested"],
+        lhs: {_type: "state", data:["global", "something", "deeper", "nested"]},
         operator: "==",
         rhs: true
       });
     });
 
     test('should require an operator', () => {
-      expect(() => helpers.parseYmlCode('global.something.deeper.nested')).toThrow(/Missing operator/i);
+      expect(() => helpers.parseYmlCode('global.something.deeper.nested')).toThrow(/Could not find the operator/i);
     });
 
     test('should require a valid operator', () => {
-      expect(() => helpers.parseYmlCode('global.something @ true')).toThrow(/Invalid operator/i);
+      expect(() => helpers.parseYmlCode('global.something @ true')).toThrow(/Could not find the operator/i);
     });
 
     test('should require a rhs', () => {
-      expect(() => helpers.parseYmlCode('global.something == ')).toThrow(/Missing rhs/i);
+      expect(() => helpers.parseYmlCode('global.something == ')).toThrow(/Missing right-hand side/i);
     });
 
     test('should require a lhs', () => {
-      expect(() => helpers.parseYmlCode('== true')).toThrow(/Missing lhs/i);
+      expect(() => helpers.parseYmlCode(' == true')).toThrow(/Missing left-hand side/i);
     });
 
     test('should expand shorthands in state access', () => {
-      expect(helpers.parseYmlCode('g.something == true'), {g: 'global'}).toEqual({
-        lhs: ["@", "global", "something"],
+      expect(helpers.parseYmlCode('g.something == true', {g: 'global'})).toEqual({
+        lhs: {_type: "state", data:["global", "something"]},
         operator: "==",
         rhs: true
       });
     });
 
     test('should expand complex shorthands in state access', () => {
-      expect(helpers.parseYmlCode('sl.something == true'), {sl: 'storylines.current_storyline'}).toEqual({
-        lhs: ["@", "storylines", "current_storyline", "something"],
+      expect(helpers.parseYmlCode('sl.something == true', {sl: 'storylines.current_storyline'})).toEqual({
+        lhs: {_type: "state", data:["storylines", "current_storyline", "something"]},
         operator: "==",
         rhs: true
       });
     });
 
     test('should only expand shorthands in first level', () => {
-      expect(helpers.parseYmlCode('global.g.something == "a string"'), {g: 'global'}).toEqual({
-        lhs: ["@", "global", "g", "something"],
+      expect(helpers.parseYmlCode('global.g.something == "a string"', {g: 'global'})).toEqual({
+        lhs: {_type: "state", data:["global", "g", "something"]},
         operator: "==",
         rhs: "a string"
       });
