@@ -157,7 +157,7 @@ class Storylines {
     let operations = this.currentEvent.actions[action].operations;
     this.applyOperations(operations);
 
-    console.log(`Event ${this.currentEvent.event}: selected ${action}`, this.state);
+    this.log(`Event ${this.currentEvent.event}: selected ${action}`, this.state);
     this.nextEvent();
   }
 
@@ -307,6 +307,7 @@ class Storylines {
   }
 
   log() {
+    /* istanbul ignore next */
     if(environment === "browser") {
       console.log.apply(console, arguments);
     }
@@ -326,5 +327,6 @@ try {
   module.exports = Storylines;
   environment = "node";
 } catch(e) {
+  /* istanbul ignore next */
   environment = "browser";
 }
