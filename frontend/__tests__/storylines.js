@@ -792,4 +792,38 @@ describe("Storylines", () => {
     });
   });
 
+  describe("doEventLottery()", () => {
+    it("should do a lottery", () => {
+      var events = [
+        {weight: 1},
+        {weight: 1},
+      ];
+
+      stubStoryline.random = () => 0;
+      expect(stubStoryline.doEventLottery(events)).toBe(events[0]);
+    });
+
+    it("should do a lottery based on weights", () => {
+      var events = [
+        {weight: 1},
+        {weight: 10},
+      ];
+
+      stubStoryline.random = () => 0.5;
+      expect(stubStoryline.doEventLottery(events)).toBe(events[1]);
+
+      events = [
+        {weight: 1},
+        {weight: 10},
+        {weight: 1},
+      ];
+
+      stubStoryline.random = () => 0.5;
+      expect(stubStoryline.doEventLottery(events)).toBe(events[1]);
+      stubStoryline.random = () => 0;
+      expect(stubStoryline.doEventLottery(events)).toBe(events[0]);
+      stubStoryline.random = () => 0.99;
+      expect(stubStoryline.doEventLottery(events)).toBe(events[2]);
+    });
+  });
 });

@@ -80,12 +80,13 @@ class Storylines {
    */
   doEventLottery(events) {
     let sum = events.reduce((sum, e) => sum + (e.weight || 1), 0);
-    let number = Math.floor(sum * Math.random());
-    return events.find(e => {
-      if(number <= 0) {
+    let number = Math.floor(sum * this.random());
+    return events.find(event => {
+      if(number < event.weight) {
         return true;
       }
-      number -= e.weight;
+
+      number -= event.weight;
     });
   }
 
@@ -296,6 +297,13 @@ class Storylines {
     if(environment === "browser") {
       console.log.apply(console, arguments);
     }
+  }
+
+  /**
+  * Extracted to its own function for easy mocking
+  */
+  random() {
+    return Math.random();
   }
 }
 
