@@ -39,6 +39,7 @@
     {
       "story": "red_planet",
       "event": "arrival",
+      "weight": 1,
       "triggers": {
         "hard": [
           {
@@ -48,6 +49,7 @@
           }
         ]
       },
+      "on_display": [],
       "description": "Welcome onboard, captain.\nWe're ready to go boldly explore when no man has gone before. Do you want to make an announcement to the crew, or should we get started immediately?",
       "actions": {
         "Make an announcement": {
@@ -73,6 +75,7 @@
     {
       "story": "red_planet",
       "event": "announcement",
+      "weight": 1,
       "triggers": {
         "hard": [
           {
@@ -110,6 +113,7 @@
     {
       "story": "red_planet",
       "event": "leaving",
+      "weight": 1,
       "triggers": {
         "hard": [
           {

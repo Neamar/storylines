@@ -79,15 +79,14 @@ class Storylines {
    * then return correct event
    */
   doEventLottery(events) {
-    let sum = events.reduce((sum, e) => sum + (e.weight || 1), 0);
+    let sum = events.reduce((sum, e) => sum + e.weight, 0);
     let number = Math.floor(sum * this.random());
     return events.find(event => {
-      var weight = event.weight || 1;
-      if(number < weight) {
+      if(number < event.weight) {
         return true;
       }
 
-      number -= weight;
+      number -= event.weight;
     });
   }
 
@@ -131,9 +130,7 @@ class Storylines {
   moveToEvent(event) {
     this.currentEvent = event;
 
-    if(event.on_display) {
-      this.applyOperations(event.on_display);
-    }
+    this.applyOperations(event.on_display);
 
     this.callbacks.displayEvent(event, this.respondToEvent.bind(this));
   }
