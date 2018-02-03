@@ -39,15 +39,17 @@
     {
       "story": "red_planet",
       "event": "arrival",
-      "weight": 1,
       "triggers": {
-        "hard": [
-          {
-            "lhs": {"_type": "state", "data":["global", "current_turn"]},
-            "operator": "==",
-            "rhs": 1
-          }
-        ]
+        "hard": {
+          "conditions": [
+            {
+              "lhs": {"_type": "state", "data":["global", "current_turn"]},
+              "operator": "==",
+              "rhs": 1
+            }
+          ],
+          "weight": 1
+        }
       },
       "on_display": [],
       "description": "Welcome onboard, captain.\nWe're ready to go boldly explore when no man has gone before. Do you want to make an announcement to the crew, or should we get started immediately?",
@@ -75,15 +77,17 @@
     {
       "story": "red_planet",
       "event": "announcement",
-      "weight": 1,
       "triggers": {
-        "hard": [
-          {
-            "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
-            "operator": "==",
-            "rhs": true
-          }
-        ]
+        "hard": {
+          "conditions": [
+            {
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
+              "operator": "==",
+              "rhs": true
+            }
+          ],
+          "weight": 1
+        }
       },
       "on_display": [
         {
@@ -113,15 +117,17 @@
     {
       "story": "red_planet",
       "event": "leaving",
-      "weight": 1,
       "triggers": {
-        "hard": [
-          {
-            "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
-            "operator": "==",
-            "rhs": true
-          }
-        ]
+        "hard": {
+          "conditions": [
+            {
+              "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
+              "operator": "==",
+              "rhs": true
+            }
+          ],
+          "weight": 1
+        }
       },
       "on_display": [
         {
