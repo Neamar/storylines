@@ -84,6 +84,30 @@ TEST
         expect(() => event.validateEvent(e)).toThrow(/Hard triggers must include conditions: storyline_slug\/event_slug/i);
       });
 
+      test('should ensure hard triggers weight property is numeric', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          hard: {
+            conditions: [],
+            weight: false
+          }
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
+      });
+
+      test('should accept hard triggers weight numeric property', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          hard: {
+            conditions: [],
+            weight: 15
+          }
+        };
+
+        expect(event.validateEvent(e)).toHaveProperty('triggers.hard.weight', 15);
+      });
+
       test('should ensure soft triggers have a conditions property', () => {
         var e = getBasicEvent();
         e.triggers = {
@@ -102,7 +126,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Soft triggers weight must be numeric: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
       });
 
       test('should accept soft triggers weight numeric property', () => {
