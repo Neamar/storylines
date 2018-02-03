@@ -75,6 +75,21 @@ class Storylines {
   }
 
   /**
+   * Randomly draw a number between 0 and SUM(events.weight),
+   * then return correct event
+   */
+  doEventLottery(events) {
+    let sum = events.reduce((sum, e) => sum + (e.weight || 1), 0);
+    let number = Math.floor(sum * Math.random());
+    return events.find(e => {
+      if(number <= 0) {
+        return true;
+      }
+      number -= e.weight;
+    });
+  }
+
+  /**
    * Displays the next event.
    * If there is at least one hard trigger matching, use it.
    * Otherwise pick one of the soft events
@@ -93,7 +108,8 @@ class Storylines {
     let softEvents = this.listAvailableSoftEvents();
     this.log("Matching soft events: ", hardEvents);
     if(softEvents.length > 0) {
-      this.moveToEvent(softEvents[0]);
+      let softEvent = this.doEventLottery(softEvents);
+      this.moveToEvent(softEvent);
       return;
     }
 
