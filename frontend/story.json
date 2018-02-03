@@ -56,11 +56,6 @@
               "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
               "operator": "=",
               "rhs": true
-            },
-            {
-              "lhs": {"_type": "state", "data":["resources", "morale"]},
-              "operator": "+=",
-              "rhs": 10
             }
           ]
         },
@@ -87,15 +82,22 @@
           }
         ]
       },
+      "on_display": [
+        {
+          "lhs": {"_type": "state", "data":["resources", "morale"]},
+          "operator": "+=",
+          "rhs": 10
+        },
+        {
+          "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
+          "operator": "=",
+          "rhs": false
+        }
+      ],
       "description": "« This is your captain speaking. We're about to embark in a dangerous journey, that will... »\n\nYou pour yourself into the words. As you finish, you notice tears in your First Lieutenant eyes. He wipes them out shamefully, clears his throat and yell to the crew: « Come on, time to go! Time and tide wait for no man... »",
       "actions": {
         "Let's go!": {
           "operations": [
-            {
-              "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
-              "operator": "=",
-              "rhs": false
-            },
             {
               "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
               "operator": "=",
@@ -117,6 +119,13 @@
           }
         ]
       },
+      "on_display": [
+        {
+          "lhs": {"_type": "state", "data":["resources", "energy"]},
+          "operator": "-=",
+          "rhs": 500
+        }
+      ],
       "description": "The spaceship thrusts into the unknown. Soon, you'll be the most well known capitain of mankind. The one that pushed the boundaries and expanded humanity's horizon. Good job."
     }
   ]
