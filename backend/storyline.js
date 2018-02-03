@@ -1,5 +1,5 @@
 "use strict";
-const fs = require("fs");
+// var fs = require("fs");
 
 
 /**
@@ -7,6 +7,7 @@ const fs = require("fs");
  * @return an array of each storyline slug
  */
 function getStorylinesSlugs(storyPath, storylinesFolder) {
+  /*jshint unused:false */
   // TODO, using fs.readdirSync()
   return [];
 }
@@ -17,6 +18,7 @@ function getStorylinesSlugs(storyPath, storylinesFolder) {
  * @return an array of each storyline slug
  */
 function getEventsSlugs(storyPath, storylinesFolder, storylineSlug) {
+  /*jshint unused:false */
   // TODO, using fs.readdirSync() and listing all .md files
   return [];
 }

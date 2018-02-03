@@ -13,11 +13,9 @@ describe("Storylines", () => {
   var stubDisplayEvent = () => {};
   var stubDisplayResources = () => {};
 
-  function getGlobalFooEqualBarState(value) {
+  function getFooEqualBarState(value) {
     return {
-      global: {
-        foo: value || "bar"
-      }
+      foo: value || "bar"
     };
   }
 
@@ -67,7 +65,7 @@ describe("Storylines", () => {
   describe("Conditions and operations", () => {
     describe("resolveStatePath()", () => {
       it("should return parent object and key when statePath exists", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(buildState(['global', 'foo']));
 
@@ -96,13 +94,13 @@ describe("Storylines", () => {
       });
 
       it("should throw when throwOnMissing is true", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(() => stubStoryline.resolveStatePath(buildState(['missing', 'foo']), true)).toThrow(/Trying to access non-existing path/i);
       });
 
       it("should stop with current situation when throwOnMissing is false", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(buildState(['missing', 'foo']));
 
@@ -128,7 +126,7 @@ describe("Storylines", () => {
       });
 
       it("should throw when trying to access something that isn't a state path", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(() => stubStoryline.resolveStatePath("something different")).toThrow(/Must be a state access/i);
       });
@@ -143,19 +141,19 @@ describe("Storylines", () => {
       });
 
       it("should resolve state access", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['global', 'foo']))).toEqual("bar");
       });
 
       it("should resolve invalid state access (last level) to undefined", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['global', 'fizz']))).toBeUndefined();
       });
 
       it("should resolve invalid state access (before last level) to undefined", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['buzz', 'fizz']))).toBeUndefined();
       });
@@ -177,7 +175,7 @@ describe("Storylines", () => {
 
     describe("applyOperation()", () => {
       it("should fail on any operator when missing a value before the last one", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -190,7 +188,7 @@ describe("Storylines", () => {
       });
 
       it("should work on = operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -219,7 +217,7 @@ describe("Storylines", () => {
       });
 
       it("should work on = operator when creating a new value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'fizz']),
@@ -231,7 +229,7 @@ describe("Storylines", () => {
       });
 
       it("should work on += operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -243,7 +241,7 @@ describe("Storylines", () => {
       });
 
       it("should fail on += operator when accessing non existing final value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -274,7 +272,7 @@ describe("Storylines", () => {
       });
 
       it("should work on -= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -286,7 +284,7 @@ describe("Storylines", () => {
       });
 
       it("should fail on -= operator when accessing non existing final value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -300,7 +298,7 @@ describe("Storylines", () => {
       });
 
       it("should work on *= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -312,7 +310,7 @@ describe("Storylines", () => {
       });
 
       it("should work on /= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -324,7 +322,7 @@ describe("Storylines", () => {
       });
 
       it("should work on %= operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState(10);
+        stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
           lhs: buildState(['global', 'foo']),
@@ -336,7 +334,7 @@ describe("Storylines", () => {
       });
 
       it("should fail on unknown operator", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.applyOperation({
@@ -352,7 +350,7 @@ describe("Storylines", () => {
 
     describe("applyOperations()", () => {
       it("should apply all operations", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         var operations = [
           {
             lhs: buildState(["global", "foo"]),
@@ -384,7 +382,7 @@ describe("Storylines", () => {
 
     describe("testCondition()", () => {
       it("should return false on any operator when missing a value", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.testCondition({
@@ -521,7 +519,7 @@ describe("Storylines", () => {
       });
 
       it("should work with state access", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testCondition({
           lhs: buildState(['global', 'foo']),
           operator: "==",
@@ -544,7 +542,7 @@ describe("Storylines", () => {
 
     describe("testConditions()", () => {
       it("should return true if all conditions pass", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testConditions([
           {
             lhs: buildState(['global', 'foo']),
@@ -559,7 +557,7 @@ describe("Storylines", () => {
         ])).toBeTruthy();
       });
       it("should return false if one condition fails", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testConditions([
           {
             lhs: buildState(['global', 'foo']),
@@ -588,31 +586,40 @@ describe("Storylines", () => {
       });
 
       it("should return all matching events", () => {
-        stubStoryline.state = getGlobalFooEqualBarState();
+        stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.events = [
           {
             id: 1,
             triggers: {
-              soft: [
-                {lhs: true, operator: "==", rhs: true}
-              ]
+              soft: {
+                conditions: [
+                  {lhs: true, operator: "==", rhs: true}
+                ],
+                weight: 1
+              }
             }
           },
           {
             id: 2,
             triggers: {
-              soft: [
-                {lhs: "bar", operator: "==", rhs: buildState(["global", "foo"])}
-              ]
+              soft: {
+                conditions: [
+                  {lhs: "bar", operator: "==", rhs: buildState(["global", "foo"])}
+                ],
+                weight: 1
+              }
             }
           },
           {
             id: 3,
             triggers: {
-              soft: [
-                {lhs: true, operator: "==", rhs: false}
-              ]
+              soft: {
+                conditions: [
+                  {lhs: true, operator: "==", rhs: false}
+                ],
+                weight: 1
+              }
             }
           }
         ];
@@ -666,9 +673,56 @@ describe("Storylines", () => {
     });
   });
 
+  describe("respondToEvent()", () => {
+    it("should ensure selected action is available", () => {
+      stubStoryline.currentEvent = {
+        actions: {}
+      };
+
+      expect(() => stubStoryline.respondToEvent("FAKEACTION")).toThrow(/Action FAKEACTION is not available/i);
+    });
+
+    it("should apply operations for specified actions", () => {
+      stubStoryline.currentEvent = {
+        actions: {
+          "OK": {
+            operations: [
+              {
+                lhs: buildState(["global", "action_ok"]),
+                operator: "=",
+                rhs: true
+              }
+            ]
+          }
+        }
+      };
+
+      stubStoryline.nextEvent = jest.fn();
+      stubStoryline.respondToEvent("OK");
+      expect(stubStoryline.state).toHaveProperty("global.action_ok", true);
+    });
+
+    it("should call nextEvent()", () => {
+      stubStoryline.currentEvent = {
+        actions: {
+          "OK": {
+            operations: []
+          }
+        }
+      };
+
+      stubStoryline.nextEvent = jest.fn();
+      stubStoryline.respondToEvent("OK");
+      expect(stubStoryline.nextEvent.mock.calls.length).toBe(1);
+    });
+  });
+
   describe("moveToEvent()", () => {
     it("should save event in currentEvent", () => {
-      var event = {id: 1};
+      var event = {
+        id: 1,
+        on_display: [],
+      };
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.currentEvent).toBe(event);
@@ -677,14 +731,17 @@ describe("Storylines", () => {
     it("should notify displayEvent callback", () => {
       stubStoryline.callbacks.displayEvent = jest.fn();
 
-      var event = {id: 1};
+      var event = {
+        id: 1,
+        on_display: []
+      };
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.callbacks.displayEvent.mock.calls[0][0]).toBe(event);
     });
 
-    it("should apply on_display operations if specified", () => {
+    it("should apply on_display operations", () => {
       var event = {id: 1, on_display: [
         {
           lhs: buildState(['global', 'on_display']),
@@ -697,9 +754,57 @@ describe("Storylines", () => {
 
       expect(stubStoryline.state).toHaveProperty('global.on_display', true);
     });
+
+    it("should store event in a Set if repeatable is false", () => {
+      var event = {
+        id: 1,
+        on_display: [],
+        story: "fake",
+        event: "event-1",
+        repeatable: false
+      };
+
+      stubStoryline.moveToEvent(event);
+      expect(stubStoryline.state.viewed_events.has(stubStoryline.getEventSlug(event))).toBeTruthy();
+    });
+
+    it("should not store event if repeatable is true", () => {
+      var event = {
+        id: 1,
+        on_display: [],
+        story: "fake",
+        event: "event-1",
+        repeatable: true
+      };
+
+      stubStoryline.moveToEvent(event);
+      expect(stubStoryline.state.viewed_events.entries).toHaveProperty('length', 0);
+    });
   });
 
   describe("nextEvent()", () => {
+    var simpleMatchingEvent = function(id, triggerType) {
+      var event = {
+        id: id,
+        story: "fake",
+        event: "event-" + id,
+        triggers: {}
+      };
+
+      event.triggers[triggerType] = {
+        conditions: [
+          {
+            lhs: true,
+            operator: "==",
+            rhs: true
+          }
+        ],
+        weight: 1
+      };
+
+      return event;
+    };
+
     it("should throw when no events are available", () => {
       stubStoryline.events = [];
 
@@ -712,13 +817,16 @@ describe("Storylines", () => {
       stubStoryline.events = [{
         id: 1,
         triggers: {
-          soft: [
-            {
-              lhs: buildState(["global", "no_events_available"]),
-              operator: "==",
-              rhs: true
-            }
-          ]
+          soft: {
+            conditions: [
+              {
+                lhs: buildState(["global", "no_events_available"]),
+                operator: "==",
+                rhs: true
+              }
+            ],
+            weight: 1
+          }
         }
       }];
 
@@ -733,70 +841,81 @@ describe("Storylines", () => {
 
     it("should return hard triggers before soft triggers", () => {
       stubStoryline.events = [
-      {
-        id: 1,
-        triggers: {
-          soft: [
-            {
-              lhs: true,
-              operator: "==",
-              rhs: true
-            }
-          ]
-        }
-      },
-      {
-        id: 2,
-        triggers: {
-          hard: [
-            {
-              lhs: true,
-              operator: "==",
-              rhs: true
-            }
-          ]
-        }
-      }];
+        simpleMatchingEvent(1, "soft"),
+        simpleMatchingEvent(2, "hard"),
+      ];
 
       stubStoryline.moveToEvent = jest.fn();
 
       stubStoryline.nextEvent();
       expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
+    });
+
+    it("should increment current_turn counter", () => {
+      stubStoryline.events = [
+        simpleMatchingEvent(1, "soft"),
+      ];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
       expect(stubStoryline.state.global.current_turn).toBe(1);
+    });
+
+    it("should not set no_events_available when events are available", () => {
+      stubStoryline.events = [
+        simpleMatchingEvent(1, "soft"),
+      ];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
       expect(stubStoryline.state.global.no_events_available).toBeFalsy();
     });
 
     it("should return soft triggers when there is no matching hard triggers", () => {
       stubStoryline.events = [
-      {
-        id: 1,
-        triggers: {
-          soft: [
-            {
-              lhs: true,
-              operator: "==",
-              rhs: true
-            }
-          ]
-        }
-      }];
+        simpleMatchingEvent(1, "soft"),
+      ];
 
       stubStoryline.moveToEvent = jest.fn();
 
       stubStoryline.nextEvent();
       expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
-      expect(stubStoryline.state.global.current_turn).toBe(1);
-      expect(stubStoryline.state.global.no_events_available).toBeFalsy();
+    });
+
+    it("should skip events already displayed", () => {
+      stubStoryline.events = [
+        simpleMatchingEvent(1, "hard"),
+        simpleMatchingEvent(2, "soft"),
+      ];
+      stubStoryline.state.viewed_events.add(stubStoryline.getEventSlug(stubStoryline.events[0]));
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
+      expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
     });
   });
 
   describe("doEventLottery()", () => {
+    function generateEventWithWeight(weight) {
+      return {
+        triggers: {
+          soft: {
+            weight: weight
+          }
+        }
+      };
+    }
+
     it("should do a lottery", () => {
       var events = [
-        {weight: 1},
-        {weight: 1},
+        generateEventWithWeight(1),
+        generateEventWithWeight(1),
       ];
 
       stubStoryline.random = () => 0;
@@ -805,7 +924,7 @@ describe("Storylines", () => {
 
     it("should work with only one event", () => {
       var events = [
-        {weight: 1},
+        generateEventWithWeight(1),
       ];
 
       stubStoryline.random = () => 0;
@@ -814,17 +933,17 @@ describe("Storylines", () => {
 
     it("should do a lottery based on weights", () => {
       var events = [
-        {weight: 1},
-        {weight: 10},
+        generateEventWithWeight(1),
+        generateEventWithWeight(10),
       ];
 
       stubStoryline.random = () => 0.5;
       expect(stubStoryline.doEventLottery(events)).toBe(events[1]);
 
       events = [
-        {weight: 1},
-        {weight: 10},
-        {weight: 1},
+        generateEventWithWeight(1),
+        generateEventWithWeight(10),
+        generateEventWithWeight(1),
       ];
 
       stubStoryline.random = () => 0.5;
