@@ -594,25 +594,34 @@ describe("Storylines", () => {
           {
             id: 1,
             triggers: {
-              soft: [
-                {lhs: true, operator: "==", rhs: true}
-              ]
+              soft: {
+                conditions: [
+                  {lhs: true, operator: "==", rhs: true}
+                ],
+                weight: 1
+              }
             }
           },
           {
             id: 2,
             triggers: {
-              soft: [
-                {lhs: "bar", operator: "==", rhs: buildState(["global", "foo"])}
-              ]
+              soft: {
+                conditions: [
+                  {lhs: "bar", operator: "==", rhs: buildState(["global", "foo"])}
+                ],
+                weight: 1
+              }
             }
           },
           {
             id: 3,
             triggers: {
-              soft: [
-                {lhs: true, operator: "==", rhs: false}
-              ]
+              soft: {
+                conditions: [
+                  {lhs: true, operator: "==", rhs: false}
+                ],
+                weight: 1
+              }
             }
           }
         ];
@@ -668,7 +677,10 @@ describe("Storylines", () => {
 
   describe("moveToEvent()", () => {
     it("should save event in currentEvent", () => {
-      var event = {id: 1};
+      var event = {
+        id: 1,
+        on_display: [],
+      };
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.currentEvent).toBe(event);
@@ -677,7 +689,10 @@ describe("Storylines", () => {
     it("should notify displayEvent callback", () => {
       stubStoryline.callbacks.displayEvent = jest.fn();
 
-      var event = {id: 1};
+      var event = {
+        id: 1,
+        on_display: []
+      };
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
@@ -712,13 +727,16 @@ describe("Storylines", () => {
       stubStoryline.events = [{
         id: 1,
         triggers: {
-          soft: [
-            {
-              lhs: buildState(["global", "no_events_available"]),
-              operator: "==",
-              rhs: true
-            }
-          ]
+          soft: {
+            conditions: [
+              {
+                lhs: buildState(["global", "no_events_available"]),
+                operator: "==",
+                rhs: true
+              }
+            ],
+            weight: 1
+          }
         }
       }];
 
@@ -736,25 +754,31 @@ describe("Storylines", () => {
       {
         id: 1,
         triggers: {
-          soft: [
-            {
-              lhs: true,
-              operator: "==",
-              rhs: true
-            }
-          ]
+          soft: {
+            conditions: [
+              {
+                lhs: true,
+                operator: "==",
+                rhs: true
+              }
+            ],
+            weight: 1
+          }
         }
       },
       {
         id: 2,
         triggers: {
-          hard: [
-            {
-              lhs: true,
-              operator: "==",
-              rhs: true
-            }
-          ]
+          hard: {
+            conditions: [
+              {
+                lhs: true,
+                operator: "==",
+                rhs: true
+              }
+            ],
+            weight: 1
+          }
         }
       }];
 
@@ -772,13 +796,16 @@ describe("Storylines", () => {
       {
         id: 1,
         triggers: {
-          soft: [
-            {
-              lhs: true,
-              operator: "==",
-              rhs: true
-            }
-          ]
+          soft: {
+            weight: 1,
+            conditions: [
+              {
+                lhs: true,
+                operator: "==",
+                rhs: true
+              }
+            ]
+          }
         }
       }];
 
@@ -793,10 +820,20 @@ describe("Storylines", () => {
   });
 
   describe("doEventLottery()", () => {
+    function generateEventWithWeight(weight) {
+      return {
+        triggers: {
+          soft: {
+            weight: weight
+          }
+        }
+      };
+    }
+
     it("should do a lottery", () => {
       var events = [
-        {weight: 1},
-        {weight: 1},
+        generateEventWithWeight(1),
+        generateEventWithWeight(1),
       ];
 
       stubStoryline.random = () => 0;
@@ -805,7 +842,7 @@ describe("Storylines", () => {
 
     it("should work with only one event", () => {
       var events = [
-        {weight: 1},
+        generateEventWithWeight(1),
       ];
 
       stubStoryline.random = () => 0;
@@ -814,17 +851,17 @@ describe("Storylines", () => {
 
     it("should do a lottery based on weights", () => {
       var events = [
-        {weight: 1},
-        {weight: 10},
+        generateEventWithWeight(1),
+        generateEventWithWeight(10),
       ];
 
       stubStoryline.random = () => 0.5;
       expect(stubStoryline.doEventLottery(events)).toBe(events[1]);
 
       events = [
-        {weight: 1},
-        {weight: 10},
-        {weight: 1},
+        generateEventWithWeight(1),
+        generateEventWithWeight(10),
+        generateEventWithWeight(1),
       ];
 
       stubStoryline.random = () => 0.5;

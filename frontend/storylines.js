@@ -62,7 +62,7 @@ class Storylines {
       }
 
       // Otherwise, return true if all conditions pass
-      return this.testConditions(e.triggers[triggerType]);
+      return this.testConditions(e.triggers[triggerType].conditions);
     });
   }
 
@@ -79,14 +79,14 @@ class Storylines {
    * then return correct event
    */
   doEventLottery(events) {
-    let sum = events.reduce((sum, e) => sum + e.weight, 0);
+    let sum = events.reduce((sum, e) => sum + e.triggers.soft.weight, 0);
     let number = Math.floor(sum * this.random());
     return events.find(event => {
-      if(number < event.weight) {
+      if(number < event.triggers.soft.weight) {
         return true;
       }
 
-      number -= event.weight;
+      number -= event.triggers.soft.weight;
     });
   }
 
