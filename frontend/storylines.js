@@ -307,6 +307,7 @@ class Storylines {
   }
 
   log() {
+    /* istanbul ignore next */
     if(environment === "browser") {
       console.log.apply(console, arguments);
     }
@@ -326,5 +327,6 @@ try {
   module.exports = Storylines;
   environment = "node";
 } catch(e) {
+  /* istanbul ignore next */
   environment = "browser";
 }
