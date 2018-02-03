@@ -699,7 +699,7 @@ describe("Storylines", () => {
       expect(stubStoryline.callbacks.displayEvent.mock.calls[0][0]).toBe(event);
     });
 
-    it("should apply on_display operations if specified", () => {
+    it("should apply on_display operations", () => {
       var event = {id: 1, on_display: [
         {
           lhs: buildState(['global', 'on_display']),
@@ -715,6 +715,26 @@ describe("Storylines", () => {
   });
 
   describe("nextEvent()", () => {
+    var simpleMatchingEvent = function(id, triggerType) {
+      var event = {
+        id: id,
+        triggers: {}
+      };
+
+      event.triggers[triggerType] = {
+        conditions: [
+          {
+            lhs: true,
+            operator: "==",
+            rhs: true
+          }
+        ],
+        weight: 1
+      };
+
+      return event;
+    };
+
     it("should throw when no events are available", () => {
       stubStoryline.events = [];
 
@@ -751,63 +771,56 @@ describe("Storylines", () => {
 
     it("should return hard triggers before soft triggers", () => {
       stubStoryline.events = [
-      {
-        id: 1,
-        triggers: {
-          soft: {
-            conditions: [
-              {
-                lhs: true,
-                operator: "==",
-                rhs: true
-              }
-            ],
-            weight: 1
-          }
-        }
-      },
-      {
-        id: 2,
-        triggers: {
-          hard: {
-            conditions: [
-              {
-                lhs: true,
-                operator: "==",
-                rhs: true
-              }
-            ],
-            weight: 1
-          }
-        }
-      }];
+        simpleMatchingEvent(1, "soft"),
+        simpleMatchingEvent(2, "hard"),
+      ];
 
       stubStoryline.moveToEvent = jest.fn();
 
       stubStoryline.nextEvent();
       expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
+    });
+
+
+    it("should increment current_turn counter", () => {
+      stubStoryline.events = [
+        simpleMatchingEvent(1, "soft"),
+      ];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
       expect(stubStoryline.state.global.current_turn).toBe(1);
+    });
+
+    it("should not set no_events_available when events are available", () => {
+      stubStoryline.events = [
+        simpleMatchingEvent(1, "soft"),
+      ];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
       expect(stubStoryline.state.global.no_events_available).toBeFalsy();
     });
 
     it("should return soft triggers when there is no matching hard triggers", () => {
       stubStoryline.events = [
-      {
-        id: 1,
-        triggers: {
-          soft: {
-            weight: 1,
-            conditions: [
-              {
-                lhs: true,
-                operator: "==",
-                rhs: true
-              }
-            ]
-          }
-        }
-      }];
+        simpleMatchingEvent(1, "soft"),
+      ];
+
+      stubStoryline.moveToEvent = jest.fn();
+
+      stubStoryline.nextEvent();
+      expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
+    });
+
+    it("should store viewed events in a list if repeatable is false", () => {
+      stubStoryline.events = [
+        simpleMatchingEvent(1, "soft"),
+      ];
 
       stubStoryline.moveToEvent = jest.fn();
 
@@ -817,6 +830,7 @@ describe("Storylines", () => {
       expect(stubStoryline.state.global.current_turn).toBe(1);
       expect(stubStoryline.state.global.no_events_available).toBeFalsy();
     });
+
   });
 
   describe("doEventLottery()", () => {
