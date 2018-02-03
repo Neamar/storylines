@@ -40,7 +40,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
  */
 function validateEvent(eventObject) {
   // TODO
-  helpers.validateKeyType(eventObject, "", "string", "")
+  helpers.validateKeyType(eventObject, "", "string", "");
   return jsonifiedYml;
 }
 

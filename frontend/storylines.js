@@ -29,6 +29,7 @@ class Storylines {
 
     // Clone default state
     this.state = Object.assign({}, story.default_state);
+    this.state.viewed_events = new Set();
 
 
     // Save functions to interact with UI
@@ -61,8 +62,13 @@ class Storylines {
         return false;
       }
 
+      // Discard if event has repeatable=false and is already in viewed_events
+      if(!e.repeatable && this.state.viewed_events.has(this.getEventSlug(e))) {
+        return false;
+      }
+
       // Otherwise, return true if all conditions pass
-      return this.testConditions(e.triggers[triggerType]);
+      return this.testConditions(e.triggers[triggerType].conditions);
     });
   }
 
@@ -79,14 +85,14 @@ class Storylines {
    * then return correct event
    */
   doEventLottery(events) {
-    let sum = events.reduce((sum, e) => sum + e.weight, 0);
+    let sum = events.reduce((sum, e) => sum + e.triggers.soft.weight, 0);
     let number = Math.floor(sum * this.random());
     return events.find(event => {
-      if(number < event.weight) {
+      if(number < event.triggers.soft.weight) {
         return true;
       }
 
-      number -= event.weight;
+      number -= event.triggers.soft.weight;
     });
   }
 
@@ -133,6 +139,11 @@ class Storylines {
     this.applyOperations(event.on_display);
 
     this.callbacks.displayEvent(event, this.respondToEvent.bind(this));
+
+    if(!event.repeatable) {
+      // Event isn't repeatable, store it in a Set to make sure we don't pick it again.
+      this.state.viewed_events.add(this.getEventSlug(event));
+    }
   }
 
   /**
@@ -289,6 +300,10 @@ class Storylines {
         };
       }
     }
+  }
+
+  getEventSlug(event) {
+    return event.story + "/" + event.event;
   }
 
   log() {
