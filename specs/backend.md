@@ -121,9 +121,11 @@ An event file looks like this:
 ---
 triggers:
     hard:
+        weight: 1
         conditions:
             - [[CONDITION]]
     soft:
+        weight: 1
         conditions:
             - [[CONDITION]]
 on_display:
@@ -146,6 +148,7 @@ Here are the possible keys:
 * `triggers`, an object which **must** contain at least one `soft` of `hard` subkey, or can contain both.
     - `hard`, an object. The only available key within this object is:
         + `conditions`, an array of conditions. If multiple conditions are present, they are **AND**ed together. See "Conditions & operations" below for details.
+        + `weight`, an integer, defaults to 1. If more than one event have a matching hard trigger during event selection, the event with the higher `weight` will be displayed to the user.
     - `soft`, an object. Available keys are:
         + `conditions`, a list of conditions. If multiple conditions are present, they are **AND**ed together. See "Conditions & operations" below for details.
         + `weight`, an integer, defaults to 1. Any value higher than 1 will mean this event has more probability to appear to the user (10 means this event counts for 10 in the lottery)
