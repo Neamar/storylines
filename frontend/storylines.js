@@ -2,7 +2,25 @@ var environment;
 
 
 class Storylines {
-  constructor(story, displayEvent, displayResources) {
+  /**
+   * story: a valid JSON story, as specified in https://github.com/Neamar/storylines/blob/master/specs/backend.md
+   * callbacks: an object with the callbacks that will be used to communicate with the UI.
+   *    Required keys: displayEvent, displayResources
+   */
+  constructor(story, callbacks) {
+    if(!story) {
+      throw new Error("Story is required");
+    }
+    if(!callbacks) {
+      throw new Error("Callbacks object is required");
+    }
+
+    ['displayEvent', 'displayResources'].forEach((k) => {
+      if(!callbacks[k]) {
+        throw new Error("Missing required callback: " + k);
+      }
+    });
+
     this.story = story;
     this.events = story.events;
     this.resources = story.resources;
@@ -12,9 +30,9 @@ class Storylines {
     // Clone default state
     this.state = Object.assign({}, story.default_state);
 
+
     // Save functions to interact with UI
-    this.displayEvent = displayEvent;
-    this.displayResources = displayResources;
+    this.callbacks = callbacks;
 
     // Start game
     this.updateResourcesUI();
@@ -29,7 +47,7 @@ class Storylines {
   }
 
   updateResourcesUI() {
-    this.displayResources(this.resources, this.state.resources);
+    this.callbacks.displayResources(this.resources, this.state.resources);
   }
 
   /**
@@ -57,6 +75,23 @@ class Storylines {
   }
 
   /**
+   * Randomly draw a number between 0 and SUM(events.weight),
+   * then return correct event
+   */
+  doEventLottery(events) {
+    let sum = events.reduce((sum, e) => sum + (e.weight || 1), 0);
+    let number = Math.floor(sum * this.random());
+    return events.find(event => {
+      var weight = event.weight || 1;
+      if(number < weight) {
+        return true;
+      }
+
+      number -= weight;
+    });
+  }
+
+  /**
    * Displays the next event.
    * If there is at least one hard trigger matching, use it.
    * Otherwise pick one of the soft events
@@ -75,7 +110,8 @@ class Storylines {
     let softEvents = this.listAvailableSoftEvents();
     this.log("Matching soft events: ", hardEvents);
     if(softEvents.length > 0) {
-      this.moveToEvent(softEvents[0]);
+      let softEvent = this.doEventLottery(softEvents);
+      this.moveToEvent(softEvent);
       return;
     }
 
@@ -94,7 +130,12 @@ class Storylines {
    */
   moveToEvent(event) {
     this.currentEvent = event;
-    this.displayEvent(event, this.respondToEvent.bind(this));
+
+    if(event.on_display) {
+      this.applyOperations(event.on_display);
+    }
+
+    this.callbacks.displayEvent(event, this.respondToEvent.bind(this));
   }
 
   /**
@@ -148,6 +189,7 @@ class Storylines {
 
   applyOperations(operations) {
     operations.forEach(o => this.applyOperation(o));
+    this.updateResourcesUI();
   }
 
   /**
@@ -256,6 +298,13 @@ class Storylines {
     if(environment === "browser") {
       console.log.apply(console, arguments);
     }
+  }
+
+  /**
+  * Extracted to its own function for easy mocking
+  */
+  random() {
+    return Math.random();
   }
 }
 
