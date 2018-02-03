@@ -137,6 +137,7 @@ actions:
     "Action name 2":
         operations:
             - [[OPERATION]]
+repeatable: false
 ---
 
 Potentially multi-line, markdown description of your event
@@ -155,6 +156,7 @@ Here are the possible keys:
 * `on_display`, a list of operations that will be applied when this action is displayed to the *Reader*. See "Conditions & operations" below for details.
 * `actions`, an object of available actions for the *Reader*. The only time when this object can be empty is for end events, to finish the story. Each action key is the name that will be displayed. Within this key:
     - `operations`, a list of operations that will be applied if this action is chosen. See "Conditions & operations" below for details.
+* `repeatable`, a boolean, defaults to `false`. A non-repeatable event is guaranteed to only be displayed once to the user.
 
 ## Conditions & operations
 ### Conditions

@@ -371,6 +371,32 @@ TEST
         expect(event.parseEvent(e)).toEqual(expected);
       });
     });
+
+    describe("repeatable parsing", () => {
+      test("should accept missing repeatable key", () => {
+        var e = getBasicEvent();
+        var expected = getBasicEvent();
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+
+      test('should ensure repeatable is a boolean', () => {
+        var e = getBasicEvent();
+        e.repeatable = "LOL";
+
+        expect(() => event.validateEvent(e)).toThrow(/repeatable must be a boolean: storyline_slug\/event_slug/i);
+      });
+
+      test('should save repeatable when it is specified', () => {
+        var e = getBasicEvent();
+        e.repeatable = true;
+
+        var expected = getBasicEvent();
+        expected.repeatable = true;
+
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+    });
+
   });
 
   describe("getEvent()", function() {
