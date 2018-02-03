@@ -803,6 +803,15 @@ describe("Storylines", () => {
       expect(stubStoryline.doEventLottery(events)).toBe(events[0]);
     });
 
+    it("should work with only one event", () => {
+      var events = [
+        {weight: 1},
+      ];
+
+      stubStoryline.random = () => 0;
+      expect(stubStoryline.doEventLottery(events)).toBe(events[0]);
+    });
+
     it("should do a lottery based on weights", () => {
       var events = [
         {weight: 1},

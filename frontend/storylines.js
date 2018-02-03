@@ -82,11 +82,12 @@ class Storylines {
     let sum = events.reduce((sum, e) => sum + (e.weight || 1), 0);
     let number = Math.floor(sum * this.random());
     return events.find(event => {
-      if(number < event.weight) {
+      var weight = event.weight || 1;
+      if(number < weight) {
         return true;
       }
 
-      number -= event.weight;
+      number -= weight;
     });
   }
 
