@@ -17,6 +17,7 @@ function readEvent(storyPath, storylineSlug, eventSlug) {
  * @return event object
  */
 function buildEvent(eventContent) {
+  /*jshint unused:false */
   // TODO
   return {};
 }

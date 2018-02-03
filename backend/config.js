@@ -17,6 +17,7 @@ function readStoryConfig(storyPath, storyConfigFile) {
  * @return config object
  */
 function buildStoryConfig(configContent) {
+  /*jshint unused:false */
   // TODO
   return {};
 }
