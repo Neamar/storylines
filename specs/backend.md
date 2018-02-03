@@ -115,17 +115,21 @@ In a *Storyline* folder (`/storylines/{storyline-slug}/`), the *Story writer* wi
 
 The event file name **must** be a proper slug (no special characters, must start with an alpha character, all lower cased, spaces replaced by the `_` symbol). Extension for event file is `.md`.
 
-An event file **must** contain the following keys:
+An event file looks like this:
 
 ```yaml
 ---
 triggers:
     hard:
+        weight: 1
         conditions:
             - [[CONDITION]]
     soft:
+        weight: 1
         conditions:
             - [[CONDITION]]
+on_display:
+    - [[OPERATION]]
 actions:
     "Action name 1":
         operations:
@@ -133,20 +137,26 @@ actions:
     "Action name 2":
         operations:
             - [[OPERATION]]
+repeatable: false
 ---
 
 Potentially multi-line, markdown description of your event
 ```
 
+At least one of `triggers.hard` or `triggers.soft` must be set.
+
 Here are the possible keys:
 * `triggers`, an object which **must** contain at least one `soft` of `hard` subkey, or can contain both.
     - `hard`, an object. The only available key within this object is:
         + `conditions`, an array of conditions. If multiple conditions are present, they are **AND**ed together. See "Conditions & operations" below for details.
+        + `weight`, an integer, defaults to 1. If more than one event have a matching hard trigger during event selection, the event with the higher `weight` will be displayed to the user.
     - `soft`, an object. Available keys are:
-        + `conditions`, an array of conditions. If multiple conditions are present, they are **AND**ed together. See "Conditions & operations" below for details.
+        + `conditions`, a list of conditions. If multiple conditions are present, they are **AND**ed together. See "Conditions & operations" below for details.
         + `weight`, an integer, defaults to 1. Any value higher than 1 will mean this event has more probability to appear to the user (10 means this event counts for 10 in the lottery)
+* `on_display`, a list of operations that will be applied when this action is displayed to the *Reader*. See "Conditions & operations" below for details.
 * `actions`, an object of available actions for the *Reader*. The only time when this object can be empty is for end events, to finish the story. Each action key is the name that will be displayed. Within this key:
     - `operations`, a list of operations that will be applied if this action is chosen. See "Conditions & operations" below for details.
+* `repeatable`, a boolean, defaults to `false`. A non-repeatable event is guaranteed to only be displayed once to the user.
 
 ## Conditions & operations
 ### Conditions
@@ -241,6 +251,6 @@ It is one big JSON containing all the data properly formatted.
 All the keys from the *Story Config* are first-level keys in the *Story bundle* (`version`, `story_title`, ...). The config FrontMatter content is stored under `story_description`.
 
 In addition, a key named `events` holds an array of all the storylines. Similarly to the config, every event YML file is converted to JSON (with shorthand modifiers replaced), with an additional `storyline` key containing the current storyline slug, and `event` key containing the current event slug. The event FrontMatter content is stored under `description`.
-Conditions and operations are parsend and stored in a structure containing `lhs`, `operator` and `rhs`. Items accessing the state are stored as an array, with the first item being an `@` to differentiate them from standard arrays: `['@', 'global', 'foo']`.
+Conditions and operations are parsed and stored in a structure containing `lhs`, `operator` and `rhs`. Items accessing the state are stored as an array, with the first item being an `@` to differentiate them from standard arrays: `['@', 'global', 'foo']`.
 
 Finally, a key named `default_state` contains the default state documented above for the current story.

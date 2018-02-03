@@ -4,7 +4,22 @@ const event = require('../event');
 
 describe("event file", () => {
   function getBasicEvent() {
-    return {description: "Description", event: 'event_slug', storyline: 'storyline_slug'};
+    return {
+      description: "Description",
+      event: 'event_slug',
+      storyline: 'storyline_slug'
+    };
+  }
+
+  function getBasicExpectedEvent() {
+    return {
+      description: "Description",
+      event: 'event_slug',
+      storyline: 'storyline_slug',
+      repeatable: false,
+      on_display: [],
+      weight: 1
+    };
   }
 
   describe("readEvent()", () => {
@@ -62,7 +77,7 @@ TEST
     });
 
     test('should work with the most basic event', () => {
-      expect(event.validateEvent(getBasicEvent())).toEqual(getBasicEvent());
+      expect(event.validateEvent(getBasicEvent())).toEqual(getBasicExpectedEvent());
     });
 
     describe("Trigger validation", () => {
@@ -84,6 +99,30 @@ TEST
         expect(() => event.validateEvent(e)).toThrow(/Hard triggers must include conditions: storyline_slug\/event_slug/i);
       });
 
+      test('should ensure hard triggers weight property is numeric', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          hard: {
+            conditions: [],
+            weight: false
+          }
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
+      });
+
+      test('should accept hard triggers weight numeric property', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          hard: {
+            conditions: [],
+            weight: 15
+          }
+        };
+
+        expect(event.validateEvent(e)).toHaveProperty('triggers.hard.weight', 15);
+      });
+
       test('should ensure soft triggers have a conditions property', () => {
         var e = getBasicEvent();
         e.triggers = {
@@ -102,7 +141,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Soft triggers weight must be numeric: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
       });
 
       test('should accept soft triggers weight numeric property', () => {
@@ -141,6 +180,22 @@ TEST
     });
   });
 
+  describe("on_display operations", () => {
+    test('should accept empty on_display', () => {
+      var e = getBasicEvent();
+      expect(event.validateEvent(e)).toHaveProperty("event", e.event);
+    });
+
+    test('should ensure on_display operations is an array', () => {
+      var e = getBasicEvent();
+      e.on_display = {
+        operations: false
+      };
+
+      expect(() => event.validateEvent(e)).toThrow(/on_display operations must be an array: storyline_slug\/event_slug/i);
+    });
+  });
+
   describe("parseEvent()", () => {
     describe("Trigger parsing", () => {
       test('should parse enclosed soft conditions', () => {
@@ -153,7 +208,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           soft: {
             conditions: [
@@ -180,7 +235,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           hard: {
             conditions: [
@@ -212,7 +267,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           soft: {
             conditions: [
@@ -234,6 +289,38 @@ TEST
       });
     });
 
+    describe("on_display parsing", () => {
+      test("should accept missing on_display key", () => {
+        var e = getBasicEvent();
+        var expected = getBasicExpectedEvent();
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+
+      test('should parse enclosed operations', () => {
+        var e = getBasicEvent();
+        e.on_display = [
+          'global.something = true',
+          'resources.foo += 150'
+        ];
+
+        var expected = getBasicExpectedEvent();
+        expected.on_display = [
+          {
+            lhs: ['@', 'global', 'something'],
+            operator: '=',
+            rhs: true
+          },
+          {
+            lhs: ['@', 'resources', 'foo'],
+            operator: '+=',
+            rhs: 150
+          },
+        ];
+
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+    });
+
     describe("Actions parsing", () => {
       test('should parse enclosed operations', () => {
         var e = getBasicEvent();
@@ -246,7 +333,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.actions = {
           OK: {
             operations: [
@@ -278,7 +365,7 @@ TEST
           }
         };
 
-        var expected = getBasicEvent();
+        var expected = getBasicExpectedEvent();
         expected.triggers = {
           soft: {
             conditions: [
@@ -299,6 +386,32 @@ TEST
         expect(event.parseEvent(e)).toEqual(expected);
       });
     });
+
+    describe("repeatable parsing", () => {
+      test("should accept missing repeatable key", () => {
+        var e = getBasicEvent();
+        var expected = getBasicExpectedEvent();
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+
+      test('should ensure repeatable is a boolean', () => {
+        var e = getBasicEvent();
+        e.repeatable = "LOL";
+
+        expect(() => event.validateEvent(e)).toThrow(/repeatable must be a boolean: storyline_slug\/event_slug/i);
+      });
+
+      test('should save repeatable when it is specified', () => {
+        var e = getBasicEvent();
+        e.repeatable = true;
+
+        var expected = getBasicExpectedEvent();
+        expected.repeatable = true;
+
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+    });
+
   });
 
   describe("getEvent()", function() {
@@ -332,5 +445,4 @@ TEST
       });
     });
   });
-
 });

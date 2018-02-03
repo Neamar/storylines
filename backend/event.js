@@ -52,6 +52,7 @@ function validateEvent(eventObject) {
  * @throws on invalid event
  */
 function parseEvent(jsonifiedYml) {
+
   // TODO
   return jsonifiedYml;
 }
