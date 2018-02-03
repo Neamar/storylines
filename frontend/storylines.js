@@ -157,7 +157,7 @@ class Storylines {
     let operations = this.currentEvent.actions[action].operations;
     this.applyOperations(operations);
 
-    console.log(`Event ${this.currentEvent.event}: selected ${action}`, this.state);
+    this.log(`Event ${this.currentEvent.event}: selected ${action}`, this.state);
     this.nextEvent();
   }
 

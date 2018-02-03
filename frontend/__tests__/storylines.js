@@ -673,6 +673,50 @@ describe("Storylines", () => {
     });
   });
 
+  describe("respondToEvent()", () => {
+    it("should ensure selected action is available", () => {
+      stubStoryline.currentEvent = {
+        actions: {}
+      };
+
+      expect(() => stubStoryline.respondToEvent("FAKEACTION")).toThrow(/Action FAKEACTION is not available/i);
+    });
+
+    it("should apply operations for specified actions", () => {
+      stubStoryline.currentEvent = {
+        actions: {
+          "OK": {
+            operations: [
+              {
+                lhs: buildState(["global", "action_ok"]),
+                operator: "=",
+                rhs: true
+              }
+            ]
+          }
+        }
+      };
+
+      stubStoryline.nextEvent = jest.fn();
+      stubStoryline.respondToEvent("OK");
+      expect(stubStoryline.state).toHaveProperty("global.action_ok", true);
+    });
+
+    it("should call nextEvent()", () => {
+      stubStoryline.currentEvent = {
+        actions: {
+          "OK": {
+            operations: []
+          }
+        }
+      };
+
+      stubStoryline.nextEvent = jest.fn();
+      stubStoryline.respondToEvent("OK");
+      expect(stubStoryline.nextEvent.mock.calls.length).toBe(1);
+    });
+  });
+
   describe("moveToEvent()", () => {
     it("should save event in currentEvent", () => {
       var event = {
