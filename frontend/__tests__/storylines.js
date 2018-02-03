@@ -17,7 +17,8 @@ describe("Storylines", () => {
     return {
       global: {
         foo: value || "bar"
-      }
+      },
+      viewed_events: new Set()
     };
   }
 
@@ -712,12 +713,40 @@ describe("Storylines", () => {
 
       expect(stubStoryline.state).toHaveProperty('global.on_display', true);
     });
+
+    it("should store event in a Set if repeatable is false", () => {
+      var event = {
+        id: 1,
+        on_display: [],
+        story: "fake",
+        event: "event-1",
+        repeatable: false
+      };
+
+      stubStoryline.moveToEvent(event);
+      expect(stubStoryline.state.viewed_events.has(stubStoryline.getEventSlug(event))).toBeTruthy();
+    });
+
+    it("should not store event if repeatable is true", () => {
+      var event = {
+        id: 1,
+        on_display: [],
+        story: "fake",
+        event: "event-1",
+        repeatable: true
+      };
+
+      stubStoryline.moveToEvent(event);
+      expect(stubStoryline.state.viewed_events.entries).toHaveProperty('length', 0);
+    });
   });
 
   describe("nextEvent()", () => {
     var simpleMatchingEvent = function(id, triggerType) {
       var event = {
         id: id,
+        story: "fake",
+        event: "event-" + id,
         triggers: {}
       };
 
@@ -782,7 +811,6 @@ describe("Storylines", () => {
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
     });
 
-
     it("should increment current_turn counter", () => {
       stubStoryline.events = [
         simpleMatchingEvent(1, "soft"),
@@ -817,20 +845,19 @@ describe("Storylines", () => {
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
     });
 
-    it("should store viewed events in a list if repeatable is false", () => {
+    it("should skip events already displayed", () => {
       stubStoryline.events = [
-        simpleMatchingEvent(1, "soft"),
+        simpleMatchingEvent(1, "hard"),
+        simpleMatchingEvent(2, "soft"),
       ];
+      stubStoryline.state.viewed_events.add(stubStoryline.getEventSlug(stubStoryline.events[0]));
 
       stubStoryline.moveToEvent = jest.fn();
 
       stubStoryline.nextEvent();
       expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
-      expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
-      expect(stubStoryline.state.global.current_turn).toBe(1);
-      expect(stubStoryline.state.global.no_events_available).toBeFalsy();
+      expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
     });
-
   });
 
   describe("doEventLottery()", () => {
