@@ -24,6 +24,7 @@ const ARG_STATE_LEVEL_STORYLINES        = ["storylines", "s"];
 const ARG_STATE_LEVEL_CURRENT_STORYLINE = ["sl"]; // This is replaced in the handling code
 const ARG_STATE_FIRST_LEVEL = ARG_STATE_LEVEL_GLOBAL.concat(ARG_STATE_LEVEL_RESOURCES).concat(ARG_STATE_LEVEL_STORYLINES).concat(ARG_STATE_LEVEL_CURRENT_STORYLINE);
 
+const SLUG_REGEX = /^[a-z][a-z0-9_]*$/;
 
 function strip(stripList, string) {
   var beginIndex = 0;
@@ -43,7 +44,7 @@ function strip(stripList, string) {
 
 
 function isSlug(potentialSlug) {
-  return potentialSlug.match(/^[a-z][a-z0-9_]*$/);
+  return potentialSlug.match(SLUG_REGEX);
 }
 
 
