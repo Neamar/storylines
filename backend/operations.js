@@ -1,7 +1,7 @@
 "use strict";
-const helpers = require('./helpers.js');
+module.exports.YML_OPERATORS = const YML_OPERATORS = ['=', '+=', '-=', '/=', '%=', 'APPEND TO', 'REMOVE FROM'];
 
-const YML_OPERATORS = ['=', '+=', '-=', '/=', '%=', 'APPEND TO', 'REMOVE FROM'];
+const helpers = require('./helpers.js');
 
 
 module.exports.parseOperation = function parseOperation(stringOperation) {
@@ -9,5 +9,3 @@ module.exports.parseOperation = function parseOperation(stringOperation) {
   // TODO
   return operation;
 };
-
-module.exports.YML_OPERATORS = YML_OPERATORS;
