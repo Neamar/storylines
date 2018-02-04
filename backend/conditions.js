@@ -10,3 +10,5 @@ module.exports.parseCondition = function parseCondition(stringCondition) {
 
   return condition;
 };
+
+module.exports.YML_OPERATORS = YML_OPERATORS;

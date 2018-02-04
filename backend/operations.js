@@ -9,3 +9,5 @@ module.exports.parseOperation = function parseOperation(stringOperation) {
   // TODO
   return operation;
 };
+
+module.exports.YML_OPERATORS = YML_OPERATORS;
