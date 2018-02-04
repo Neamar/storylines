@@ -1,5 +1,5 @@
 "use strict";
-const event = require('../event');
+const event = require('../event'); // jshint ignore:line
 
 describe("event file", () => {
   function getBasicEvent() {

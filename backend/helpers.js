@@ -90,7 +90,7 @@ function findOperator(codeString) {
       var cand_end = cand_begin + candidate.length - 1;
       var cur_begin = codeString.indexOf(' ' + candidates[i] + ' ');
       var cur_end = cur_begin + candidates[i].length - 1;
-    
+
       if(!((cand_begin <= cur_begin) && (cand_end >= cur_end))) {
         throw new Error("Too many operator candidates: " + candidates);
       }
@@ -142,7 +142,7 @@ function isValidStr(arg) {
   var strDelimiter = arg.charAt(0);
 
   if(strip([strDelimiter], arg).includes(strDelimiter)) {
-    return false; 
+    return false;
   }
   return true;
 }

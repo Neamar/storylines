@@ -26,7 +26,7 @@ describe("helpers", () => {
       expect(helpers.getBooleanArg("true")).toBeTruthy();
     });
 
-    test("'false' should return true", () => {
+    test("'false' should return false", () => {
       expect(helpers.getBooleanArg("false")).toBeFalsy();
     });
 
@@ -271,7 +271,7 @@ describe("helpers", () => {
     });
 
     test('should throw if the key does not exist', () => {
-      expect(() => helpers.validateKeyType({"test": ""}, "oops", "object")).toThrow();
+      expect(() => helpers.validateKeyType({"test": ""}, "oops", "object")).toThrow(/oops doesn't exist/i);
     });
 
     test('should throw the error message if specified', () => {
