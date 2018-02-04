@@ -23,7 +23,7 @@
   "esversion"           : 6,
   "esnext"        : false,
   "evil"          : false,
-  "expr"          : true,
+  "expr"          : false,
   "forin"         : false,
   "funcscope"     : false,
   "globalstrict"  : false,
