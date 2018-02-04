@@ -7,18 +7,18 @@ describe("operations", () => {
   describe("parseOperation()", () => {
     test("should parse valid operation", () => {
       expect(operations.parseOperation('global.something = true')).toEqual({
-        lhs: ["@", "global", "something"],
+        lhs: {"_type": "state", "data": ["global", "something"]},
         operator: "=",
         rhs: true
       });
     });
 
     test("should require a valid assignment operator", () => {
-      expect(() => operations.parseOperation('global.something == true')).toThrow(/Invalid operator ==/i);
+      expect(() => operations.parseOperation('global.something == true')).toThrow(/Invalid operator: ==/i);
     });
 
     test("should require lhs to be a state access", () => {
-      expect(() => operations.parseOperation('true == true')).toThrow(/Operation lhs must change state/i);
+      expect(() => operations.parseOperation('true += true')).toThrow(/Left-hand side in operations must be a state access./i);
     });
   });
 });
