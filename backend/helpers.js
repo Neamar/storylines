@@ -254,6 +254,11 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
   if(objectKeyType === 'undefined') {
     throw new Error(msgNotFound);
   }
+  else if(keyType === "slug") {
+    if(!isSlug(object[keyName])) {
+      throw new Error("'" + keyName + "' should be a slug");
+    }
+  }
   else if((keyType !== null) && (objectKeyType !== keyType)) {
     throw new Error(keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
   }

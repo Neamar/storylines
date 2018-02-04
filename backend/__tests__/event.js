@@ -61,7 +61,7 @@ TEST
     });
 
     test('should ensure storyline is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/'storyline' must be a slug:/i);
+      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/'storyline' should be a slug/i);
     });
 
     test('should ensure event slug is present', () => {
@@ -69,11 +69,11 @@ TEST
     });
 
     test('should ensure event is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/'event' must be a slug:\//i);
+      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/'event' should be a slug/i);
     });
 
     test('should ensure description is present', () => {
-      expect(() => event.validateEvent({event: 'event_slug', storyline: 'storyline_slug'})).toThrow(/Missing event description: storyline_slug\/event_slug/i);
+      expect(() => event.validateEvent({event: 'event_slug', storyline: 'storyline_slug'})).toThrow(/Missing event description/i);
     });
 
     test('should work with the most basic event', () => {
@@ -87,7 +87,7 @@ TEST
           nonexisting: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers must be either hard or soft: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers cannot be 'nonexisting'. Possible types are: hard, soft/i);
       });
 
       test('should ensure hard triggers have a conditions property', () => {
@@ -96,7 +96,7 @@ TEST
           hard: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Hard triggers must include conditions: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers must include conditions/i);
       });
 
       test('should ensure hard triggers weight property is numeric', () => {
@@ -108,7 +108,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/weight should be of type 'number', not 'boolean'/i);
       });
 
       test('should accept hard triggers weight numeric property', () => {
@@ -129,7 +129,7 @@ TEST
           soft: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Soft triggers must include conditions: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers must include conditions/i);
       });
 
       test('should ensure soft triggers weight property is numeric', () => {
@@ -141,7 +141,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/weight should be of type 'number', not 'boolean'/i);
       });
 
       test('should accept soft triggers weight numeric property', () => {
@@ -158,13 +158,13 @@ TEST
     });
 
     describe("Actions validation", () => {
-      test('should ensure actions contains an operations key', () => {
+      test('should ensure actions contain an operations key', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Actions must contain an operations key: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Actions must include operations/i);
       });
 
       test('should ensure actions operations is an array', () => {
@@ -175,7 +175,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Actions operations must be an array: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/operations should be of type 'array', not 'boolean'/i);
       });
     });
   });
