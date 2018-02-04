@@ -256,7 +256,7 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
       // User has instructed not to warn when not found
       return;
     }
-    throw new Error(msgNotFound);
+    throw new Error(msgNotFound || ("'" + keyName + "' doesn't exist"));
   }
   else if(keyType === "slug") {
     if(!isSlug(object[keyName])) {
