@@ -68,9 +68,7 @@ function validateEvent(eventObject) {
   helpers.validateKeyType(eventObject, "storyline", "slug", "Missing storyline slug.");
   helpers.validateKeyType(eventObject, "event", "slug", "Missing event slug.");
   helpers.validateKeyType(eventObject, "description", "string", "Missing event description");
-  if(eventObject.repeatable) {
-    helpers.validateKeyType(eventObject, "repeatable", "boolean", "Missing event repeatable");
-  }
+  helpers.validateKeyType(eventObject, "repeatable", "boolean", null);
 
   if(eventObject.triggers) {
     validateTriggers(eventObject.triggers);

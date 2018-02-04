@@ -1,6 +1,5 @@
 "use strict";
 const event = require('../event');
-const basicEventString = '---\n\n---\n\nDescription';
 
 describe("event file", () => {
   function getBasicEvent() {
