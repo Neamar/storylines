@@ -250,11 +250,9 @@ function parseYmlCode(codeString) {
  */
 function validateKeyType(object, keyName, keyType, msgNotFound) {
   var objectKeyType = typeof object[keyName];
-//  if(!object.keyName) {
   if(objectKeyType === "undefined") {
     if(msgNotFound === null) {
       // User has instructed not to warn when not found
-      console.log("Don't warn !!!");
       return;
     }
     throw new Error(msgNotFound);

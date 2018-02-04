@@ -2,6 +2,7 @@
 
 
 module.exports.generateDefaultState = function generateDefaultState(resources, storylineSlugs) {
+/*jshint unused:false */
   if(resources === null) {
     console.log("This is here to shut the linter up");
   }

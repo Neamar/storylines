@@ -1,17 +1,10 @@
 "use strict";
 const event = require('../event');
-
+const basicEventString = '---\n\n---\n\nDescription';
 
 describe("event file", () => {
   function getBasicEvent() {
-    return {
-      description: "Description",
-      event: 'event_slug',
-      storyline: 'storyline_slug',
-      repeatable: false,
-      on_display: [],
-      weight: 1
-    };
+    return event.buildEvent(basicEventString, 'storyline_slug', 'event_slug');
   }
 
   function getBasicExpectedEvent() {
@@ -21,7 +14,6 @@ describe("event file", () => {
       storyline: 'storyline_slug',
       repeatable: false,
       on_display: [],
-      weight: 1
     };
   }
 
@@ -433,6 +425,8 @@ TEST
         event: "event_1_1",
         storyline: "test_storyline_1",
         description: "Potentially multiline, markdown description of your event",
+        repeatable: false,
+        on_display: [],
         triggers: {
           soft: {
             conditions: [

@@ -29,6 +29,8 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
   event.description = fm.body.trim();
   event.event = eventSlug;
   event.storyline = storylineSlug;
+  event.repeatable = event.repeatable || false;
+  event.on_display = [];
   return event;
 }
 
@@ -66,17 +68,16 @@ function validateEvent(eventObject) {
   helpers.validateKeyType(eventObject, "storyline", "slug", "Missing storyline slug.");
   helpers.validateKeyType(eventObject, "event", "slug", "Missing event slug.");
   helpers.validateKeyType(eventObject, "description", "string", "Missing event description");
-  if(eventObject.repeatable !== undefined) {
+  if(eventObject.repeatable) {
     helpers.validateKeyType(eventObject, "repeatable", "boolean", "Missing event repeatable");
   }
 
-  var triggers = eventObject.triggers;
-  if(triggers !== undefined) {
+  if(eventObject.triggers) {
     validateTriggers(eventObject.triggers);
   }
 
   var actions = eventObject.actions;
-  if(actions !== undefined) {
+  if(actions) {
     validateActions(eventObject.actions);
   }
 
@@ -97,7 +98,7 @@ function parseTriggers(eventObject) {
   validateTriggers(eventObject.triggers);
 
   TRIGGER_TYPES.forEach(type => {
-    if(Object.keys(eventObject.triggers || []).includes(type)) {
+    if(eventObject.triggers && eventObject.triggers[type]) {
       eventObject.triggers[type] = parseTrigger(eventObject.triggers[type]);
     }
   });
@@ -106,8 +107,7 @@ function parseTriggers(eventObject) {
 
 
 function parseOperations(actionObject) {
-//  validateOperations(actionObject.operations);
-  if(actionObject.operations !== undefined) {
+  if(actionObject.operations) {
     actionObject.operations = actionObject.operations.map(helpers.parseYmlCode);
   }
   return actionObject;
@@ -115,7 +115,7 @@ function parseOperations(actionObject) {
 
 
 function parseActions(eventObject) {
-  if(eventObject.actions !== undefined) {
+  if(eventObject.actions) {
     Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName]));
   }
   return eventObject;
@@ -123,7 +123,7 @@ function parseActions(eventObject) {
 
 
 function parseOnDisplay(eventObject) {
-  if(eventObject.on_display !== undefined) {
+  if(eventObject.on_display) {
     eventObject.on_display = eventObject.on_display.map(helpers.parseYmlCode);
   }
   return eventObject;
