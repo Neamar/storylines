@@ -44,13 +44,13 @@ function findOperator(codeString) {
     return candidates[0];
   }
   else {
-    var candidate = candidates[candidates.length - 1]; 
+    var candidate = candidates[candidates.length - 1];
     for(var i = 0; i < candidates.length; i++) {
       var cand_begin = codeString.indexOf(' ' + candidate + ' ');
       var cand_end = cand_begin + candidate.length - 1;
       var cur_begin = codeString.indexOf(' ' + candidates[i] + ' ');
       var cur_end = cur_begin + candidates[i].length - 1;
-    
+
       if(!((cand_begin <= cur_begin) && (cand_end >= cur_end))) {
         throw new Error("Too many operator candidates: " + candidates);
       }
@@ -108,7 +108,7 @@ function isValidStr(arg) {
   var strDelimiter = arg.charAt(0);
 
   if(strip([strDelimiter], arg).includes(strDelimiter)) {
-    return false; 
+    return false;
   }
   return true;
 }
@@ -251,8 +251,8 @@ module.exports.parseYmlCode = function parseYmlCode(codeString, shorthands) {
  */
 function validateKeyType(object, keyName, keyType, msgNotFound) {
   var objectKeyType = typeof object[keyName];
-  if(objectKeyType === 'undefined') {
-    throw new Error(msgNotFound);
+  if(!(keyName in object)) {
+    throw new Error(msgNotFound || (keyName + " doesn't exist."));
   }
   else if((keyType !== null) && (objectKeyType !== keyType)) {
     throw new Error(keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
