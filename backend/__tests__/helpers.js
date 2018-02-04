@@ -271,7 +271,7 @@ describe("helpers", () => {
     });
 
     test('should throw if the key does not exist', () => {
-      expect(() => helpers.validateKeyType({"test": ""}, "oops", "object")).toThrow(/oops doesn't exist/i);
+      expect(() => helpers.validateKeyType({"test": ""}, "oops", "object")).toThrow(/'oops' doesn't exist/i);
     });
 
     test('should throw the error message if specified', () => {
