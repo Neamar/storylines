@@ -1,29 +1,29 @@
 "use strict";
+const operations = require('./operations.js');
+const conditions = require('./conditions.js');
 
 
-var YML_CONDITIONS_OPERATORS = ['==', '>', '<', '>=', '<=', '!=', 'IN', 'NOT IN'];
-var YML_OPERATIONS_OPERATORS = ['=', '+=', '-=', '/=', '%=', 'APPEND TO', 'REMOVE FROM'];
-var YML_ALL_OPERATORS = YML_CONDITIONS_OPERATORS.concat(YML_OPERATIONS_OPERATORS);
+const YML_ALL_OPERATORS = conditions.YML_OPERATORS.concat(operations.YML_OPERATORS);
 
-var ARG_TYPE_NULL           = 0;
-var ARG_TYPE_BOOLEAN        = 1;
-var ARG_TYPE_NUMERAL        = 2;
-var ARG_TYPE_STRING         = 3;
-var ARG_TYPE_ARRAY          = 4;
-var ARG_TYPE_STATE_ACCESS   = 5;
-var ARG_TYPES = [ARG_TYPE_NULL, ARG_TYPE_BOOLEAN, ARG_TYPE_NUMERAL, ARG_TYPE_ARRAY, ARG_TYPE_STRING, ARG_TYPE_STATE_ACCESS];
+const ARG_TYPE_NULL           = 0;
+const ARG_TYPE_BOOLEAN        = 1;
+const ARG_TYPE_NUMERAL        = 2;
+const ARG_TYPE_STRING         = 3;
+const ARG_TYPE_ARRAY          = 4;
+const ARG_TYPE_STATE_ACCESS   = 5;
+const ARG_TYPES = [ARG_TYPE_NULL, ARG_TYPE_BOOLEAN, ARG_TYPE_NUMERAL, ARG_TYPE_ARRAY, ARG_TYPE_STRING, ARG_TYPE_STATE_ACCESS];
 
-var ARG_NULL_VALS  = ["NULL", "null", "Null", "NONE", "none", "None"];
-var ARG_VALS_FALSE = ["FALSE", "false", "False"];
-var ARG_VALS_TRUE  = ["TRUE", "true", "True"];
-var ARG_BOOLEAN_VALS = ARG_VALS_TRUE.concat(ARG_VALS_FALSE);
+const ARG_NULL_VALS  = ["NULL", "null", "Null", "NONE", "none", "None"];
+const ARG_VALS_FALSE = ["FALSE", "false", "False"];
+const ARG_VALS_TRUE  = ["TRUE", "true", "True"];
+const ARG_BOOLEAN_VALS = ARG_VALS_TRUE.concat(ARG_VALS_FALSE);
 
 // In the next 3 arrays, the first element is the name that will be used to replace all the others
-var ARG_STATE_LEVEL_GLOBAL            = ["global", "g"]
-var ARG_STATE_LEVEL_RESOURCES         = ["resources", "r"]
-var ARG_STATE_LEVEL_STORYLINES        = ["storylines", "s"]
-var ARG_STATE_LEVEL_CURRENT_STORYLINE = ["sl"] // This is replaced in the handling code
-var ARG_STATE_FIRST_LEVEL = ARG_STATE_LEVEL_GLOBAL.concat(ARG_STATE_LEVEL_RESOURCES).concat(ARG_STATE_LEVEL_STORYLINES).concat(ARG_STATE_LEVEL_CURRENT_STORYLINE)
+const ARG_STATE_LEVEL_GLOBAL            = ["global", "g"]
+const ARG_STATE_LEVEL_RESOURCES         = ["resources", "r"]
+const ARG_STATE_LEVEL_STORYLINES        = ["storylines", "s"]
+const ARG_STATE_LEVEL_CURRENT_STORYLINE = ["sl"] // This is replaced in the handling code
+const ARG_STATE_FIRST_LEVEL = ARG_STATE_LEVEL_GLOBAL.concat(ARG_STATE_LEVEL_RESOURCES).concat(ARG_STATE_LEVEL_STORYLINES).concat(ARG_STATE_LEVEL_CURRENT_STORYLINE)
 
 
 function isSlug(potentialSlug) {
@@ -265,6 +265,7 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
 }
 
 module.exports.isSlug = isSlug;
+module.exports.getArgType = getArgType;
 module.exports.getBooleanArg = getBooleanArg;
 module.exports.parseYmlCode = parseYmlCode;
 module.exports.validateKeyType = validateKeyType;
