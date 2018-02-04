@@ -5,7 +5,7 @@ const eventTools = require("./event");
 const stateTools = require("./state");
 
 
-module.exports = function bundle(storyPath, storyConfigFile, storylinesFolder) {
+function storyBundle(storyPath, storyConfigFile, storylinesFolder) {
   // Story components
   var storyEvents = [];
   var storyConfig;
@@ -40,4 +40,6 @@ module.exports = function bundle(storyPath, storyConfigFile, storylinesFolder) {
   storyConfig.default_state = stateTools.generateDefaultState(storyConfig.resources, storylinesSlugs);
 
   return storyConfig;
-};
+}
+
+module.exports.storyBundle = storyBundle;

@@ -7,7 +7,10 @@ describe("event file", () => {
     return {
       description: "Description",
       event: 'event_slug',
-      storyline: 'storyline_slug'
+      storyline: 'storyline_slug',
+      repeatable: false,
+      on_display: [],
+      weight: 1
     };
   }
 
@@ -24,7 +27,7 @@ describe("event file", () => {
 
   describe("readEvent()", () => {
     test('should read event from disk', () => {
-      var r = event.readEvent(__dirname + '/mocks', 'test_storyline_1', 'event_1_1');
+      var r = event.readEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1');
 
       expect(r).toContain("triggers");
       expect(r).toContain("g.test");
@@ -160,6 +163,12 @@ TEST
     describe("Actions validation", () => {
       test('should ensure actions contain an operations key', () => {
         var e = getBasicEvent();
+        e.triggers = {
+          soft: {
+            conditions: [],
+            weight: 15
+          }
+        };
         e.actions = {
           OK: {}
         };
@@ -175,7 +184,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/operations should be of type 'array', not 'boolean'/i);
+        expect(() => event.validateEvent(e)).toThrow(/'operations' should be an array/i);
       });
     });
   });
@@ -186,13 +195,11 @@ TEST
       expect(event.validateEvent(e)).toHaveProperty("event", e.event);
     });
 
-    test('should ensure on_display operations is an array', () => {
+    test('should ensure on_display is an array', () => {
       var e = getBasicEvent();
-      e.on_display = {
-        operations: false
-      };
+      e.on_display = {};
 
-      expect(() => event.validateEvent(e)).toThrow(/on_display operations must be an array: storyline_slug\/event_slug/i);
+      expect(() => event.validateEvent(e)).toThrow(/'on_display' should be an array/i);
     });
   });
 
@@ -204,7 +211,8 @@ TEST
           soft: {
             conditions: [
               'global.something == true'
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -213,11 +221,12 @@ TEST
           soft: {
             conditions: [
               {
-                lhs: ['@', 'global', 'something'],
+                lhs: {"_type": "state", "data": ['global', 'something']},
                 operator: '==',
                 rhs: true
               }
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -231,7 +240,8 @@ TEST
             conditions: [
               'global.something == true',
               'resources.foo >= 150'
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -240,16 +250,17 @@ TEST
           hard: {
             conditions: [
               {
-                lhs: ['@', 'global', 'something'],
+                lhs: {"_type": "state", "data": ['global', 'something']},
                 operator: '==',
                 rhs: true
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '>=',
                 rhs: 150
               },
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -262,8 +273,9 @@ TEST
           soft: {
             conditions: [
               'sl.something == true',
-              'r.foo == true'
-            ]
+              'r.foo >= 150'
+            ],
+            weight: 1,
           }
         };
 
@@ -272,16 +284,17 @@ TEST
           soft: {
             conditions: [
               {
-                lhs: ['@', 'storylines', 'storyline_slug'],
+                lhs: {"_type": "state", "data": ['storylines', 'current_storyline', "something"]},
                 operator: '==',
                 rhs: true
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '>=',
                 rhs: 150
               },
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -306,12 +319,12 @@ TEST
         var expected = getBasicExpectedEvent();
         expected.on_display = [
           {
-            lhs: ['@', 'global', 'something'],
+            lhs: {"_type": "state", "data": ['global', 'something']},
             operator: '=',
             rhs: true
           },
           {
-            lhs: ['@', 'resources', 'foo'],
+            lhs: {"_type": "state", "data": ['resources', 'foo']},
             operator: '+=',
             rhs: 150
           },
@@ -338,12 +351,12 @@ TEST
           OK: {
             operations: [
               {
-                lhs: ['@', 'global', 'something'],
+                lhs: {"_type": "state", "data": ['global', 'something']},
                 operator: '=',
                 rhs: true
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '+=',
                 rhs: 150
               },
@@ -366,16 +379,16 @@ TEST
         };
 
         var expected = getBasicExpectedEvent();
-        expected.triggers = {
-          soft: {
-            conditions: [
+        expected.actions = {
+          OK: {
+            operations: [
               {
-                lhs: ['@', 'storylines', 'storyline_slug'],
-                operator: '==',
+                lhs: {"_type": "state", "data": ['storylines', 'current_storyline', 'something']},
+                operator: '=',
                 rhs: "ABC"
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '*=',
                 rhs: 5
               },
@@ -398,7 +411,7 @@ TEST
         var e = getBasicEvent();
         e.repeatable = "LOL";
 
-        expect(() => event.validateEvent(e)).toThrow(/repeatable must be a boolean: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/repeatable should be of type 'boolean', not 'string'/i);
       });
 
       test('should save repeatable when it is specified', () => {
@@ -424,20 +437,21 @@ TEST
           soft: {
             conditions: [
               {
-                lhs: ['global', 'test'],
+                lhs: {"_type": "state", "data": ['global', 'test']},
                 operator: '==',
-                rhs: [true]
+                rhs: true
               }
-            ]
+            ],
+            weight: 1,
           }
         },
         actions: {
           OK: {
             operations: [
               {
-                lhs: ['global', 'test'],
+                lhs: {"_type": "state", "data": ['global', 'test']},
                 operator: '=',
-                rhs: [false]
+                rhs: false
               }
             ]
           }

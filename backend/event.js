@@ -1,7 +1,6 @@
 "use strict";
 const fs = require('fs');
 const frontMatter = require('front-matter');
-
 const helpers = require('./helpers');
 
 const TRIGGER_TYPES = ['hard', 'soft'];
@@ -34,29 +33,26 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 }
 
 
-function validateTriggers(triggersObject) {
-  var keys = Object.keys(triggersObject);
-  for(var i = 0; i < keys.length; i++) {
-    var key = keys[i];
-    var trigger = triggersObject[key];
+function validateTrigger(trigger) {
+    helpers.validateKeyType(trigger, "conditions", "object", "Triggers must include conditions");
+    helpers.validateKeyType(trigger, "weight", "number", "Triggers must include a weight");
+}
 
+
+function validateTriggers(triggersObject) {
+  Object.keys(triggersObject || []).forEach(key => {
     if(!TRIGGER_TYPES.includes(key)) {
       throw new Error("Triggers cannot be '" + key + "'. Possible types are: " + TRIGGER_TYPES.join(", "));
     }
-
-    helpers.validateKeyType(trigger, "conditions", "object", "Triggers must include conditions");
-    helpers.validateKeyType(trigger, "weight", "number", "Triggers must include a weight");
-  }
+    validateTrigger(triggersObject[key]);
+  });
 }
 
 
 function validateActions(actionsObject) {
-  var keys = Object.keys(actionsObject);
-  for(var i = 0; i < keys.length; i++) {
-    var key = keys[i];
-    var action = actionsObject[key];
-    helpers.validateKeyType(action, "operations", "array", "Actions must include operations");
-  }
+  Object.keys(actionsObject || []).forEach(key => 
+    helpers.validateKeyType(actionsObject[key], "operations", "array", "Actions must include operations")
+  );
 }
 
 
@@ -70,6 +66,9 @@ function validateEvent(eventObject) {
   helpers.validateKeyType(eventObject, "storyline", "slug", "Missing storyline slug.");
   helpers.validateKeyType(eventObject, "event", "slug", "Missing event slug.");
   helpers.validateKeyType(eventObject, "description", "string", "Missing event description");
+  if(eventObject.repeatable !== undefined) {
+    helpers.validateKeyType(eventObject, "repeatable", "boolean", "Missing event repeatable");
+  }
 
   var triggers = eventObject.triggers;
   if(triggers !== undefined) {
@@ -79,6 +78,53 @@ function validateEvent(eventObject) {
   var actions = eventObject.actions;
   if(actions !== undefined) {
     validateActions(eventObject.actions);
+  }
+
+  // notFoundmsg is null: don't warn if not found
+  helpers.validateKeyType(eventObject, "on_display", "array", null);
+  return eventObject;
+}
+
+
+function parseTrigger(triggerObject) {
+  validateTrigger(triggerObject); // this should have been checked by parseTriggers, but what if we call parseTrigger directly?
+  triggerObject.conditions = triggerObject.conditions.map(helpers.parseYmlCode);
+  return triggerObject;
+}
+
+
+function parseTriggers(eventObject) { 
+  validateTriggers(eventObject.triggers);
+
+  TRIGGER_TYPES.forEach(type => {
+    if(Object.keys(eventObject.triggers || []).includes(type)) {
+      eventObject.triggers[type] = parseTrigger(eventObject.triggers[type]);
+    }
+  });
+  return eventObject;
+}
+
+
+function parseOperations(actionObject) {
+//  validateOperations(actionObject.operations);
+  if(actionObject.operations !== undefined) {
+    actionObject.operations = actionObject.operations.map(helpers.parseYmlCode);
+  }
+  return actionObject;
+}
+
+
+function parseActions(eventObject) {
+  if(eventObject.actions !== undefined) {
+    Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName]));
+  }
+  return eventObject;
+}
+
+
+function parseOnDisplay(eventObject) {
+  if(eventObject.on_display !== undefined) {
+    eventObject.on_display = eventObject.on_display.map(helpers.parseYmlCode);
   }
   return eventObject;
 }
@@ -90,10 +136,11 @@ function validateEvent(eventObject) {
  * @return event object
  * @throws on invalid event
  */
-function parseEvent(jsonifiedYml) {
-
-  // TODO
-  return jsonifiedYml;
+function parseEvent(eventObject) {
+  parseTriggers(eventObject);
+  parseActions(eventObject);
+  parseOnDisplay(eventObject);
+  return eventObject;
 }
 
 
@@ -103,13 +150,8 @@ function parseEvent(jsonifiedYml) {
  */
 function getEvent(storyPath, storylineSlug, eventSlug) {
   var eventContent = readEvent(storyPath, storylineSlug, eventSlug);
-
-  var jsonifiedYml = buildEvent(eventContent, storylineSlug, eventSlug);
-
-  var event = validateEvent(jsonifiedYml);
-  event = parseEvent(event);
-
-  return event;
+  var eventObject = buildEvent(eventContent, storylineSlug, eventSlug);
+  return parseEvent(eventObject);
 }
 
 

@@ -3,6 +3,7 @@ triggers:
     soft:
         conditions:
             - g.test == true
+        weight: 1
 actions:
     "OK":
         operations:
