@@ -225,7 +225,7 @@ describe("helpers", () => {
     });
 
     test('should expand shorthands in state access', () => {
-      expect(helpers.parseYmlCode('g.something == true', {g: 'global'})).toEqual({
+      expect(helpers.parseYmlCode('g.something == true')).toEqual({
         lhs: {_type: "state", data:["global", "something"]},
         operator: "==",
         rhs: true
@@ -237,7 +237,7 @@ describe("helpers", () => {
     });
 
     test('should expand complex shorthands in state access', () => {
-      expect(helpers.parseYmlCode('sl.something == true', {sl: 'storylines.current_storyline'})).toEqual({
+      expect(helpers.parseYmlCode('sl.something == true')).toEqual({
         lhs: {_type: "state", data:["storylines", "current_storyline", "something"]},
         operator: "==",
         rhs: true
@@ -245,7 +245,7 @@ describe("helpers", () => {
     });
 
     test('should only expand shorthands in first level', () => {
-      expect(helpers.parseYmlCode('s.g.something == "a string"', {g: 'global'})).toEqual({
+      expect(helpers.parseYmlCode('s.g.something == "a string"')).toEqual({
         lhs: {_type: "state", data:["storylines", "g", "something"]},
         operator: "==",
         rhs: "a string"
@@ -255,15 +255,15 @@ describe("helpers", () => {
 
   describe("validateKeyType", () => {
     test('should work for a simple string case', () => {
-      expect(helpers.validateKeyType({"test": ""}, "test", "string"))
+      expect(helpers.validateKeyType({"test": ""}, "test", "string"));
     });
 
     test('should work for a simple number case', () => {
-      expect(helpers.validateKeyType({"test": 42}, "test", "number"))
+      expect(helpers.validateKeyType({"test": 42}, "test", "number"));
     });
 
     test('should work for a simple array case', () => {
-      expect(helpers.validateKeyType({"test": []}, "test", "object"))
+      expect(helpers.validateKeyType({"test": []}, "test", "object"));
     });
 
     test('should not work for wrong type', () => {
@@ -279,7 +279,7 @@ describe("helpers", () => {
     });
 
     test('should accept string if type is null', () => {
-      expect(helpers.validateKeyType({"test": ""}, "test", null, "404 Not Found"))
+      expect(helpers.validateKeyType({"test": ""}, "test", null, "404 Not Found"));
     });
   });
 });

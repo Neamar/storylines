@@ -2,6 +2,7 @@
 
 
 module.exports.generateDefaultState = function generateDefaultState(resources, storylineSlugs) {
+/*jshint unused:false */
   return {
     global: {
       current_turn: 0,

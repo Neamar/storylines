@@ -11,7 +11,6 @@ const ARG_TYPE_NUMERAL        = 2;
 const ARG_TYPE_STRING         = 3;
 const ARG_TYPE_ARRAY          = 4;
 const ARG_TYPE_STATE_ACCESS   = 5;
-const ARG_TYPES = [ARG_TYPE_NULL, ARG_TYPE_BOOLEAN, ARG_TYPE_NUMERAL, ARG_TYPE_ARRAY, ARG_TYPE_STRING, ARG_TYPE_STATE_ACCESS];
 
 const ARG_NULL_VALS  = ["NULL", "null", "Null", "NONE", "none", "None"];
 const ARG_VALS_FALSE = ["FALSE", "false", "False"];
@@ -19,23 +18,64 @@ const ARG_VALS_TRUE  = ["TRUE", "true", "True"];
 const ARG_BOOLEAN_VALS = ARG_VALS_TRUE.concat(ARG_VALS_FALSE);
 
 // In the next 3 arrays, the first element is the name that will be used to replace all the others
-const ARG_STATE_LEVEL_GLOBAL            = ["global", "g"]
-const ARG_STATE_LEVEL_RESOURCES         = ["resources", "r"]
-const ARG_STATE_LEVEL_STORYLINES        = ["storylines", "s"]
-const ARG_STATE_LEVEL_CURRENT_STORYLINE = ["sl"] // This is replaced in the handling code
-const ARG_STATE_FIRST_LEVEL = ARG_STATE_LEVEL_GLOBAL.concat(ARG_STATE_LEVEL_RESOURCES).concat(ARG_STATE_LEVEL_STORYLINES).concat(ARG_STATE_LEVEL_CURRENT_STORYLINE)
+const ARG_STATE_LEVEL_GLOBAL            = ["global", "g"];
+const ARG_STATE_LEVEL_RESOURCES         = ["resources", "r"];
+const ARG_STATE_LEVEL_STORYLINES        = ["storylines", "s"];
+const ARG_STATE_LEVEL_CURRENT_STORYLINE = ["sl"]; // This is replaced in the handling code
+const ARG_STATE_FIRST_LEVEL = ARG_STATE_LEVEL_GLOBAL.concat(ARG_STATE_LEVEL_RESOURCES).concat(ARG_STATE_LEVEL_STORYLINES).concat(ARG_STATE_LEVEL_CURRENT_STORYLINE);
+
+
+function strip(stripList, string) {
+  var beginIndex = 0;
+  var  endIndex = string.length - 1;
+
+  while(stripList.includes(string[beginIndex])) {
+    beginIndex += 1;
+  }
+  if(beginIndex >= endIndex) {
+    return '';
+  }
+  while(stripList.includes(string[endIndex])) {
+    endIndex -= 1;
+  }
+  return string.substring(beginIndex, endIndex + 1);
+}
 
 
 function isSlug(potentialSlug) {
   return potentialSlug.match(/^[a-z][a-z0-9_]*$/);
-};
+}
+
+
+// ARG_TYPE_STRING
+function isStr(arg) {
+  return ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith('"') && arg.endsWith('"')));
+}
+
+
+function isArray(arg) {
+  return ((arg.startsWith("[") && arg.endsWith("]")));
+}
+
+
+function isStateAccess(arg) {
+  var keys = arg.trim().split('.');
+  if(keys.length < 2) {
+    return false;
+  }
+  for(var i = 1; i < keys.length; i += 1) {
+    if(!isSlug(keys[i]) && isNaN(keys[i])) {
+      return false;
+    }
+  }
+  return true;
+}
 
 
 function findOperator(codeString) {
   // For now, at least, we suppose there is at least one space before and after the operator
   // 'IN' is included in 'NOT IN' so we need to look for the longer match (if one contains the other)
   var candidates = YML_ALL_OPERATORS.filter(op => codeString.includes(' ' + op + ' ')).sort((op1, op2) => op1.length - op2.length);
-  var operator;
 
   if(candidates.length === 0) {
     throw new Error("Could not find the operator. Please make sure to delimit it with spaces. Valid operators are: " + YML_ALL_OPERATORS.join(", "));
@@ -44,8 +84,8 @@ function findOperator(codeString) {
     return candidates[0];
   }
   else {
-    var candidate = candidates[candidates.length - 1];
-    for(var i = 0; i < candidates.length; i++) {
+    var candidate = candidates[candidates.length - 1]; 
+    for(var i = 0; i < candidates.length; i += 1) {
       var cand_begin = codeString.indexOf(' ' + candidate + ' ');
       var cand_end = cand_begin + candidate.length - 1;
       var cur_begin = codeString.indexOf(' ' + candidates[i] + ' ');
@@ -98,12 +138,6 @@ function getBooleanArg(arg) {
 }
 
 
-// ARG_TYPE_STRING
-function isStr(arg) {
-  return ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith('"') && arg.endsWith('"')))
-}
-
-
 function isValidStr(arg) {
   var strDelimiter = arg.charAt(0);
 
@@ -133,34 +167,14 @@ function getArray(arg) {
 }
 
 
-function isArray(arg) {
-  return ((arg.startsWith("[") && arg.endsWith("]")));
-}
-
-
 function getArrayArg(arg) {
   return getArray(arg);
 }
 
 
 // ARG_TYPE_STATE_ACCESS
-function isStateAccess(arg) {
-  var keys = arg.trim().split('.');
-  if(keys.length < 2) {
-    return false
-  }
-  for(var i = 1; i < keys.length; i++) {
-    if(!isSlug(keys[i]) && isNaN(keys[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
-
 function getStateAccess(arg) {
   var keys = arg.trim().split('.');
-  var firstLevel = keys[0];
 
   if(ARG_STATE_LEVEL_GLOBAL.includes(keys[0])) {
     keys[0] = ARG_STATE_LEVEL_GLOBAL[0];
@@ -178,25 +192,10 @@ function getStateAccess(arg) {
   else {
     throw new Error("First-Level must be one of " + ARG_STATE_FIRST_LEVEL);
   }
-  return {"_type": "state", "data": keys}
+  return {"_type": "state", "data": keys};
 }
 
 
-function strip(stripList, string) {
-  var beginIndex = 0;
-  var  endIndex = string.length - 1;
-
-  while(stripList.includes(string[beginIndex])) {
-    beginIndex++;
-  }
-  if(beginIndex >= endIndex) {
-    return '';
-  }
-  while(stripList.includes(string[endIndex])) {
-    endIndex--;
-  }
-  return string.substring(beginIndex, endIndex + 1);
-}
 
 
 function getArg(arg) {
@@ -219,7 +218,7 @@ function getArg(arg) {
 }
 
 
-module.exports.parseYmlCode = function parseYmlCode(codeString, shorthands) {
+function parseYmlCode(codeString) {
   // For now, at least, we suppose there is at least one whitespace before and after the operators
   var operator = findOperator(codeString);
   var lhs, rhs;
@@ -238,7 +237,7 @@ module.exports.parseYmlCode = function parseYmlCode(codeString, shorthands) {
     operator: operator,
     rhs: rhs
   };
-};
+}
 
 
 /**
@@ -251,8 +250,22 @@ module.exports.parseYmlCode = function parseYmlCode(codeString, shorthands) {
  */
 function validateKeyType(object, keyName, keyType, msgNotFound) {
   var objectKeyType = typeof object[keyName];
-  if(!(keyName in object)) {
-    throw new Error(msgNotFound || (keyName + " doesn't exist."));
+  if(objectKeyType === "undefined") {
+    if(msgNotFound === null) {
+      // User has instructed not to warn when not found
+      return;
+    }
+    throw new Error(msgNotFound);
+  }
+  else if(keyType === "slug") {
+    if(!isSlug(object[keyName])) {
+      throw new Error("'" + keyName + "' should be a slug");
+    }
+  }
+  else if(keyType === "array") {
+    if(!Array.isArray(object[keyName])) {
+      throw new Error("'" + keyName + "' should be an array");
+    }
   }
   else if((keyType !== null) && (objectKeyType !== keyType)) {
     throw new Error(keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
@@ -262,4 +275,5 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
 module.exports.isSlug = isSlug;
 module.exports.getArgType = getArgType;
 module.exports.getBooleanArg = getBooleanArg;
+module.exports.parseYmlCode = parseYmlCode;
 module.exports.validateKeyType = validateKeyType;

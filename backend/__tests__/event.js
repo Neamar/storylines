@@ -1,30 +1,20 @@
 "use strict";
 const event = require('../event'); // jshint ignore:line
 
-
 describe("event file", () => {
   function getBasicEvent() {
-    return {
-      description: "Description",
-      event: 'event_slug',
-      storyline: 'storyline_slug'
-    };
-  }
-
-  function getBasicExpectedEvent() {
     return {
       description: "Description",
       event: 'event_slug',
       storyline: 'storyline_slug',
       repeatable: false,
       on_display: [],
-      weight: 1
     };
   }
 
   describe("readEvent()", () => {
     test('should read event from disk', () => {
-      var r = event.readEvent(__dirname + '/mocks', 'test_storyline_1', 'event_1_1.md');
+      var r = event.readEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1');
 
       expect(r).toContain("triggers");
       expect(r).toContain("g.test");
@@ -51,6 +41,8 @@ TEST
       expect(e).toHaveProperty('event', 'event_slug');
       expect(e).toHaveProperty('storyline', 'storyline_slug');
       expect(e).toHaveProperty('triggers.soft.conditions.0', 'g.test == true');
+      expect(e).toHaveProperty('repeatable', false);
+      expect(e).toHaveProperty('on_display', []);
     });
   });
 
@@ -61,23 +53,23 @@ TEST
     });
 
     test('should ensure storyline is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/Storyline name must be a slug: not a slug/i);
+      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/'storyline' should be a slug/i);
     });
 
     test('should ensure event slug is present', () => {
-      expect(() => event.validateEvent({storyline: 'storyline_slug'})).toThrow(/Missing event slug: storyline_slug\//i);
+      expect(() => event.validateEvent({storyline: 'storyline_slug'})).toThrow(/Missing event/i);
     });
 
     test('should ensure event is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/Event name must be a slug: not a slug\//i);
+      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/'event' should be a slug/i);
     });
 
     test('should ensure description is present', () => {
-      expect(() => event.validateEvent({event: 'event_slug', storyline: 'storyline_slug'})).toThrow(/Missing event description: storyline_slug\/event_slug/i);
+      expect(() => event.validateEvent({event: 'event_slug', storyline: 'storyline_slug'})).toThrow(/Missing event description/i);
     });
 
     test('should work with the most basic event', () => {
-      expect(event.validateEvent(getBasicEvent())).toEqual(getBasicExpectedEvent());
+      expect(event.validateEvent(getBasicEvent())).toEqual(getBasicEvent());
     });
 
     describe("Trigger validation", () => {
@@ -87,7 +79,7 @@ TEST
           nonexisting: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers must be either hard or soft: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers cannot be 'nonexisting'. Possible types are: hard, soft/i);
       });
 
       test('should ensure hard triggers have a conditions property', () => {
@@ -96,7 +88,7 @@ TEST
           hard: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Hard triggers must include conditions: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers must include conditions/i);
       });
 
       test('should ensure hard triggers weight property is numeric', () => {
@@ -108,7 +100,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/weight should be of type 'number', not 'boolean'/i);
       });
 
       test('should accept hard triggers weight numeric property', () => {
@@ -129,7 +121,7 @@ TEST
           soft: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Soft triggers must include conditions: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers must include conditions/i);
       });
 
       test('should ensure soft triggers weight property is numeric', () => {
@@ -141,7 +133,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers weight must be numeric: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/weight should be of type 'number', not 'boolean'/i);
       });
 
       test('should accept soft triggers weight numeric property', () => {
@@ -158,13 +150,19 @@ TEST
     });
 
     describe("Actions validation", () => {
-      test('should ensure actions contains an operations key', () => {
+      test('should ensure actions contain an operations key', () => {
         var e = getBasicEvent();
+        e.triggers = {
+          soft: {
+            conditions: [],
+            weight: 15
+          }
+        };
         e.actions = {
           OK: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Actions must contain an operations key: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/Actions must include operations/i);
       });
 
       test('should ensure actions operations is an array', () => {
@@ -175,7 +173,7 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Actions operations must be an array: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/'operations' should be an array/i);
       });
     });
   });
@@ -186,13 +184,11 @@ TEST
       expect(event.validateEvent(e)).toHaveProperty("event", e.event);
     });
 
-    test('should ensure on_display operations is an array', () => {
+    test('should ensure on_display is an array', () => {
       var e = getBasicEvent();
-      e.on_display = {
-        operations: false
-      };
+      e.on_display = {};
 
-      expect(() => event.validateEvent(e)).toThrow(/on_display operations must be an array: storyline_slug\/event_slug/i);
+      expect(() => event.validateEvent(e)).toThrow(/'on_display' should be an array/i);
     });
   });
 
@@ -204,20 +200,22 @@ TEST
           soft: {
             conditions: [
               'global.something == true'
-            ]
+            ],
+            weight: 1,
           }
         };
 
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expected.triggers = {
           soft: {
             conditions: [
               {
-                lhs: ['@', 'global', 'something'],
+                lhs: {"_type": "state", "data": ['global', 'something']},
                 operator: '==',
                 rhs: true
               }
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -231,25 +229,27 @@ TEST
             conditions: [
               'global.something == true',
               'resources.foo >= 150'
-            ]
+            ],
+            weight: 1,
           }
         };
 
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expected.triggers = {
           hard: {
             conditions: [
               {
-                lhs: ['@', 'global', 'something'],
+                lhs: {"_type": "state", "data": ['global', 'something']},
                 operator: '==',
                 rhs: true
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '>=',
                 rhs: 150
               },
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -262,26 +262,28 @@ TEST
           soft: {
             conditions: [
               'sl.something == true',
-              'r.foo == true'
-            ]
+              'r.foo >= 150'
+            ],
+            weight: 1,
           }
         };
 
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expected.triggers = {
           soft: {
             conditions: [
               {
-                lhs: ['@', 'storylines', 'storyline_slug'],
+                lhs: {"_type": "state", "data": ['storylines', 'current_storyline', "something"]},
                 operator: '==',
                 rhs: true
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '>=',
                 rhs: 150
               },
-            ]
+            ],
+            weight: 1,
           }
         };
 
@@ -292,7 +294,7 @@ TEST
     describe("on_display parsing", () => {
       test("should accept missing on_display key", () => {
         var e = getBasicEvent();
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
@@ -303,15 +305,15 @@ TEST
           'resources.foo += 150'
         ];
 
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expected.on_display = [
           {
-            lhs: ['@', 'global', 'something'],
+            lhs: {"_type": "state", "data": ['global', 'something']},
             operator: '=',
             rhs: true
           },
           {
-            lhs: ['@', 'resources', 'foo'],
+            lhs: {"_type": "state", "data": ['resources', 'foo']},
             operator: '+=',
             rhs: 150
           },
@@ -333,17 +335,17 @@ TEST
           }
         };
 
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expected.actions = {
           OK: {
             operations: [
               {
-                lhs: ['@', 'global', 'something'],
+                lhs: {"_type": "state", "data": ['global', 'something']},
                 operator: '=',
                 rhs: true
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '+=',
                 rhs: 150
               },
@@ -365,17 +367,17 @@ TEST
           }
         };
 
-        var expected = getBasicExpectedEvent();
-        expected.triggers = {
-          soft: {
-            conditions: [
+        var expected = getBasicEvent();
+        expected.actions = {
+          OK: {
+            operations: [
               {
-                lhs: ['@', 'storylines', 'storyline_slug'],
-                operator: '==',
+                lhs: {"_type": "state", "data": ['storylines', 'current_storyline', 'something']},
+                operator: '=',
                 rhs: "ABC"
               },
               {
-                lhs: ['@', 'resources', 'foo'],
+                lhs: {"_type": "state", "data": ['resources', 'foo']},
                 operator: '*=',
                 rhs: 5
               },
@@ -390,7 +392,7 @@ TEST
     describe("repeatable parsing", () => {
       test("should accept missing repeatable key", () => {
         var e = getBasicEvent();
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
@@ -398,14 +400,14 @@ TEST
         var e = getBasicEvent();
         e.repeatable = "LOL";
 
-        expect(() => event.validateEvent(e)).toThrow(/repeatable must be a boolean: storyline_slug\/event_slug/i);
+        expect(() => event.validateEvent(e)).toThrow(/repeatable should be of type 'boolean', not 'string'/i);
       });
 
       test('should save repeatable when it is specified', () => {
         var e = getBasicEvent();
         e.repeatable = true;
 
-        var expected = getBasicExpectedEvent();
+        var expected = getBasicEvent();
         expected.repeatable = true;
 
         expect(event.parseEvent(e)).toEqual(expected);
@@ -416,28 +418,31 @@ TEST
 
   describe("getEvent()", function() {
     test('should read and parse event from disk', () => {
-      expect(event.getEvent(__dirname + '/mocks', 'test_storyline_1', 'event_1_1')).toEqual({
+      expect(event.getEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1')).toEqual({
         event: "event_1_1",
         storyline: "test_storyline_1",
         description: "Potentially multiline, markdown description of your event",
+        repeatable: false,
+        on_display: [],
         triggers: {
           soft: {
             conditions: [
               {
-                lhs: ['global', 'test'],
+                lhs: {"_type": "state", "data": ['global', 'test']},
                 operator: '==',
-                rhs: [true]
+                rhs: true
               }
-            ]
+            ],
+            weight: 1,
           }
         },
         actions: {
           OK: {
             operations: [
               {
-                lhs: ['global', 'test'],
+                lhs: {"_type": "state", "data": ['global', 'test']},
                 operator: '=',
-                rhs: [false]
+                rhs: false
               }
             ]
           }

@@ -4,7 +4,7 @@ const bundle = require('./bundle.js');
 
 describe("bundle()", () => {
   test("should bundle a proper story", () => {
-    var b = bundle(__dirname + "/mocks", "storyline.config.yml", "storylines");
+    var b = bundle.storyBundle(__dirname + "/mocks", "storyline.config.yml", "storylines");
 
     expect(b).toHaveProperty('version', 1);
     expect(b).toHaveProperty('story_title', 'Title for your story');
