@@ -138,7 +138,7 @@ describe("helpers", () => {
 
     test('should parse access to the state', () => {
       expect(helpers.parseYmlCode('global.something == true')).toEqual({
-        lhs: {_type: "state", data:["global", "something"]},
+        lhs: {_type: "state", data: ["global", "something"]},
         operator: "==",
         rhs: true
       });
@@ -146,15 +146,15 @@ describe("helpers", () => {
 
     test('should allow for access to the state on both sides', () => {
       expect(helpers.parseYmlCode('global.something %= global.something_else')).toEqual({
-        lhs: {_type: "state", data:["global", "something"]},
+        lhs: {_type: "state", data: ["global", "something"]},
         operator: "%=",
-        rhs: {_type: "state", data:["global", "something_else"]},
+        rhs: {_type: "state", data: ["global", "something_else"]},
       });
     });
 
     test('should allow the null keyword', () => {
       expect(helpers.parseYmlCode('global.something = null')).toEqual({
-        lhs: {_type: "state", data:["global", "something"]},
+        lhs: {_type: "state", data: ["global", "something"]},
         operator: "=",
         rhs: null,
       });
@@ -162,7 +162,7 @@ describe("helpers", () => {
 
     test('should parse access to the state and allow index notation', () => {
       expect(helpers.parseYmlCode('global.something.0 == true')).toEqual({
-        lhs: {_type: "state", data:["global", "something", "0"]},
+        lhs: {_type: "state", data: ["global", "something", "0"]},
         operator: "==",
         rhs: true
       });
@@ -188,7 +188,7 @@ describe("helpers", () => {
       expect(helpers.parseYmlCode('"First Lieutenant" IN global.crew.officers')).toEqual({
         lhs: "First Lieutenant",
         operator: "IN",
-        rhs: {_type: "state", data:["global", "crew", "officers"]},
+        rhs: {_type: "state", data: ["global", "crew", "officers"]},
       });
     });
 
@@ -196,13 +196,13 @@ describe("helpers", () => {
       expect(helpers.parseYmlCode('"+= ==" NOT IN global.crew.officers')).toEqual({
         lhs: "+= ==",
         operator: "NOT IN",
-        rhs: {_type: "state", data:["global", "crew", "officers"]},
+        rhs: {_type: "state", data: ["global", "crew", "officers"]},
       });
     });
 
     test('should allow for nested access to the state', () => {
       expect(helpers.parseYmlCode('resources.something.deeper.nested == true')).toEqual({
-        lhs: {_type: "state", data:["resources", "something", "deeper", "nested"]},
+        lhs: {_type: "state", data: ["resources", "something", "deeper", "nested"]},
         operator: "==",
         rhs: true
       });
@@ -226,7 +226,7 @@ describe("helpers", () => {
 
     test('should expand shorthands in state access', () => {
       expect(helpers.parseYmlCode('g.something == true')).toEqual({
-        lhs: {_type: "state", data:["global", "something"]},
+        lhs: {_type: "state", data: ["global", "something"]},
         operator: "==",
         rhs: true
       });
@@ -238,7 +238,7 @@ describe("helpers", () => {
 
     test('should expand complex shorthands in state access', () => {
       expect(helpers.parseYmlCode('sl.something == true')).toEqual({
-        lhs: {_type: "state", data:["storylines", "current_storyline", "something"]},
+        lhs: {_type: "state", data: ["storylines", "current_storyline", "something"]},
         operator: "==",
         rhs: true
       });
@@ -246,7 +246,7 @@ describe("helpers", () => {
 
     test('should only expand shorthands in first level', () => {
       expect(helpers.parseYmlCode('s.g.something == "a string"')).toEqual({
-        lhs: {_type: "state", data:["storylines", "g", "something"]},
+        lhs: {_type: "state", data: ["storylines", "g", "something"]},
         operator: "==",
         rhs: "a string"
       });

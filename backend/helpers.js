@@ -1,4 +1,6 @@
 "use strict";
+/*jshint latedef: nofunc */
+
 const operations = require('./operations.js');
 const conditions = require('./conditions.js');
 
@@ -85,18 +87,19 @@ function findOperator(codeString) {
     return candidates[0];
   }
   else {
-    var candidate = candidates[candidates.length - 1]; 
+    var candidate = candidates[candidates.length - 1];
     for(var i = 0; i < candidates.length; i += 1) {
-      var cand_begin = codeString.indexOf(' ' + candidate + ' ');
-      var cand_end = cand_begin + candidate.length - 1;
-      var cur_begin = codeString.indexOf(' ' + candidates[i] + ' ');
-      var cur_end = cur_begin + candidates[i].length - 1;
+      var candidateBegin = codeString.indexOf(' ' + candidate + ' ');
+      var candidateEnd = candidateBegin + candidate.length - 1;
+      var currentBegin = codeString.indexOf(' ' + candidates[i] + ' ');
+      var currentStart = currentBegin + candidates[i].length - 1;
 
-      if(!((cand_begin <= cur_begin) && (cand_end >= cur_end))) {
+      if(!((candidateBegin <= currentBegin) && (candidateEnd >= currentStart))) {
         throw new Error("Too many operator candidates: " + candidates);
       }
-    // All other candidates were contained in this one, this is the one we want
-    return candidate;
+
+      // All other candidates were contained in this one, this is the one we want
+      return candidate;
     }
   }
 }
@@ -197,8 +200,6 @@ function getStateAccess(arg) {
 }
 
 
-
-
 function getArg(arg) {
   switch(getArgType(arg)) {
     case ARG_TYPE_NULL:
@@ -222,7 +223,8 @@ function getArg(arg) {
 function parseYmlCode(codeString) {
   // For now, at least, we suppose there is at least one whitespace before and after the operators
   var operator = findOperator(codeString);
-  var lhs, rhs;
+  var lhs;
+  var rhs;
   [lhs, rhs] = codeString.split(operator).map(x => x.trim());
   if(lhs === '') {
     throw new Error("Missing left-hand side");
