@@ -132,6 +132,8 @@ on_display:
     - [[OPERATION]]
 actions:
     "Action name 1":
+        conditions:
+            - [[CONDITION]]
         operations:
             - [[OPERATION]]
     "Action name 2":
@@ -155,7 +157,8 @@ Here are the possible keys:
         + `weight`, an integer, defaults to 1. Any value higher than 1 will mean this event has more probability to appear to the user (10 means this event counts for 10 in the lottery)
 * `on_display`, a list of operations that will be applied when this action is displayed to the *Reader*. See "Conditions & operations" below for details.
 * `actions`, an object of available actions for the *Reader*. The only time when this object can be empty is for end events, to finish the story. Each action key is the name that will be displayed. Within this key:
-    - `operations`, a list of operations that will be applied if this action is chosen. See "Conditions & operations" below for details.
+    - `conditions`, an optional list of conditions that have to be met for this action to be visible to the *Reader*. If multiple conditions are present, they are **AND**ed together. See "Conditions & operations" below for details.
+    - `operations`, an optional list of operations that will be applied if this action is chosen. See "Conditions & operations" below for details.
 * `repeatable`, a boolean, defaults to `false`. A non-repeatable event is guaranteed to only be displayed once to the user.
 
 ## Conditions & operations
