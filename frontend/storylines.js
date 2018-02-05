@@ -138,7 +138,14 @@ class Storylines {
 
     this.applyOperations(event.on_display);
 
-    let actions = Object.keys(event.actions || []).filter(a => !a.conditions || this.testConditions(a.conditions));
+    let actions = Object.keys(event.actions || []).filter(a => {
+      let actionData = event.actions[a];
+      if(!actionData.conditions) {
+        return true;
+      }
+
+      return this.testConditions(actionData.conditions);
+    });
 
     this.callbacks.displayEvent(event.description, actions, this.respondToEvent.bind(this));
 
