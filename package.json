@@ -26,6 +26,7 @@
     "jest": "^22.1.4"
   },
   "devDependencies": {
+    "jest": "^22.1.4",
     "jscs": "^3.0.7",
     "jshint": "^2.9.5"
   },

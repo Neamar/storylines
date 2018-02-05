@@ -39,6 +39,7 @@
     {
       "story": "red_planet",
       "event": "arrival",
+      "weight": 1,
       "triggers": {
         "hard": {
           "conditions": [
@@ -77,6 +78,7 @@
     {
       "story": "red_planet",
       "event": "announcement",
+      "weight": 1,
       "triggers": {
         "hard": {
           "conditions": [
@@ -117,6 +119,7 @@
     {
       "story": "red_planet",
       "event": "leaving",
+      "weight": 1,
       "triggers": {
         "hard": {
           "conditions": [

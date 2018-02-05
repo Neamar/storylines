@@ -1,0 +1,17 @@
+---
+version: 1
+story_title: "Title for your story"
+resources:
+    "resource1":
+        description: "Resource description"
+        format: "%s"
+        display_name: "Resource 1"
+        default: 100
+    "resource2":
+        description: "Resource description"
+        format: "%s¥"
+        display_name: "Resource 2"
+        default: "ABC"
+---
+
+Potentially multiline, markdown description of your story
