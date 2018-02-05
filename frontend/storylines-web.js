@@ -2,14 +2,14 @@
 
 
 // Display an event in the Jumbotron
-window.displayEvent = function displayEvent(event, respondToEventCb) {
+window.displayEvent = function displayEvent(description, actions, respondToEventCb) {
   let eventHTML = `
 <div class="jumbotron">
-  <p>${event.description}</p>
+  <p>${description}</p>
   <p class="lead">
 `;
 
-  Object.keys(event.actions || []).forEach(a => {
+  Object.keys(actions).forEach(a => {
     eventHTML += `<a class="btn btn-primary btn-lg" href="#${a}" role="button">${a}</a> `;
   });
 
