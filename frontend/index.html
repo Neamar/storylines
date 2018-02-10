@@ -13,7 +13,10 @@
   <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-bottom">
       <a class="navbar-brand" href="#">Storylines</a>
-      <span class="navbar-text" id="resources">
+      <span class="navbar-text mr-auto" id="resources">
+      </span>
+      <span class="navbar-text">
+        <a href=# id="debug" data-toggle="tooltip" data-html="true" title="test<br/>test">Debug</a>
       </span>
     </nav>
 
@@ -26,6 +29,7 @@
     <script src="./storylines.js"></script>
     <script>
 "use strict";
+/* global Storylines, alert */
 var storyline;
 function startStory(story) {
   var callbacks = {
@@ -35,14 +39,23 @@ function startStory(story) {
 
   storyline = new Storylines(story, callbacks);
   storyline.start();
+
+  var debugTooltip = document.getElementById('debug');
+  debugTooltip.addEventListener('mouseenter', () => {
+    debugTooltip.title = JSON.stringify(storyline.state, null, 4);
+  });
 }
 
 
 // Download the story, and start!
-fetch('./story.json')
+var storyUrl = document.location.hash ? document.location.hash.substr(1) : "./story.json";
+fetch(storyUrl)
   .then(r => r.json())
-  .then(startStory);
-
+  .then(startStory)
+  .catch((e) => {
+    console.log(e);
+    alert("Unable to load story from URL anchor. Look in the console for details.");
+  });
 
     </script>
     <!-- Optional JavaScript -->
