@@ -46,7 +46,7 @@ function strip(stripList, string) {
 
 
 function isSlug(potentialSlug) {
-  return potentialSlug.match(SLUG_REGEX);
+  return typeof potentialSlug === "string" && potentialSlug.match(SLUG_REGEX);
 }
 
 
@@ -260,17 +260,16 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
     }
     throw new Error(msgNotFound || ("'" + keyName + "' doesn't exist"));
   }
-  else if(keyType === "slug") {
-    if(!isSlug(object[keyName])) {
-      throw new Error("'" + keyName + "' should be a slug");
-    }
+
+
+  if(isSlug(object[keyName])) {
+    objectKeyType = "slug";
   }
-  else if(keyType === "array") {
-    if(!Array.isArray(object[keyName])) {
-      throw new Error("'" + keyName + "' should be an array");
-    }
+  else if(Array.isArray(object[keyName])) {
+    objectKeyType = "array";
   }
-  else if((keyType !== null) && (objectKeyType !== keyType)) {
+
+  if((keyType !== null) && (objectKeyType !== keyType)) {
     throw new Error(keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
   }
 }
