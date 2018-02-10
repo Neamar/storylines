@@ -36,7 +36,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
 
 function validateTrigger(trigger) {
-  helpers.validateKeyType(trigger, "conditions", "object", "Triggers must include conditions");
+  helpers.validateKeyType(trigger, "conditions", "array", "Triggers must include conditions");
   helpers.validateKeyType(trigger, "weight", "number", "Triggers must include a weight");
 }
 
@@ -76,8 +76,8 @@ function validateEvent(eventObject) {
     validateTriggers(eventObject.triggers);
   }
 
-  var actions = eventObject.actions;
-  if(actions) {
+  helpers.validateKeyType(eventObject, "actions", "object", null);
+  if(eventObject.actions) {
     validateActions(eventObject.actions);
   }
 
