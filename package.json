@@ -1,5 +1,5 @@
 {
-  "name": "storylines-backend",
+  "name": "storylines",
   "version": "1.0.0",
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
