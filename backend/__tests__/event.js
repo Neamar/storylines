@@ -53,7 +53,7 @@ TEST
     });
 
     test('should ensure storyline is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/'storyline' should be a slug/i);
+      expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/storyline should be of type 'slug', not 'string'/i);
     });
 
     test('should ensure event slug is present', () => {
@@ -61,7 +61,7 @@ TEST
     });
 
     test('should ensure event is a slug', () => {
-      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/'event' should be a slug/i);
+      expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/event should be of type 'slug', not 'string'/i);
     });
 
     test('should ensure description is present', () => {
@@ -73,6 +73,12 @@ TEST
     });
 
     describe("Trigger validation", () => {
+      test('should ensure triggers is an object', () => {
+        var e = getBasicEvent();
+        e.triggers = [];
+
+        expect(() => event.validateEvent(e)).toThrow(/triggers should be of type 'object', not 'array'/i);
+      });
       test('should ensure triggers only contain hard or soft constraints', () => {
         var e = getBasicEvent();
         e.triggers = {
@@ -150,6 +156,19 @@ TEST
     });
 
     describe("Actions validation", () => {
+      test('should ensure actions is an object', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          soft: {
+            conditions: [],
+            weight: 15
+          }
+        };
+        e.actions = [];
+
+        expect(() => event.validateEvent(e)).toThrow(/actions should be of type 'object', not 'array'/i);
+      });
+
       test('should ensure actions contain an operations key', () => {
         var e = getBasicEvent();
         e.triggers = {
@@ -173,7 +192,19 @@ TEST
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/'operations' should be an array/i);
+        expect(() => event.validateEvent(e)).toThrow(/operations should be of type 'array', not 'boolean'/i);
+      });
+
+      test('should ensure actions conditions is an array', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {
+            operations: [],
+            conditions: false
+          }
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/conditions should be of type 'array', not 'boolean'/i);
       });
     });
   });
@@ -188,7 +219,7 @@ TEST
       var e = getBasicEvent();
       e.on_display = {};
 
-      expect(() => event.validateEvent(e)).toThrow(/'on_display' should be an array/i);
+      expect(() => event.validateEvent(e)).toThrow(/on_display should be of type 'array', not 'object'/i);
     });
   });
 
@@ -351,6 +382,56 @@ TEST
               },
             ]
           }
+        };
+
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+
+      test('should parse enclosed conditions', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {
+            operations: [
+              'global.something = true',
+            ]
+          },
+          KO: {
+            conditions: [
+              'global.testval == 123',
+            ],
+            operations: [
+              'global.something = false',
+            ]
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.actions = {
+          OK: {
+            operations: [
+              {
+                lhs: {"_type": "state", "data": ['global', 'something']},
+                operator: '=',
+                rhs: true
+              },
+            ]
+          },
+          KO: {
+            conditions: [
+              {
+                lhs: {"_type": "state", "data": ['global', 'testval']},
+                operator: '==',
+                rhs: 123
+              },
+            ],
+            operations: [
+              {
+                lhs: {"_type": "state", "data": ['global', 'something']},
+                operator: '=',
+                rhs: false
+              },
+            ]
+          },
         };
 
         expect(event.parseEvent(e)).toEqual(expected);

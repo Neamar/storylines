@@ -36,7 +36,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
 
 function validateTrigger(trigger) {
-  helpers.validateKeyType(trigger, "conditions", "object", "Triggers must include conditions");
+  helpers.validateKeyType(trigger, "conditions", "array", "Triggers must include conditions");
   helpers.validateKeyType(trigger, "weight", "number", "Triggers must include a weight");
 }
 
@@ -52,8 +52,10 @@ function validateTriggers(triggersObject) {
 
 
 function validateActions(actionsObject) {
-  Object.keys(actionsObject || []).forEach(key =>
-    helpers.validateKeyType(actionsObject[key], "operations", "array", "Actions must include operations")
+  Object.keys(actionsObject || []).forEach(key => {
+      helpers.validateKeyType(actionsObject[key], "operations", "array", "Actions must include operations");
+      helpers.validateKeyType(actionsObject[key], "conditions", "array", null);
+    }
   );
 }
 
@@ -70,12 +72,13 @@ function validateEvent(eventObject) {
   helpers.validateKeyType(eventObject, "description", "string", "Missing event description");
   helpers.validateKeyType(eventObject, "repeatable", "boolean", null);
 
+  helpers.validateKeyType(eventObject, "triggers", "object", null);
   if(eventObject.triggers) {
     validateTriggers(eventObject.triggers);
   }
 
-  var actions = eventObject.actions;
-  if(actions) {
+  helpers.validateKeyType(eventObject, "actions", "object", null);
+  if(eventObject.actions) {
     validateActions(eventObject.actions);
   }
 
@@ -112,9 +115,18 @@ function parseOperations(actionObject) {
 }
 
 
+function parseConditions(actionObject) {
+  if(actionObject.conditions) {
+    actionObject.conditions = actionObject.conditions.map(helpers.parseYmlCode);
+  }
+  return actionObject;
+}
+
+
 function parseActions(eventObject) {
   if(eventObject.actions) {
     Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName]));
+    Object.keys(eventObject.actions || []).forEach(actionName => parseConditions(eventObject.actions[actionName]));
   }
   return eventObject;
 }

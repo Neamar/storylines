@@ -263,7 +263,11 @@ describe("helpers", () => {
     });
 
     test('should work for a simple array case', () => {
-      expect(helpers.validateKeyType({"test": []}, "test", "object"));
+      expect(helpers.validateKeyType({"test": []}, "test", "array"));
+    });
+
+    test('should work for a simple object case', () => {
+      expect(helpers.validateKeyType({"test": {}}, "test", "object"));
     });
 
     test('should not work for wrong type', () => {
