@@ -13,7 +13,10 @@
   <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-bottom">
       <a class="navbar-brand" href="#">Storylines</a>
-      <span class="navbar-text" id="resources">
+      <span class="navbar-text mr-auto" id="resources">
+      </span>
+      <span class="navbar-text">
+        <a href=# id="debug" data-toggle="tooltip" data-html="true" title="test<br/>test">Debug</a>
       </span>
     </nav>
 
@@ -35,6 +38,11 @@ function startStory(story) {
 
   storyline = new Storylines(story, callbacks);
   storyline.start();
+
+  var debugTooltip = document.getElementById('debug');
+  debugTooltip.addEventListener('mouseenter', () => {
+    debugTooltip.title = JSON.stringify(storyline.state, null, 2);
+  });
 }
 
 
@@ -42,8 +50,6 @@ function startStory(story) {
 fetch('./story.json')
   .then(r => r.json())
   .then(startStory);
-
-
     </script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
