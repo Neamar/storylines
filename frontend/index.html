@@ -29,6 +29,7 @@
     <script src="./storylines.js"></script>
     <script>
 "use strict";
+/* global Storylines, alert */
 var storyline;
 function startStory(story) {
   var callbacks = {
@@ -47,9 +48,15 @@ function startStory(story) {
 
 
 // Download the story, and start!
-fetch('./story.json')
+var storyUrl = document.location.hash ? document.location.hash.substr(1) : "./story.json";
+fetch(storyUrl)
   .then(r => r.json())
-  .then(startStory);
+  .then(startStory)
+  .catch((e) => {
+    console.log(e);
+    alert("Unable to load story from URL anchor. Look in the console for details.");
+  });
+
     </script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
