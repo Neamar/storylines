@@ -356,6 +356,56 @@ TEST
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
+      test('', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {
+            operations: [
+              'global.something = true',
+            ]
+          },
+          KO: {
+            conditions: [
+              'global.testval == 123',
+            ],
+            operations: [
+              'global.something = false',
+            ]
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.actions = {
+          OK: {
+            operations: [
+              {
+                lhs: {"_type": "state", "data": ['global', 'something']},
+                operator: '=',
+                rhs: true
+              },
+            ]
+            },
+          KO: {
+            conditions: [
+              {
+                lhs: {"_type": "state", "data": ['global', 'testval']},
+                operator: '==',
+                rhs: 123
+              },
+            ],
+            operations: [
+              {
+                lhs: {"_type": "state", "data": ['global', 'something']},
+                operator: '=',
+                rhs: false
+              },
+            ]
+          },
+        };
+
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+
       test('should replace shorthands', () => {
         var e = getBasicEvent();
         e.actions = {
