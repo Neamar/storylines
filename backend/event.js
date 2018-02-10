@@ -52,8 +52,10 @@ function validateTriggers(triggersObject) {
 
 
 function validateActions(actionsObject) {
-  Object.keys(actionsObject || []).forEach(key =>
-    helpers.validateKeyType(actionsObject[key], "operations", "array", "Actions must include operations")
+  Object.keys(actionsObject || []).forEach(key => {
+      helpers.validateKeyType(actionsObject[key], "operations", "array", "Actions must include operations");
+      helpers.validateKeyType(actionsObject[key], "conditions", "array", null);
+    }
   );
 }
 

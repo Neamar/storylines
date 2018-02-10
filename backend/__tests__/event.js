@@ -175,6 +175,17 @@ TEST
 
         expect(() => event.validateEvent(e)).toThrow(/'operations' should be an array/i);
       });
+
+      test('should ensure actions conditions is an array', () => {
+        var e = getBasicEvent();
+        e.actions = {
+          OK: {
+            conditions: false
+          }
+        };
+
+        expect(() => event.validateEvent(e)).toThrow(/'conditions' should be an array/i);
+      });
     });
   });
 
@@ -356,7 +367,7 @@ TEST
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('', () => {
+      test('should parse enclosed conditions', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
@@ -384,7 +395,7 @@ TEST
                 rhs: true
               },
             ]
-            },
+          },
           KO: {
             conditions: [
               {
