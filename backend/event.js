@@ -112,9 +112,18 @@ function parseOperations(actionObject) {
 }
 
 
+function parseConditions(actionObject) {
+  if(actionObject.conditions) {
+    actionObject.conditions = actionObject.conditions.map(helpers.parseYmlCode);
+  }
+  return actionObject;
+}
+
+
 function parseActions(eventObject) {
   if(eventObject.actions) {
     Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName]));
+    Object.keys(eventObject.actions || []).forEach(actionName => parseConditions(eventObject.actions[actionName]));
   }
   return eventObject;
 }
