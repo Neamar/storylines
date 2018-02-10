@@ -41,7 +41,7 @@ function startStory(story) {
 
   var debugTooltip = document.getElementById('debug');
   debugTooltip.addEventListener('mouseenter', () => {
-    debugTooltip.title = JSON.stringify(storyline.state, null, 2);
+    debugTooltip.title = JSON.stringify(storyline.state, null, 4);
   });
 }
 
