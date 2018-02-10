@@ -72,6 +72,7 @@ function validateEvent(eventObject) {
   helpers.validateKeyType(eventObject, "description", "string", "Missing event description");
   helpers.validateKeyType(eventObject, "repeatable", "boolean", null);
 
+  helpers.validateKeyType(eventObject, "triggers", "object", null);
   if(eventObject.triggers) {
     validateTriggers(eventObject.triggers);
   }

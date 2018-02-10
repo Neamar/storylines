@@ -73,6 +73,12 @@ TEST
     });
 
     describe("Trigger validation", () => {
+      test('should ensure triggers is an object', () => {
+        var e = getBasicEvent();
+        e.triggers = [];
+
+        expect(() => event.validateEvent(e)).toThrow(/triggers should be of type 'object', not 'array'/i);
+      });
       test('should ensure triggers only contain hard or soft constraints', () => {
         var e = getBasicEvent();
         e.triggers = {
@@ -150,7 +156,7 @@ TEST
     });
 
     describe("Actions validation", () => {
-      test('should ensure actions is am object', () => {
+      test('should ensure actions is an object', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
@@ -160,7 +166,7 @@ TEST
         };
         e.actions = [];
 
-        expect(() => event.validateEvent(e)).toThrow(/actions should be of type 'object', not /i);
+        expect(() => event.validateEvent(e)).toThrow(/actions should be of type 'object', not 'array'/i);
       });
 
       test('should ensure actions contain an operations key', () => {
