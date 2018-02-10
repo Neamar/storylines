@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
+  "bin": {
+    "storyline": "./backend/compile.js"
+  },
   "scripts": {
     "local": "node frontend.js",
     "compile": "node backend/compile.js",
