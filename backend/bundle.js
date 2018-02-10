@@ -40,6 +40,8 @@ function storyBundle(storyPath, storyConfigFile, storylinesFolder) {
   // Generate default state
   storyConfig.default_state = stateTools.generateDefaultState(storyConfig.resources, storylinesSlugs);
 
+  // "Stamp" the story (makes searching within Github easier)
+  storyConfig._source = "https://github.com/Neamar/storylines";
   return storyConfig;
 }
 
