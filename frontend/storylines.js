@@ -138,7 +138,16 @@ class Storylines {
 
     this.applyOperations(event.on_display);
 
-    this.callbacks.displayEvent(event, this.respondToEvent.bind(this));
+    let actions = Object.keys(event.actions || []).filter(a => {
+      let actionData = event.actions[a];
+      if(!actionData.conditions) {
+        return true;
+      }
+
+      return this.testConditions(actionData.conditions);
+    });
+
+    this.callbacks.displayEvent(event.description, actions, this.respondToEvent.bind(this));
 
     if(!event.repeatable) {
       // Event isn't repeatable, store it in a Set to make sure we don't pick it again.

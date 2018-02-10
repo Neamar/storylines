@@ -733,12 +733,16 @@ describe("Storylines", () => {
 
       var event = {
         id: 1,
-        on_display: []
+        on_display: [],
+        actions: {
+          "OK": {}
+        }
       };
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
-      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][0]).toBe(event);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][0]).toBe(event.description);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][1]).toEqual(["OK"]);
     });
 
     it("should apply on_display operations", () => {
@@ -753,6 +757,39 @@ describe("Storylines", () => {
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.state).toHaveProperty('global.on_display', true);
+    });
+
+    it("should filter actions depending on conditions", () => {
+      stubStoryline.state.global = getFooEqualBarState();
+
+      stubStoryline.callbacks.displayEvent = jest.fn();
+
+      var event = {
+        id: 1,
+        on_display: [],
+        actions: {
+          "OK": {
+            conditions: [{
+              lhs: buildState(['global', 'foo']),
+              operator: "==",
+              rhs: "bar"
+            }]
+          },
+          "NOTOK": {
+            conditions: [{
+              lhs: buildState(['global', 'foo']),
+              operator: "==",
+              rhs: "notok"
+            }]
+          },
+          "ALWAYS": {}
+        }
+      };
+
+      stubStoryline.moveToEvent(event);
+
+      expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][1]).toEqual(["OK", "ALWAYS"]);
     });
 
     it("should store event in a Set if repeatable is false", () => {

@@ -31,7 +31,7 @@ The following logic then applies:
 ### Displaying an event
 The *Current Event* description is displayed to the *Reader*.
 
-For every available action, a button or similar UI component is displayed allowing the *Reader* to make a choice for his character.
+For every available action, a button or similar UI component is displayed allowing the *Reader* to make a choice for his character provided all the actions conditions are met.
 
 If no actions are available, see "Special case: actionless events".
 
@@ -46,6 +46,6 @@ The UI for *Resources* is updated.
 The engine then moves back to "Picking an event".
 
 ### Special case: actionless events
-Some events don't have any actions.
+Some events don't have any actions (or no actions match all the conditions)
 
 Those are "final" events, ending the story.
