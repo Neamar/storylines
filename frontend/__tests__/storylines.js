@@ -646,6 +646,48 @@ describe("Storylines", () => {
         ]})).toBeTruthy();
       });
 
+      it("should evaluate more than two matching conditions", () => {
+        stubStoryline.state.global = getFooEqualBarState();
+        expect(stubStoryline.testPropositionalCondition({
+          _type: "propositional_condition",
+          boolean_operator: "AND",
+          conditions: [
+            {
+              _type: "atomic_condition",
+              lhs: true,
+              operator: "==",
+              rhs: true
+            },
+            {
+              _type: "atomic_condition",
+              lhs: true,
+              operator: "==",
+              rhs: true
+            },
+            {
+              _type: "atomic_condition",
+              lhs: true,
+              operator: "==",
+              rhs: false
+            }
+        ]})).toBeFalsy();
+      });
+
+      it("should evaluate even when there is only one condition", () => {
+        stubStoryline.state.global = getFooEqualBarState();
+        expect(stubStoryline.testPropositionalCondition({
+          _type: "propositional_condition",
+          boolean_operator: "OR",
+          conditions: [
+            {
+              _type: "atomic_condition",
+              lhs: true,
+              operator: "==",
+              rhs: true
+            },
+        ]})).toBeTruthy();
+      });
+
       it("should return false when using OR and all conditions fails", () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
