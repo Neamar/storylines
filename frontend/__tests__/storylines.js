@@ -740,9 +740,12 @@ describe("Storylines", () => {
             id: 1,
             triggers: {
               soft: {
-                conditions: [
-                  {lhs: true, operator: "==", rhs: true}
-                ],
+                condition: {
+                  _type: "atomic_condition",
+                  lhs: true,
+                  operator: "==",
+                  rhs: true
+                },
                 weight: 1
               }
             }
@@ -751,9 +754,12 @@ describe("Storylines", () => {
             id: 2,
             triggers: {
               soft: {
-                conditions: [
-                  {lhs: "bar", operator: "==", rhs: buildState(["global", "foo"])}
-                ],
+                condition: {
+                  _type: "atomic_condition",
+                  lhs: "bar",
+                  operator: "==",
+                  rhs: buildState(["global", "foo"])
+                },
                 weight: 1
               }
             }
@@ -762,9 +768,12 @@ describe("Storylines", () => {
             id: 3,
             triggers: {
               soft: {
-                conditions: [
-                  {lhs: true, operator: "==", rhs: false}
-                ],
+                condition: {
+                  _type: "atomic_condition",
+                  lhs: true,
+                  operator: "==",
+                  rhs: false
+                },
                 weight: 1
               }
             }
@@ -916,18 +925,20 @@ describe("Storylines", () => {
         on_display: [],
         actions: {
           "OK": {
-            conditions: [{
+            condition: {
+              _type: "atomic_condition",
               lhs: buildState(['global', 'foo']),
               operator: "==",
               rhs: "bar"
-            }]
+            }
           },
           "NOTOK": {
-            conditions: [{
+            condition: {
+              _type: "atomic_condition",
               lhs: buildState(['global', 'foo']),
               operator: "==",
               rhs: "notok"
-            }]
+            }
           },
           "ALWAYS": {}
         }
@@ -976,13 +987,12 @@ describe("Storylines", () => {
       };
 
       event.triggers[triggerType] = {
-        conditions: [
-          {
-            lhs: true,
-            operator: "==",
-            rhs: true
-          }
-        ],
+        condition: {
+          _type: "atomic_condition",
+          lhs: true,
+          operator: "==",
+          rhs: true
+        },
         weight: 1
       };
 
@@ -1002,13 +1012,12 @@ describe("Storylines", () => {
         id: 1,
         triggers: {
           soft: {
-            conditions: [
-              {
-                lhs: buildState(["global", "no_events_available"]),
-                operator: "==",
-                rhs: true
-              }
-            ],
+            condition: {
+              _type: "atomic_condition",
+              lhs: buildState(["global", "no_events_available"]),
+              operator: "==",
+              rhs: true
+            },
             weight: 1
           }
         }

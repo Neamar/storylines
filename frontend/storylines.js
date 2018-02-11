@@ -67,6 +67,10 @@ class Storylines {
         return false;
       }
 
+      if(!e.triggers[triggerType].condition) {
+        return true;
+      }
+
       // Otherwise, return true if condition pass
       return this.testCondition(e.triggers[triggerType].condition);
     });
