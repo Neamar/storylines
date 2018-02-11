@@ -16,7 +16,7 @@
     - Example: "Nuclear fuel: 250 units"
 * **State**, a JSON mapping (where keys are strings and values can be strings, integers, float, arrays or JSON) completely describing a *Character*  in a *Story* (and therefore, in the corrseponding *Storylines*). A *State* always contains at least three keys: `global` for global variables useful to the *Story*, `resources` with the resource defined by the *Story*, and `storylines` with all data relative to past *Storylines*.
     - Example: `{"global": {}, "resources": {"Nuclear fuel": 250}, storylines: {}}`
-* **Conditions**: either a boolean expression or an object with exactly one key among 'OR' and 'AND' corresponding to an aray of *Conditions*. The conditions are applied on a *State* and can reference *State* elements or constant values. *Conditions* can be expressed in JSON or YML.
+* **Conditions**: either a boolean expression or an object with exactly one key among 'OR' and 'AND' corresponding to an aray of *Conditions*. The conditions are applied on a *State* and can reference *State* elements or constant values. *Conditions* can be expressed in JSON or YML. Supported boolean operators in *Conditions* are *'AND'* and *'OR'*. They act on a list of conditions (so they can be recursive) and will return the only element if the list has one single item.
     - Example: `"Nuclear fuel" > 500`, `{"AND": [g.test >= 1, {"OR": [g.test1 == true, r.fuel > 500]}]}`
 * **Operations**: an array of operations updating a given *State* by applying various transformations to it. *Operations* can be expressed in JSON or YML.
     - Example: `"Nuclear fuel" = 650`
