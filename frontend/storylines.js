@@ -67,8 +67,8 @@ class Storylines {
         return false;
       }
 
-      // Otherwise, return true if all conditions pass
-      return this.testConditions(e.triggers[triggerType].conditions);
+      // Otherwise, return true if condition pass
+      return this.testCondition(e.triggers[triggerType].condition);
     });
   }
 
@@ -140,11 +140,11 @@ class Storylines {
 
     let actions = Object.keys(event.actions || []).filter(a => {
       let actionData = event.actions[a];
-      if(!actionData.conditions) {
+      if(!actionData.condition) {
         return true;
       }
 
-      return this.testConditions(actionData.conditions);
+      return this.testCondition(actionData.condition);
     });
 
     this.callbacks.displayEvent(event.description, actions, this.respondToEvent.bind(this));
@@ -171,18 +171,24 @@ class Storylines {
   }
 
   /**
-  * Return true if all the specified conditions pass
-  * (logical AND)
+  * Evaluate specified condition
   */
-  testConditions(conditions) {
-    return conditions.every(c => this.testCondition(c));
+  testCondition(condition) {
+    if(condition._type === "atomic_condition") {
+      return this.testAtomicCondition(condition);
+    }
+    else if(condition._type === "propostional_condition") {
+      return this.testPropositionalCondition(condition);
+    }
+
+    throw new Error("Invalid condition type " + condition._type);
   }
 
   /**
   * Test the specified condition, which can use the state,
   * and returns a boolean.
   */
-  testCondition(condition) {
+  testAtomicCondition(condition) {
     let lhs = this.resolveValue(condition.lhs);
     let rhs = this.resolveValue(condition.rhs);
 
@@ -201,6 +207,20 @@ class Storylines {
         return lhs !== rhs;
       default:
         throw new Error("Invalid operator " + condition.operator);
+    }
+  }
+
+  /**
+  * Test the specified proposition (atomic conditions with logical connectors such as AND or OR)
+  */
+  testPropositionalCondition(condition) {
+    switch(condition.boolean_operator) {
+      case 'AND':
+        return condition.conditions.every(c => this.testCondition(c));
+      case 'OR':
+        return condition.conditions.some(c => this.testCondition(c));
+      default:
+        throw new Error("Invalid boolean operator " + condition.boolean_operator);
     }
   }
 
