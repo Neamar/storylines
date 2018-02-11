@@ -39,8 +39,7 @@ describe("event file", () => {
       var e = event.buildEvent(`---
 triggers:
     soft:
-        conditions:
-            - g.test == true
+        condition: g.test == true
 ---
 TEST
 `, 'storyline_slug', 'event_slug');
@@ -48,7 +47,7 @@ TEST
       expect(e).toHaveProperty('description', 'TEST');
       expect(e).toHaveProperty('event', 'event_slug');
       expect(e).toHaveProperty('storyline', 'storyline_slug');
-      expect(e).toHaveProperty('triggers.soft.conditions.0', 'g.test == true');
+      expect(e).toHaveProperty('triggers.soft.condition', 'g.test == true');
       expect(e).toHaveProperty('repeatable', false);
       expect(e).toHaveProperty('on_display', []);
     });
@@ -96,20 +95,20 @@ TEST
         expect(() => event.validateEvent(e)).toThrow(/Triggers cannot be 'nonexisting'. Possible types are: hard, soft/i);
       });
 
-      test('should ensure hard triggers have a conditions property', () => {
+      test('should ensure hard triggers have a condition property', () => {
         var e = getBasicEvent();
         e.triggers = {
           hard: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers must include conditions/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers must include condition/i);
       });
 
       test('should ensure hard triggers weight property is numeric', () => {
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            conditions: "",
+            condition: "",
             weight: false
           }
         };
@@ -121,7 +120,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            conditions: "",
+            condition: "",
             weight: 15
           }
         };
@@ -129,20 +128,20 @@ TEST
         expect(event.validateEvent(e)).toHaveProperty('triggers.hard.weight', 15);
       });
 
-      test('should ensure soft triggers have a conditions property', () => {
+      test('should ensure soft triggers have a condition property', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {}
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/Triggers must include conditions/i);
+        expect(() => event.validateEvent(e)).toThrow(/Triggers must include condition/i);
       });
 
       test('should ensure soft triggers weight property is numeric', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: "",
+            condition: "",
             weight: false
           }
         };
@@ -154,7 +153,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: "",
+            condition: "",
             weight: 15
           }
         };
@@ -168,7 +167,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: "",
+            condition: "",
             weight: 15
           }
         };
@@ -181,7 +180,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: "",
+            condition: "",
             weight: 15
           }
         };
@@ -203,16 +202,16 @@ TEST
         expect(() => event.validateEvent(e)).toThrow(/operations should be of type 'array', not 'boolean'/i);
       });
 
-      test('should ensure actions conditions is an array', () => {
+      test('should ensure actions condition is an array', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
             operations: [],
-            conditions: false
+            condition: false
           }
         };
 
-        expect(() => event.validateEvent(e)).toThrow(/conditions should be of type 'array', not 'boolean'/i);
+        expect(() => event.validateEvent(e)).toThrow(/condition should be of type 'array', not 'boolean'/i);
       });
     });
   });
@@ -233,11 +232,11 @@ TEST
 
   describe("parseEvent()", () => {
     describe("Trigger parsing", () => {
-      test('should parse enclosed soft conditions', () => {
+      test('should parse enclosed soft condition', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: 'global.something == true',
+            condition: 'global.something == true',
             weight: 1,
           }
         };
@@ -245,7 +244,8 @@ TEST
         var expected = getBasicEvent();
         expected.triggers = {
           soft: {
-            conditions: {
+            condition: {
+              '_type': 'atomic_condition',
               lhs: {"_type": "state", "data": ['global', 'something']},
               operator: '==',
               rhs: true
@@ -257,11 +257,11 @@ TEST
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should parse enclosed hard conditions', () => {
+      test('should parse enclosed hard condition', () => {
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            conditions: {
+            condition: {
               'AND': [
                 'global.something == true',
                 'resources.foo >= 150'
@@ -274,14 +274,18 @@ TEST
         var expected = getBasicEvent();
         expected.triggers = {
           hard: {
-            conditions: {
-              'AND': [
+            condition: {
+              _type: 'propositional_condition',
+              boolean_operator: 'AND',
+              conditions: [
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['global', 'something']},
                   operator: '==',
                   rhs: true
                 },
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['resources', 'foo']},
                   operator: '>=',
                   rhs: 150
@@ -299,8 +303,8 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: {
-              "AND": [
+            condition: {
+              AND: [
                 'sl.something == true',
                 'r.foo >= 150'
               ],
@@ -312,14 +316,18 @@ TEST
         var expected = getBasicEvent();
         expected.triggers = {
           soft: {
-            conditions: {
-              "AND": [
+            condition: {
+              _type: 'propositional_condition',
+              boolean_operator: 'AND',
+              conditions: [
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['storylines', 'current_storyline', "something"]},
                   operator: '==',
                   rhs: true
                 },
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['resources', 'foo']},
                   operator: '>=',
                   rhs: 150
@@ -399,7 +407,7 @@ TEST
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should parse enclosed conditions', () => {
+      test('should parse enclosed condition', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
@@ -408,7 +416,7 @@ TEST
             ]
           },
           KO: {
-            conditions: 'global.testval == 123',
+            condition: 'global.testval == 123',
             operations: [
               'global.something = false',
             ]
@@ -427,7 +435,8 @@ TEST
             ]
           },
           KO: {
-            conditions: {
+            condition: {
+              _type: 'atomic_condition',
               lhs: {"_type": "state", "data": ['global', 'testval']},
               operator: '==',
               rhs: 123
@@ -515,7 +524,8 @@ TEST
         on_display: [],
         triggers: {
           soft: {
-            conditions: {
+            condition: {
+              _type: 'atomic_condition',
               lhs: {"_type": "state", "data": ['global', 'test']},
               operator: '==',
               rhs: true

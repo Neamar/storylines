@@ -1,7 +1,7 @@
 ---
 triggers:
     soft:
-        conditions:
+        condition:
             OR:
                 - g.test == true
                 - AND:

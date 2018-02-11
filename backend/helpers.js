@@ -194,7 +194,7 @@ function getStateAccess(arg) {
     keys.splice(1, 0, "current_storyline");
   }
   else {
-    throw new Error("First-Level must be one of " + ARG_STATE_FIRST_LEVEL);
+    throw new Error("First-Level must be one of " + ARG_STATE_FIRST_LEVEL + ", not " + keys[0]);
   }
   return {"_type": "state", "data": keys};
 }
