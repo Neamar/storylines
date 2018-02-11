@@ -304,7 +304,7 @@ TEST
         e.triggers = {
           soft: {
             condition: {
-              'AND': [
+              AND: [
                 'sl.something == true',
                 'r.foo >= 150'
               ],
