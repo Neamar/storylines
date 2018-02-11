@@ -177,7 +177,7 @@ class Storylines {
     if(condition._type === "atomic_condition") {
       return this.testAtomicCondition(condition);
     }
-    else if(condition._type === "propostional_condition") {
+    else if(condition._type === "propositional_condition") {
       return this.testPropositionalCondition(condition);
     }
 
