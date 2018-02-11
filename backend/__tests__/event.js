@@ -20,6 +20,14 @@ describe("event file", () => {
       expect(r).toContain("g.test");
       expect(r).toContain("---");
     });
+
+    test('should read event from disk', () => {
+      var r = event.readEvent(__dirname + '/mocks/storylines', 'test_storyline_2', 'event_2_1');
+
+      expect(r).toContain("triggers");
+      expect(r).toContain("g.test");
+      expect(r).toContain("---");
+    });
   });
 
   describe("buildEvent()", function() {
@@ -101,7 +109,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            conditions: [],
+            conditions: "",
             weight: false
           }
         };
@@ -113,7 +121,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            conditions: [],
+            conditions: "",
             weight: 15
           }
         };
@@ -134,7 +142,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: [],
+            conditions: "",
             weight: false
           }
         };
@@ -146,7 +154,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: [],
+            conditions: "",
             weight: 15
           }
         };
@@ -160,7 +168,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: [],
+            conditions: "",
             weight: 15
           }
         };
@@ -173,7 +181,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: [],
+            conditions: "",
             weight: 15
           }
         };
@@ -229,9 +237,7 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: [
-              'global.something == true'
-            ],
+            conditions: 'global.something == true',
             weight: 1,
           }
         };
@@ -239,13 +245,11 @@ TEST
         var expected = getBasicEvent();
         expected.triggers = {
           soft: {
-            conditions: [
-              {
-                lhs: {"_type": "state", "data": ['global', 'something']},
-                operator: '==',
-                rhs: true
-              }
-            ],
+            conditions: {
+              lhs: {"_type": "state", "data": ['global', 'something']},
+              operator: '==',
+              rhs: true
+            },
             weight: 1,
           }
         };
@@ -257,10 +261,12 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            conditions: [
-              'global.something == true',
-              'resources.foo >= 150'
-            ],
+            conditions: {
+              'AND': [
+                'global.something == true',
+                'resources.foo >= 150'
+              ]
+            },
             weight: 1,
           }
         };
@@ -268,18 +274,20 @@ TEST
         var expected = getBasicEvent();
         expected.triggers = {
           hard: {
-            conditions: [
-              {
-                lhs: {"_type": "state", "data": ['global', 'something']},
-                operator: '==',
-                rhs: true
-              },
-              {
-                lhs: {"_type": "state", "data": ['resources', 'foo']},
-                operator: '>=',
-                rhs: 150
-              },
-            ],
+            conditions: {
+              'AND': [
+                {
+                  lhs: {"_type": "state", "data": ['global', 'something']},
+                  operator: '==',
+                  rhs: true
+                },
+                {
+                  lhs: {"_type": "state", "data": ['resources', 'foo']},
+                  operator: '>=',
+                  rhs: 150
+                },
+              ]
+            },
             weight: 1,
           }
         };
@@ -291,10 +299,12 @@ TEST
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            conditions: [
-              'sl.something == true',
-              'r.foo >= 150'
-            ],
+            conditions: {
+              "AND": [
+                'sl.something == true',
+                'r.foo >= 150'
+              ],
+            },
             weight: 1,
           }
         };
@@ -302,18 +312,20 @@ TEST
         var expected = getBasicEvent();
         expected.triggers = {
           soft: {
-            conditions: [
-              {
-                lhs: {"_type": "state", "data": ['storylines', 'current_storyline', "something"]},
-                operator: '==',
-                rhs: true
-              },
-              {
-                lhs: {"_type": "state", "data": ['resources', 'foo']},
-                operator: '>=',
-                rhs: 150
-              },
-            ],
+            conditions: {
+              "AND": [
+                {
+                  lhs: {"_type": "state", "data": ['storylines', 'current_storyline', "something"]},
+                  operator: '==',
+                  rhs: true
+                },
+                {
+                  lhs: {"_type": "state", "data": ['resources', 'foo']},
+                  operator: '>=',
+                  rhs: 150
+                },
+              ],
+            },
             weight: 1,
           }
         };
@@ -396,9 +408,7 @@ TEST
             ]
           },
           KO: {
-            conditions: [
-              'global.testval == 123',
-            ],
+            conditions: 'global.testval == 123',
             operations: [
               'global.something = false',
             ]
@@ -417,13 +427,11 @@ TEST
             ]
           },
           KO: {
-            conditions: [
-              {
-                lhs: {"_type": "state", "data": ['global', 'testval']},
-                operator: '==',
-                rhs: 123
-              },
-            ],
+            conditions: {
+              lhs: {"_type": "state", "data": ['global', 'testval']},
+              operator: '==',
+              rhs: 123
+            },
             operations: [
               {
                 lhs: {"_type": "state", "data": ['global', 'something']},
@@ -507,13 +515,11 @@ TEST
         on_display: [],
         triggers: {
           soft: {
-            conditions: [
-              {
-                lhs: {"_type": "state", "data": ['global', 'test']},
-                operator: '==',
-                rhs: true
-              }
-            ],
+            conditions: {
+              lhs: {"_type": "state", "data": ['global', 'test']},
+              operator: '==',
+              rhs: true
+            },
             weight: 1,
           }
         },

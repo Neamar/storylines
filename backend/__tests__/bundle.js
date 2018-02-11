@@ -11,7 +11,7 @@ describe("storyBundle()", () => {
     expect(b).toHaveProperty('events');
     expect(b).toHaveProperty('events.0.storyline', 'test_storyline_1');
     expect(b).toHaveProperty('events.0.event', 'event_1_1');
-    expect(b).toHaveProperty('events.0.triggers.soft.conditions.0.lhs', {"_type": "state", "data": ['global', 'test']});
+    expect(b).toHaveProperty('events.0.triggers.soft.conditions.lhs', {"_type": "state", "data": ['global', 'test']});
     expect(b).toHaveProperty('default_state.global', {"current_turn": 0});
     expect(b).toHaveProperty('default_state.resources', {resource1: 100, resource2: "ABC"});
     expect(b).toHaveProperty('default_state.storylines', {test_storyline_1: {}, test_storyline_2: {}});

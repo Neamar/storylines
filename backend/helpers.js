@@ -269,7 +269,7 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
     objectKeyType = "array";
   }
 
-  if((keyType !== null) && (objectKeyType !== keyType)) {
+  if((keyType !== null) && !((objectKeyType === keyType) || (Array.isArray(keyType) && keyType.includes(objectKeyType)))) {
     throw new Error(keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
   }
 }

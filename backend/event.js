@@ -2,6 +2,7 @@
 const fs = require('fs');
 const frontMatter = require('front-matter');
 const helpers = require('./helpers');
+const conditionsTools = require('./conditions');
 
 const TRIGGER_TYPES = ['hard', 'soft'];
 
@@ -36,7 +37,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
 
 function validateTrigger(trigger) {
-  helpers.validateKeyType(trigger, "conditions", "array", "Triggers must include conditions");
+  helpers.validateKeyType(trigger, "conditions", ["string", "object"], "Triggers must include conditions");
   helpers.validateKeyType(trigger, "weight", "number", "Triggers must include a weight");
 }
 
@@ -90,7 +91,7 @@ function validateEvent(eventObject) {
 
 function parseTrigger(triggerObject) {
   validateTrigger(triggerObject); // this should have been checked by parseTriggers, but what if we call parseTrigger directly?
-  triggerObject.conditions = triggerObject.conditions.map(helpers.parseYmlCode);
+  triggerObject.conditions = conditionsTools.parseCondition(triggerObject.conditions);
   return triggerObject;
 }
 
@@ -117,7 +118,7 @@ function parseOperations(actionObject) {
 
 function parseConditions(actionObject) {
   if(actionObject.conditions) {
-    actionObject.conditions = actionObject.conditions.map(helpers.parseYmlCode);
+    actionObject.conditions = conditionsTools.parseCondition(actionObject.conditions);
   }
   return actionObject;
 }
