@@ -167,7 +167,7 @@ Here are the possible keys:
 *Conditions* are a way to express a conditional test on the current `State`. They are of two types: "atomic" or "propositional".
 
 An *Atomic Condition* is formed of three components in this order: `lhs` (left hand side), `operator`, `rhs` (right hand side).
-A *Propostitional Condition* is a list of *Conditions* (*atomic* or *propositional*) to be joined by a boolean operator, either 'AND' or 'OR'. They are evaluated recursively, and will resolve to the only element if the list of *conditions* contains only one, no matter the operator.
+A *Propositional Condition* is a list of *Conditions* (*atomic* or *propositional*) to be joined by a boolean operator, either 'AND' or 'OR'. They are evaluated recursively, and will resolve to the only element if the list of *conditions* contains only one, no matter the operator.
 
 > Example *Conditions*:
 > 
