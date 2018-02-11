@@ -5,11 +5,33 @@ const conditions = require('../conditions.js');
 
 describe("conditions", () => {
   describe("parseCondition()", () => {
-    test("should parse valid condition", () => {
+    test("should parse valid atomic condition", () => {
       expect(conditions.parseCondition('global.something == true')).toEqual({
+        _type: 'atomic_condition',
         lhs: {"_type": "state", "data": ["global", "something"]},
         operator: "==",
         rhs: true
+      });
+    });
+
+    test("should parse valid propositional condition", () => {
+      expect(conditions.parseCondition({OR: ["global.something == true", "resources.something_else == false"]})).toEqual({
+        _type: 'propositional_condition',
+        boolean_operator: 'OR',
+        conditions: [
+          {
+            _type: 'atomic_condition',
+            lhs: {"_type": "state", "data": ["global", "something"]},
+            operator: "==",
+            rhs: true
+          },
+          {
+            _type: 'atomic_condition',
+            lhs: {"_type": "state", "data": ["resources", "something_else"]},
+            operator: "==",
+            rhs: false
+          }
+        ]
       });
     });
 

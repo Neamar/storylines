@@ -245,7 +245,7 @@ TEST
         expected.triggers = {
           soft: {
             condition: {
-              '_type': 'condition', 
+              '_type': 'atomic_condition',
               lhs: {"_type": "state", "data": ['global', 'something']},
               operator: '==',
               rhs: true
@@ -262,9 +262,7 @@ TEST
         e.triggers = {
           hard: {
             condition: {
-              _type: 'nested_condition',
-              boolean_operator: 'AND',
-              conditions: [
+              'AND': [
                 'global.something == true',
                 'resources.foo >= 150'
               ]
@@ -277,15 +275,17 @@ TEST
         expected.triggers = {
           hard: {
             condition: {
-              _type: 'nested_condition',
+              _type: 'propositional_condition',
               boolean_operator: 'AND',
               conditions: [
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['global', 'something']},
                   operator: '==',
                   rhs: true
                 },
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['resources', 'foo']},
                   operator: '>=',
                   rhs: 150
@@ -304,9 +304,7 @@ TEST
         e.triggers = {
           soft: {
             condition: {
-              _type: 'nested_condition',
-              boolean_operator: 'AND',
-              conditions: [
+              'AND': [
                 'sl.something == true',
                 'r.foo >= 150'
               ],
@@ -319,15 +317,17 @@ TEST
         expected.triggers = {
           soft: {
             condition: {
-              _type: 'nested_condition',
+              _type: 'propositional_condition',
               boolean_operator: 'AND',
               conditions: [
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['storylines', 'current_storyline', "something"]},
                   operator: '==',
                   rhs: true
                 },
                 {
+                  _type: 'atomic_condition',
                   lhs: {"_type": "state", "data": ['resources', 'foo']},
                   operator: '>=',
                   rhs: 150
@@ -436,7 +436,7 @@ TEST
           },
           KO: {
             condition: {
-              type: 'condition',
+              _type: 'atomic_condition',
               lhs: {"_type": "state", "data": ['global', 'testval']},
               operator: '==',
               rhs: 123
@@ -525,7 +525,7 @@ TEST
         triggers: {
           soft: {
             condition: {
-              _type: 'condition',
+              _type: 'atomic_condition',
               lhs: {"_type": "state", "data": ['global', 'test']},
               operator: '==',
               rhs: true
