@@ -666,6 +666,14 @@ describe("Storylines", () => {
             }
         ]})).toBeFalsy();
       });
+
+      it("should fail on invalid boolean operator", () => {
+        stubStoryline.state.global = getFooEqualBarState();
+        expect(() => stubStoryline.testPropositionalCondition({
+          _type: "propositional_condition",
+          boolean_operator: "XOR",
+          conditions: []})).toThrow(/Invalid boolean operator/i);
+      });
     });
 
     describe("testCondition()", () => {
@@ -717,6 +725,11 @@ describe("Storylines", () => {
               }]
             }
         ]})).toBeFalsy();
+      });
+
+      it("should throw on invalid condition type", () => {
+        stubStoryline.state.global = getFooEqualBarState();
+        expect(() => stubStoryline.testCondition({_type: "invalid"})).toThrow(/Invalid condition type/i);
       });
     });
   });
