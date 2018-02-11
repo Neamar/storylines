@@ -37,7 +37,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
 
 function validateTrigger(trigger) {
-  helpers.validateKeyType(trigger, "conditions", ["string", "object"], "Triggers must include conditions");
+  helpers.validateKeyType(trigger, "condition", ["string", "object"], "Triggers must include condition");
   helpers.validateKeyType(trigger, "weight", "number", "Triggers must include a weight");
 }
 
@@ -55,7 +55,7 @@ function validateTriggers(triggersObject) {
 function validateActions(actionsObject) {
   Object.keys(actionsObject || []).forEach(key => {
       helpers.validateKeyType(actionsObject[key], "operations", "array", "Actions must include operations");
-      helpers.validateKeyType(actionsObject[key], "conditions", "array", null);
+      helpers.validateKeyType(actionsObject[key], "condition", "array", null);
     }
   );
 }
@@ -91,7 +91,7 @@ function validateEvent(eventObject) {
 
 function parseTrigger(triggerObject) {
   validateTrigger(triggerObject); // this should have been checked by parseTriggers, but what if we call parseTrigger directly?
-  triggerObject.conditions = conditionsTools.parseCondition(triggerObject.conditions);
+  triggerObject.condition = conditionsTools.parseCondition(triggerObject.condition);
   return triggerObject;
 }
 
@@ -117,8 +117,8 @@ function parseOperations(actionObject) {
 
 
 function parseConditions(actionObject) {
-  if(actionObject.conditions) {
-    actionObject.conditions = conditionsTools.parseCondition(actionObject.conditions);
+  if(actionObject.condition) {
+    actionObject.condition = conditionsTools.parseCondition(actionObject.condition);
   }
   return actionObject;
 }
@@ -142,7 +142,7 @@ function parseOnDisplay(eventObject) {
 
 
 /**
- * Parse content (conditions and operations)
+ * Parse content (condition and operations)
  * @param jsonifiedYml YML content from the file
  * @return event object
  * @throws on invalid event
