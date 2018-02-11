@@ -777,9 +777,18 @@ describe("Storylines", () => {
                 weight: 1
               }
             }
+          },
+          {
+            id: 4,
+            triggers: {
+              soft: {
+                condition: null,
+                weight: 1
+              }
+            }
           }
         ];
-        expect(stubStoryline.listAvailableEvents("soft")).toEqual([stubStoryline.events[0], stubStoryline.events[1]]);
+        expect(stubStoryline.listAvailableEvents("soft")).toEqual([stubStoryline.events[0], stubStoryline.events[1], stubStoryline.events[3]]);
       });
     });
 
