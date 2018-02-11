@@ -16,17 +16,8 @@
     - Example: "Nuclear fuel: 250 units"
 * **State**, a JSON mapping (where keys are strings and values can be strings, integers, float, arrays or JSON) completely describing a *Character*  in a *Story* (and therefore, in the corrseponding *Storylines*). A *State* always contains at least three keys: `global` for global variables useful to the *Story*, `resources` with the resource defined by the *Story*, and `storylines` with all data relative to past *Storylines*.
     - Example: `{"global": {}, "resources": {"Nuclear fuel": 250}, storylines: {}}`
-* **Conditions**: either a boolean expression or a list of conditions to be joined by a boolean operator. The conditions are applied on a *State* and can reference *State* elements or constant values. *Conditions* can be expressed in JSON or YML. Supported boolean operators in *Conditions* are *'AND'* and *'OR'*. They act on a list of conditions (so they can be recursive) and will return the only element if the list has one single item.
+* **Conditions**: either a boolean expression or a list of conditions to be joined by a boolean operator. The conditions are applied on a *State* and can reference *State* elements or constant values. *Conditions* can be expressed in JSON or YML.
     - Example: `"Nuclear fuel" > 500`, `{"AND": [g.test >= 1, {"OR": [g.test1 == true, r.fuel > 500]}]}`
-```yaml
----
-condition:
-    AND:
-        - g.test >= 1
-        - OR:
-            - g.test1 == true
-            - r.fuel > 500
-```
 * **Operations**: an array of operations updating a given *State* by applying various transformations to it. *Operations* can be expressed in JSON or YML.
     - Example: `"Nuclear fuel" = 650`
 * **Story bundle**: a single JSON file containing the whole story. This file isn't intended to be read by humans, it is instead generated automatically from the various *Story* components.
@@ -173,9 +164,10 @@ Here are the possible keys:
 
 ## Conditions & operations
 ### Conditions
-*Conditions* are a way to express a conditional test on the current `State`.
+*Conditions* are a way to express a conditional test on the current `State`. They are of two types: "atomic" or "propositional".
 
-A *Condition* is formed of three components in this order: `lhs` (left hand side), `operator`, `rhs` (right hand side).
+An *Atomic Condition* is formed of three components in this order: `lhs` (left hand side), `operator`, `rhs` (right hand side).
+A *Propostitional Condition* is a list of *Conditions* (*atomic* or *propositional*) to be joined by a boolean operator, either 'AND' or 'OR'. They are evaluated recursively, and will resolve to the only element if the list of *conditions* contains only one, no matter the operator.
 
 > Example *Conditions*:
 > 
@@ -185,6 +177,18 @@ A *Condition* is formed of three components in this order: `lhs` (left hand side
 > * `resources.crew >= 150`
 > * `g.alarm_level <= 2`
 > * `"First Lieutenant" in global.officers`
+
+Yaml Example:
+```yaml
+---
+condition:
+    AND:
+        - g.test >= 1
+        # The following will resolve to simply 'r.fuel > 500' because there is only 1 condition to be ORed
+        - OR:
+            - r.fuel > 500
+---
+```
 
 #### `lhs`, `rhs` in *Conditions*
 Both `lhs` and `rhs` must be either a constant value (strings must be enclosed in quotes) or a dotted value from `State`:
@@ -208,6 +212,7 @@ Both `lhs` and `rhs` must be either a constant value (strings must be enclosed i
     - For objects, will test if the `lhs` key exists within `rhs`
     - For arrays, will test if `lhs` is included in `rhs`
 * `NOT IN`, does not contain. Returns the opposite of `IN`.
+
 
 ### Operations
 *Operations* are a way to change the current `State`.
