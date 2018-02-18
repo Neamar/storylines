@@ -109,7 +109,8 @@ function parseTriggers(eventObject) {
 
 
 function parseOperations(actionObject) {
-  if(actionObject.operations) {
+  // actionObject can be null: action has no effect, but this will let the engine chose a new event with a soft condition
+  if(actionObject && actionObject.operations) {
     actionObject.operations = actionObject.operations.map(helpers.parseYmlCode);
   }
   return actionObject;
@@ -117,7 +118,8 @@ function parseOperations(actionObject) {
 
 
 function parseConditions(actionObject) {
-  if(actionObject.condition) {
+  // actionObject can be null: action has no effect, but this will let the engine chose a new event with a soft condition
+  if(actionObject && actionObject.condition) {
     actionObject.condition = conditionsTools.parseCondition(actionObject.condition);
   }
   return actionObject;
