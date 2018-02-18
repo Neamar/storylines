@@ -688,7 +688,7 @@ describe("Storylines", () => {
         ]})).toBeTruthy();
       });
 
-      it("should return false when using OR and all conditions fails", () => {
+      it("should return false when using OR and all conditions fail", () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
           _type: "propositional_condition",
