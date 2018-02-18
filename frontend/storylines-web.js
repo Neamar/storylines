@@ -20,8 +20,9 @@ window.displayEvent = function displayEvent(description, actions, respondToEvent
   document.getElementById('event').innerHTML = eventHTML;
 
   document.querySelectorAll('#event a.btn').forEach((item) => {
-    item.addEventListener("click", function() {
+    item.addEventListener("click", function(e) {
       respondToEventCb(this.innerHTML);
+      e.preventDefault();
     });
   });
 };

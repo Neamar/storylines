@@ -42,13 +42,12 @@
       "weight": 1,
       "triggers": {
         "hard": {
-          "conditions": [
-            {
-              "lhs": {"_type": "state", "data":["global", "current_turn"]},
-              "operator": "==",
-              "rhs": 1
-            }
-          ],
+          "condition": {
+            "_type": "atomic_condition",
+            "lhs": {"_type": "state", "data":["global", "current_turn"]},
+            "operator": "==",
+            "rhs": 1
+          },
           "weight": 1
         }
       },
@@ -81,13 +80,12 @@
       "weight": 1,
       "triggers": {
         "hard": {
-          "conditions": [
-            {
-              "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
-              "operator": "==",
-              "rhs": true
-            }
-          ],
+          "condition": {
+            "_type": "atomic_condition",
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "announcement"]},
+            "operator": "==",
+            "rhs": true
+          },
           "weight": 1
         }
       },
@@ -122,13 +120,12 @@
       "weight": 1,
       "triggers": {
         "hard": {
-          "conditions": [
-            {
-              "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
-              "operator": "==",
-              "rhs": true
-            }
-          ],
+          "condition": {
+            "_type": "atomic_condition",
+            "lhs": {"_type": "state", "data":["storylines", "red_planet", "leaving"]},
+            "operator": "==",
+            "rhs": true
+          },
           "weight": 1
         }
       },
