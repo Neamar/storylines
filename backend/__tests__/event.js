@@ -13,7 +13,7 @@ describe("event file", () => {
   }
 
   describe("readEvent()", () => {
-    test('should read event from disk', () => {
+    it('should read event from disk', () => {
       var r = event.readEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1');
 
       expect(r).toContain("triggers");
@@ -21,7 +21,7 @@ describe("event file", () => {
       expect(r).toContain("---");
     });
 
-    test('should read event from disk', () => {
+    it('should read event from disk', () => {
       var r = event.readEvent(__dirname + '/mocks/storylines', 'test_storyline_2', 'event_2_1');
 
       expect(r).toContain("triggers");
@@ -67,38 +67,38 @@ triggers:
 
   describe("validateEvent()", function() {
 
-    test('should ensure storyline slug is present', () => {
+    it('should ensure storyline slug is present', () => {
       expect(() => event.validateEvent({})).toThrow(/Missing storyline slug/i);
     });
 
-    test('should ensure storyline is a slug', () => {
+    it('should ensure storyline is a slug', () => {
       expect(() => event.validateEvent({storyline: 'not a slug'})).toThrow(/storyline should be of type 'slug', not 'string'/i);
     });
 
-    test('should ensure event slug is present', () => {
+    it('should ensure event slug is present', () => {
       expect(() => event.validateEvent({storyline: 'storyline_slug'})).toThrow(/Missing event/i);
     });
 
-    test('should ensure event is a slug', () => {
+    it('should ensure event is a slug', () => {
       expect(() => event.validateEvent({storyline: 'storyline_slug', event: 'not a slug'})).toThrow(/event should be of type 'slug', not 'string'/i);
     });
 
-    test('should ensure description is present', () => {
+    it('should ensure description is present', () => {
       expect(() => event.validateEvent({event: 'event_slug', storyline: 'storyline_slug'})).toThrow(/Missing event description/i);
     });
 
-    test('should work with the most basic event', () => {
+    it('should work with the most basic event', () => {
       expect(event.validateEvent(getBasicEvent())).toEqual(getBasicEvent());
     });
 
     describe("Trigger validation", () => {
-      test('should ensure triggers is an object', () => {
+      it('should ensure triggers is an object', () => {
         var e = getBasicEvent();
         e.triggers = [];
 
         expect(() => event.validateEvent(e)).toThrow(/triggers should be of type 'object', not 'array'/i);
       });
-      test('should ensure triggers only contain hard or soft constraints', () => {
+      it('should ensure triggers only contain hard or soft constraints', () => {
         var e = getBasicEvent();
         e.triggers = {
           nonexisting: {}
@@ -107,7 +107,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/Triggers cannot be 'nonexisting'. Possible types are: hard, soft/i);
       });
 
-      test('should ensure hard triggers have a condition property', () => {
+      it('should ensure hard triggers have a condition property', () => {
         var e = getBasicEvent();
         e.triggers = {
           hard: {}
@@ -116,7 +116,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/Triggers must include condition/i);
       });
 
-      test('should ensure hard triggers weight property is numeric', () => {
+      it('should ensure hard triggers weight property is numeric', () => {
         var e = getBasicEvent();
         e.triggers = {
           hard: {
@@ -128,7 +128,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/weight should be of type 'number', not 'boolean'/i);
       });
 
-      test('should accept hard triggers weight numeric property', () => {
+      it('should accept hard triggers weight numeric property', () => {
         var e = getBasicEvent();
         e.triggers = {
           hard: {
@@ -140,7 +140,7 @@ triggers:
         expect(event.validateEvent(e)).toHaveProperty('triggers.hard.weight', 15);
       });
 
-      test('should ensure soft triggers have a condition property', () => {
+      it('should ensure soft triggers have a condition property', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {}
@@ -149,7 +149,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/Triggers must include condition/i);
       });
 
-      test('should ensure soft triggers weight property is numeric', () => {
+      it('should ensure soft triggers weight property is numeric', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
@@ -161,7 +161,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/weight should be of type 'number', not 'boolean'/i);
       });
 
-      test('should accept soft triggers weight numeric property', () => {
+      it('should accept soft triggers weight numeric property', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
@@ -175,7 +175,7 @@ triggers:
     });
 
     describe("Actions validation", () => {
-      test('should ensure actions is an object', () => {
+      it('should ensure actions is an object', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
@@ -188,7 +188,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/actions should be of type 'object', not 'array'/i);
       });
 
-      test('should ensure actions contain an operations key', () => {
+      it('should ensure actions contain an operations key', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
@@ -203,7 +203,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/Actions must include operations/i);
       });
 
-      test('should ensure actions operations is an array', () => {
+      it('should ensure actions operations is an array', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
@@ -214,7 +214,7 @@ triggers:
         expect(() => event.validateEvent(e)).toThrow(/operations should be of type 'array', not 'boolean'/i);
       });
 
-      test('should ensure actions condition is an array', () => {
+      it('should ensure actions condition is an array', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
@@ -229,12 +229,12 @@ triggers:
   });
 
   describe("on_display operations", () => {
-    test('should accept empty on_display', () => {
+    it('should accept empty on_display', () => {
       var e = getBasicEvent();
       expect(event.validateEvent(e)).toHaveProperty("event", e.event);
     });
 
-    test('should ensure on_display is an array', () => {
+    it('should ensure on_display is an array', () => {
       var e = getBasicEvent();
       e.on_display = {};
 
@@ -244,7 +244,7 @@ triggers:
 
   describe("parseEvent()", () => {
     describe("Trigger parsing", () => {
-      test('should parse enclosed soft condition', () => {
+      it('should parse enclosed soft condition', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
@@ -269,7 +269,7 @@ triggers:
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should parse enclosed hard condition', () => {
+      it('should parse enclosed hard condition', () => {
         var e = getBasicEvent();
         e.triggers = {
           hard: {
@@ -311,7 +311,7 @@ triggers:
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should replace shorthands', () => {
+      it('should replace shorthands', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
@@ -361,7 +361,7 @@ triggers:
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should parse enclosed operations', () => {
+      it('should parse enclosed operations', () => {
         var e = getBasicEvent();
         e.on_display = [
           'global.something = true',
@@ -387,7 +387,7 @@ triggers:
     });
 
     describe("Actions parsing", () => {
-      test('should parse enclosed operations', () => {
+      it('should parse enclosed operations', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
@@ -419,7 +419,7 @@ triggers:
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should parse enclosed condition', () => {
+      it('should parse enclosed condition', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
@@ -466,7 +466,7 @@ triggers:
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should replace shorthands', () => {
+      it('should replace shorthands', () => {
         var e = getBasicEvent();
         e.actions = {
           OK: {
@@ -506,14 +506,14 @@ triggers:
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
-      test('should ensure repeatable is a boolean', () => {
+      it('should ensure repeatable is a boolean', () => {
         var e = getBasicEvent();
         e.repeatable = "LOL";
 
         expect(() => event.validateEvent(e)).toThrow(/repeatable should be of type 'boolean', not 'string'/i);
       });
 
-      test('should save repeatable when it is specified', () => {
+      it('should save repeatable when it is specified', () => {
         var e = getBasicEvent();
         e.repeatable = true;
 
@@ -527,7 +527,7 @@ triggers:
   });
 
   describe("getEvent()", function() {
-    test('should read and parse event from disk', () => {
+    it('should read and parse event from disk', () => {
       expect(event.getEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1')).toEqual({
         event: "event_1_1",
         storyline: "test_storyline_1",
