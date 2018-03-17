@@ -44,7 +44,7 @@ triggers:
 TEST
 `, 'storyline_slug', 'event_slug');
 
-      expect(e).toHaveProperty('description', 'TEST');
+      expect(e).toHaveProperty('description', '<p>TEST</p>');
       expect(e).toHaveProperty('event', 'event_slug');
       expect(e).toHaveProperty('storyline', 'storyline_slug');
       expect(e).toHaveProperty('triggers.soft.condition', 'g.test == true');
@@ -61,7 +61,7 @@ triggers:
 *Hello*
 `, 'storyline_slug', 'event_slug');
 
-      expect(e).toHaveProperty('description', '<p><em>Hello</em></p>\n');
+      expect(e).toHaveProperty('description', '<p><em>Hello</em></p>');
     });
   });
 
@@ -531,7 +531,7 @@ triggers:
       expect(event.getEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1')).toEqual({
         event: "event_1_1",
         storyline: "test_storyline_1",
-        description: "Potentially multiline, markdown description of your event",
+        description: "<p>Potentially multiline, markdown description of your event</p>",
         repeatable: false,
         on_display: [],
         triggers: {

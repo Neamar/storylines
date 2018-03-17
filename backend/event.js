@@ -29,7 +29,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
   var fm = frontMatter(eventContent);
   var event = fm.attributes;
-  event.description = marked(fm.body.trim());
+  event.description = marked(fm.body).trim();
   event.event = eventSlug;
   event.storyline = storylineSlug;
   event.repeatable = event.repeatable || false;
