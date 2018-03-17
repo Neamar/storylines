@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 const fs = require('fs');
 const frontMatter = require('front-matter');
-var marked = require("marked");
+var marked = require('marked');
 
 const helpers = require('./helpers');
 const conditionsTools = require('./conditions');
@@ -24,7 +24,7 @@ function readEvent(storyPath, storylineSlug, eventSlug) {
  */
 function buildEvent(eventContent, storylineSlug, eventSlug) {
   if(!frontMatter.test(eventContent)) {
-    throw new Error("Event must be a valid FrontMatter file.");
+    throw new Error('Event must be a valid FrontMatter file.');
   }
 
   var fm = frontMatter(eventContent);
@@ -39,15 +39,15 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
 
 function validateTrigger(trigger) {
-  helpers.validateKeyType(trigger, "condition", ["string", "object"], "Triggers must include condition");
-  helpers.validateKeyType(trigger, "weight", "number", "Triggers must include a weight");
+  helpers.validateKeyType(trigger, 'condition', ['string', 'object'], 'Triggers must include condition');
+  helpers.validateKeyType(trigger, 'weight', 'number', 'Triggers must include a weight');
 }
 
 
 function validateTriggers(triggersObject) {
   Object.keys(triggersObject || []).forEach(key => {
     if(!TRIGGER_TYPES.includes(key)) {
-      throw new Error("Triggers cannot be '" + key + "'. Possible types are: " + TRIGGER_TYPES.join(", "));
+      throw new Error(`Triggers cannot be '${key}'. Possible types are: ${TRIGGER_TYPES.join(', ')}`);
     }
     validateTrigger(triggersObject[key]);
   });
@@ -56,10 +56,9 @@ function validateTriggers(triggersObject) {
 
 function validateActions(actionsObject) {
   Object.keys(actionsObject || []).forEach(key => {
-      helpers.validateKeyType(actionsObject[key], "operations", "array", "Actions must include operations");
-      helpers.validateKeyType(actionsObject[key], "condition", "array", null);
-    }
-  );
+    helpers.validateKeyType(actionsObject[key], 'operations', 'array', 'Actions must include operations');
+    helpers.validateKeyType(actionsObject[key], 'condition', 'array', null);
+  });
 }
 
 
@@ -70,23 +69,23 @@ function validateActions(actionsObject) {
  * @throws on invalid event
  */
 function validateEvent(eventObject) {
-  helpers.validateKeyType(eventObject, "storyline", "slug", "Missing storyline slug.");
-  helpers.validateKeyType(eventObject, "event", "slug", "Missing event slug.");
-  helpers.validateKeyType(eventObject, "description", "string", "Missing event description");
-  helpers.validateKeyType(eventObject, "repeatable", "boolean", null);
+  helpers.validateKeyType(eventObject, 'storyline', 'slug', 'Missing storyline slug.');
+  helpers.validateKeyType(eventObject, 'event', 'slug', 'Missing event slug.');
+  helpers.validateKeyType(eventObject, 'description', 'string', 'Missing event description');
+  helpers.validateKeyType(eventObject, 'repeatable', 'boolean', null);
 
-  helpers.validateKeyType(eventObject, "triggers", "object", null);
+  helpers.validateKeyType(eventObject, 'triggers', 'object', null);
   if(eventObject.triggers) {
     validateTriggers(eventObject.triggers);
   }
 
-  helpers.validateKeyType(eventObject, "actions", "object", null);
+  helpers.validateKeyType(eventObject, 'actions', 'object', null);
   if(eventObject.actions) {
     validateActions(eventObject.actions);
   }
 
   // notFoundmsg is null: don't warn if not found
-  helpers.validateKeyType(eventObject, "on_display", "array", null);
+  helpers.validateKeyType(eventObject, 'on_display', 'array', null);
   return eventObject;
 }
 

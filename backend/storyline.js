@@ -1,14 +1,14 @@
-"use strict";
-const fs = require("fs");
-const path = require("path");
-const helpers = require("./helpers");
+'use strict';
+const fs = require('fs');
+const path = require('path');
+const helpers = require('./helpers');
 
 
 function isValidDir(dirpath) {
   try {
     return (fs.lstatSync(dirpath)).isDirectory();
   } catch(e) {
-    if(e.code === "ENOENT") {
+    if(e.code === 'ENOENT') {
       return false;
     }
     throw e;
@@ -23,7 +23,7 @@ function isValidDir(dirpath) {
 function getStorylinesSlugs(storyPath, storylinesFolder) {
   var dir = path.join(storyPath, storylinesFolder);
   if(!isValidDir(dir)) {
-    throw new Error("'" + dir + "' is not a valid directory");
+    throw new Error(`${dir} is not a valid directory`);
   }
   return fs.readdirSync(dir).filter(name => helpers.isSlug(name) && (fs.lstatSync(path.join(dir, name)).isDirectory()));
 }
@@ -37,11 +37,11 @@ function getEventsSlugs(storyPath, storylinesFolder, storylineSlug) {
   var dir = path.join(storyPath, storylinesFolder, storylineSlug);
 
   if(!helpers.isSlug(storylineSlug)) {
-    throw new Error("'" + storylineSlug + "' is not a slug");
+    throw new Error(`${storylineSlug} is not a slug`);
   }
 
   if(!isValidDir(dir)) {
-    throw new Error("'" + dir + "' is not a valid directory");
+    throw new Error(`${dir} is not a valid directory`);
   }
 
   return fs.readdirSync(`${storyPath}/${storylinesFolder}/${storylineSlug}`).filter(function(name) {

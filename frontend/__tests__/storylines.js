@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 const Storylines = require('../../frontend/storylines.js');
 
 
-describe("Storylines", () => {
+describe('Storylines', () => {
   function buildState(state) {
     return {
-      _type: "state",
+      _type: 'state',
       data: state
     };
   }
@@ -15,7 +15,7 @@ describe("Storylines", () => {
 
   function getFooEqualBarState(value) {
     return {
-      foo: value || "bar"
+      foo: value || 'bar'
     };
   }
 
@@ -44,27 +44,27 @@ describe("Storylines", () => {
     stubStoryline = new Storylines(stubStory, stubCallbacks);
   });
 
-  describe("Constructor", () => {
-    it("should require a story parameter", () => {
+  describe('Constructor', () => {
+    it('should require a story parameter', () => {
       expect(() => new Storylines()).toThrow(/Story is required/i);
     });
 
-    it("should require a callbacks parameter", () => {
+    it('should require a callbacks parameter', () => {
       expect(() => new Storylines({})).toThrow(/Callbacks object is required/i);
     });
 
-    it("should require a callbacks.displayEvent property", () => {
+    it('should require a callbacks.displayEvent property', () => {
       expect(() => new Storylines({}, {})).toThrow(/Missing required callback: displayEvent/i);
     });
 
-    it("should require a callbacks.displayResources property", () => {
+    it('should require a callbacks.displayResources property', () => {
       expect(() => new Storylines({}, {displayEvent: function() {}})).toThrow(/Missing required callback: displayResources/i);
     });
   });
 
-  describe("Conditions and operations", () => {
-    describe("resolveStatePath()", () => {
-      it("should return parent object and key when statePath exists", () => {
+  describe('Conditions and operations', () => {
+    describe('resolveStatePath()', () => {
+      it('should return parent object and key when statePath exists', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(buildState(['global', 'foo']));
@@ -75,12 +75,12 @@ describe("Storylines", () => {
         expect(r).toHaveProperty('missingOnLastLevel', false);
       });
 
-      it("should return parent object and key when statePath exists in nested access", () => {
+      it('should return parent object and key when statePath exists in nested access', () => {
         stubStoryline.state = {
           global: {
             foo: {
               bar: {
-                fizz: "buzz"
+                fizz: 'buzz'
               }}
           }
         };
@@ -93,13 +93,13 @@ describe("Storylines", () => {
         expect(r).toHaveProperty('missingOnLastLevel', false);
       });
 
-      it("should throw when throwOnMissing is true", () => {
+      it('should throw when throwOnMissing is true', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         expect(() => stubStoryline.resolveStatePath(buildState(['missing', 'foo']), true)).toThrow(/Trying to access non-existing path/i);
       });
 
-      it("should stop with current situation when throwOnMissing is false", () => {
+      it('should stop with current situation when throwOnMissing is false', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         var r = stubStoryline.resolveStatePath(buildState(['missing', 'foo']));
@@ -110,10 +110,10 @@ describe("Storylines", () => {
         expect(r).toHaveProperty('missingOnLastLevel', false);
       });
 
-      it("should indicate that value is missing on last level", () => {
+      it('should indicate that value is missing on last level', () => {
         stubStoryline.state = {
           global: {
-            foo: "bar"
+            foo: 'bar'
           }
         };
 
@@ -125,56 +125,56 @@ describe("Storylines", () => {
         expect(r).toHaveProperty('missingOnLastLevel', true);
       });
 
-      it("should throw when trying to access something that isn't a state path", () => {
+      it('should throw when trying to access something that isn\'t a state path', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
-        expect(() => stubStoryline.resolveStatePath("something different")).toThrow(/Must be a state access/i);
+        expect(() => stubStoryline.resolveStatePath('something different')).toThrow(/Must be a state access/i);
       });
     });
 
-    describe("resolveValue()", () => {
-      it("should resolve standard types", () => {
+    describe('resolveValue()', () => {
+      it('should resolve standard types', () => {
         expect(stubStoryline.resolveValue(true)).toEqual(true);
         expect(stubStoryline.resolveValue(123)).toEqual(123);
-        expect(stubStoryline.resolveValue("ABC")).toEqual("ABC");
-        expect(stubStoryline.resolveValue([1, "A"])).toEqual([1, "A"]);
+        expect(stubStoryline.resolveValue('ABC')).toEqual('ABC');
+        expect(stubStoryline.resolveValue([1, 'A'])).toEqual([1, 'A']);
       });
 
-      it("should resolve state access", () => {
+      it('should resolve state access', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
-        expect(stubStoryline.resolveValue(buildState(['global', 'foo']))).toEqual("bar");
+        expect(stubStoryline.resolveValue(buildState(['global', 'foo']))).toEqual('bar');
       });
 
-      it("should resolve invalid state access (last level) to undefined", () => {
+      it('should resolve invalid state access (last level) to undefined', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['global', 'fizz']))).toBeUndefined();
       });
 
-      it("should resolve invalid state access (before last level) to undefined", () => {
+      it('should resolve invalid state access (before last level) to undefined', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         expect(stubStoryline.resolveValue(buildState(['buzz', 'fizz']))).toBeUndefined();
       });
     });
 
-    describe("isStateAccess()", () => {
-      it("should return false for non state access", () => {
-        expect(stubStoryline.isStateAccess("fake value")).toBeFalsy();
+    describe('isStateAccess()', () => {
+      it('should return false for non state access', () => {
+        expect(stubStoryline.isStateAccess('fake value')).toBeFalsy();
       });
 
-      it("should return false for complex structures that are not state access", () => {
-        expect(stubStoryline.isStateAccess({_type: "or_condition", data: []})).toBeFalsy();
+      it('should return false for complex structures that are not state access', () => {
+        expect(stubStoryline.isStateAccess({_type: 'or_condition', data: []})).toBeFalsy();
       });
 
-      it("should return true for state access", () => {
-        expect(stubStoryline.isStateAccess({_type: "state", data: []})).toBeTruthy();
+      it('should return true for state access', () => {
+        expect(stubStoryline.isStateAccess({_type: 'state', data: []})).toBeTruthy();
       });
     });
 
-    describe("applyOperation()", () => {
-      it("should fail on any operator when missing a value before the last one", () => {
+    describe('applyOperation()', () => {
+      it('should fail on any operator when missing a value before the last one', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
@@ -187,7 +187,7 @@ describe("Storylines", () => {
         expect(deferred).toThrow(/Trying to access non-existing path in state/i);
       });
 
-      it("should work on = operator", () => {
+      it('should work on = operator', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
@@ -196,10 +196,10 @@ describe("Storylines", () => {
           rhs: 'baz'
         });
 
-        expect(stubStoryline.state).toHaveProperty('global.foo', "baz");
+        expect(stubStoryline.state).toHaveProperty('global.foo', 'baz');
       });
 
-      it("should work on = operator when rhs is a state access", () => {
+      it('should work on = operator when rhs is a state access', () => {
         stubStoryline.state = {
           global: {
             foo: 1,
@@ -216,7 +216,7 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('global.foo', 2);
       });
 
-      it("should work on = operator when creating a new value", () => {
+      it('should work on = operator when creating a new value', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
@@ -225,10 +225,10 @@ describe("Storylines", () => {
           rhs: 'buzz'
         });
 
-        expect(stubStoryline.state).toHaveProperty('global.fizz', "buzz");
+        expect(stubStoryline.state).toHaveProperty('global.fizz', 'buzz');
       });
 
-      it("should work on += operator", () => {
+      it('should work on += operator', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.applyOperation({
@@ -237,10 +237,10 @@ describe("Storylines", () => {
           rhs: 'baz'
         });
 
-        expect(stubStoryline.state).toHaveProperty('global.foo', "barbaz");
+        expect(stubStoryline.state).toHaveProperty('global.foo', 'barbaz');
       });
 
-      it("should fail on += operator when accessing non existing final value", () => {
+      it('should fail on += operator when accessing non existing final value', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
@@ -254,7 +254,7 @@ describe("Storylines", () => {
         expect(deferred).toThrow(/Can't apply compound operator on undefined/i);
       });
 
-      it("should work on += operator when rhs is a state access", () => {
+      it('should work on += operator when rhs is a state access', () => {
         stubStoryline.state = {
           global: {
             foo: 1,
@@ -271,7 +271,7 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('global.foo', 3);
       });
 
-      it("should work on -= operator", () => {
+      it('should work on -= operator', () => {
         stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
@@ -283,7 +283,7 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('global.foo', 8);
       });
 
-      it("should fail on -= operator when accessing non existing final value", () => {
+      it('should fail on -= operator when accessing non existing final value', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
@@ -297,7 +297,7 @@ describe("Storylines", () => {
         expect(deferred).toThrow(/Can't apply compound operator on undefined/i);
       });
 
-      it("should work on *= operator", () => {
+      it('should work on *= operator', () => {
         stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
@@ -309,7 +309,7 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('global.foo', 20);
       });
 
-      it("should work on /= operator", () => {
+      it('should work on /= operator', () => {
         stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
@@ -321,7 +321,7 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('global.foo', 5);
       });
 
-      it("should work on %= operator", () => {
+      it('should work on %= operator', () => {
         stubStoryline.state.global = getFooEqualBarState(10);
 
         stubStoryline.applyOperation({
@@ -333,7 +333,7 @@ describe("Storylines", () => {
         expect(stubStoryline.state).toHaveProperty('global.foo', 3);
       });
 
-      it("should fail on unknown operator", () => {
+      it('should fail on unknown operator', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
@@ -348,29 +348,29 @@ describe("Storylines", () => {
       });
     });
 
-    describe("applyOperations()", () => {
-      it("should apply all operations", () => {
+    describe('applyOperations()', () => {
+      it('should apply all operations', () => {
         stubStoryline.state.global = getFooEqualBarState();
         var operations = [
           {
-            lhs: buildState(["global", "foo"]),
+            lhs: buildState(['global', 'foo']),
             operator: '+=',
-            rhs: "baz"
+            rhs: 'baz'
           },
           {
-            lhs: buildState(["global", "bar"]),
+            lhs: buildState(['global', 'bar']),
             operator: '=',
-            rhs: "foo"
+            rhs: 'foo'
           },
         ];
 
         stubStoryline.applyOperations(operations);
 
-        expect(stubStoryline.state).toHaveProperty("global.foo", "barbaz");
-        expect(stubStoryline.state).toHaveProperty("global.bar", "foo");
+        expect(stubStoryline.state).toHaveProperty('global.foo', 'barbaz');
+        expect(stubStoryline.state).toHaveProperty('global.bar', 'foo');
       });
 
-      it("should notify displayResources", () => {
+      it('should notify displayResources', () => {
         stubStoryline.callbacks.displayResources = jest.fn();
         var operations = [];
 
@@ -380,13 +380,13 @@ describe("Storylines", () => {
       });
     });
 
-    describe("testAtomicCondition()", () => {
-      it("should return false on any operator when missing a value", () => {
+    describe('testAtomicCondition()', () => {
+      it('should return false on any operator when missing a value', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         function deferred() {
           stubStoryline.testAtomicCondition({
-            _type: "atomic_condition",
+            _type: 'atomic_condition',
             lhs: buildState(['g', 'fizz']),
             operator: '==',
             rhs: 'bar'
@@ -395,162 +395,162 @@ describe("Storylines", () => {
         expect(deferred()).toBeFalsy();
       });
 
-      it("should apply == operator", () => {
+      it('should apply == operator', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: true,
-          operator: "==",
+          operator: '==',
           rhs: true
         })).toBeTruthy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: true,
-          operator: "==",
+          operator: '==',
           rhs: false
         })).toBeFalsy();
       });
 
-      it("should apply strict equality rules", () => {
+      it('should apply strict equality rules', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 1,
-          operator: "==",
-          rhs: "1"
+          operator: '==',
+          rhs: '1'
         })).toBeFalsy();
       });
 
-      it("should apply > operator", () => {
+      it('should apply > operator', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 1,
-          operator: ">",
+          operator: '>',
           rhs: 0
         })).toBeTruthy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: ">",
+          operator: '>',
           rhs: 1
         })).toBeFalsy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: ">",
+          operator: '>',
           rhs: 0
         })).toBeFalsy();
       });
 
-      it("should apply >= operator", () => {
+      it('should apply >= operator', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 1,
-          operator: ">=",
+          operator: '>=',
           rhs: 0
         })).toBeTruthy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: ">=",
+          operator: '>=',
           rhs: 1
         })).toBeFalsy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: ">=",
+          operator: '>=',
           rhs: 0
         })).toBeTruthy();
       });
 
-      it("should apply < operator", () => {
+      it('should apply < operator', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: "<",
+          operator: '<',
           rhs: 1
         })).toBeTruthy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 1,
-          operator: "<",
+          operator: '<',
           rhs: 0
         })).toBeFalsy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: "<",
+          operator: '<',
           rhs: 0
         })).toBeFalsy();
       });
 
-      it("should apply >= operator", () => {
+      it('should apply >= operator', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: "<=",
+          operator: '<=',
           rhs: 1
         })).toBeTruthy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 1,
-          operator: "<=",
+          operator: '<=',
           rhs: 0
         })).toBeFalsy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 0,
-          operator: "<=",
+          operator: '<=',
           rhs: 0
         })).toBeTruthy();
       });
 
-      it("should apply != operator", () => {
+      it('should apply != operator', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: true,
-          operator: "!=",
+          operator: '!=',
           rhs: false
         })).toBeTruthy();
 
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: true,
-          operator: "!=",
+          operator: '!=',
           rhs: true
         })).toBeFalsy();
       });
 
-      it("should apply strict difference rules", () => {
+      it('should apply strict difference rules', () => {
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: 1,
-          operator: "!=",
-          rhs: "1"
+          operator: '!=',
+          rhs: '1'
         })).toBeTruthy();
       });
 
-      it("should work with state access", () => {
+      it('should work with state access', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testAtomicCondition({
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: buildState(['global', 'foo']),
-          operator: "==",
-          rhs: "bar"
+          operator: '==',
+          rhs: 'bar'
         })).toBeTruthy();
       });
 
-      it("should fail on unknown operator", () => {
+      it('should fail on unknown operator', () => {
         function deferred() {
           stubStoryline.testAtomicCondition({
-            _type: "atomic_condition",
+            _type: 'atomic_condition',
             lhs: true,
             operator: '===',
             rhs: true
@@ -561,233 +561,233 @@ describe("Storylines", () => {
       });
     });
 
-    describe("testPropositionalCondition()", () => {
-      it("should return true when using AND and all conditions pass", () => {
+    describe('testPropositionalCondition()', () => {
+      it('should return true when using AND and all conditions pass', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "AND",
+          _type: 'propositional_condition',
+          boolean_operator: 'AND',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "bar"
+              operator: '==',
+              rhs: 'bar'
             },
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: true
             }
         ]})).toBeTruthy();
       });
 
-      it("should return false when using AND and one condition fails", () => {
+      it('should return false when using AND and one condition fails', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "AND",
+          _type: 'propositional_condition',
+          boolean_operator: 'AND',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "bar"
+              operator: '==',
+              rhs: 'bar'
             },
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: false
             }
         ]})).toBeFalsy();
       });
 
-      it("should return true when using OR and at least one condition passes", () => {
+      it('should return true when using OR and at least one condition passes', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "OR",
+          _type: 'propositional_condition',
+          boolean_operator: 'OR',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "nope"
+              operator: '==',
+              rhs: 'nope'
             },
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: true
             }
         ]})).toBeTruthy();
       });
 
-      it("should return true when using OR and all conditions pass", () => {
+      it('should return true when using OR and all conditions pass', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "OR",
+          _type: 'propositional_condition',
+          boolean_operator: 'OR',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "bar"
+              operator: '==',
+              rhs: 'bar'
             },
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: true
             }
         ]})).toBeTruthy();
       });
 
-      it("should evaluate more than two matching conditions", () => {
+      it('should evaluate more than two matching conditions', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "AND",
+          _type: 'propositional_condition',
+          boolean_operator: 'AND',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: true
             },
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: true
             },
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: false
             }
         ]})).toBeFalsy();
       });
 
-      it("should evaluate even when there is only one condition", () => {
+      it('should evaluate even when there is only one condition', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "OR",
+          _type: 'propositional_condition',
+          boolean_operator: 'OR',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: true
             },
         ]})).toBeTruthy();
       });
 
-      it("should return false when using OR and all conditions fail", () => {
+      it('should return false when using OR and all conditions fail', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "OR",
+          _type: 'propositional_condition',
+          boolean_operator: 'OR',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "nope"
+              operator: '==',
+              rhs: 'nope'
             },
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: true,
-              operator: "==",
+              operator: '==',
               rhs: false
             }
         ]})).toBeFalsy();
       });
 
-      it("should fail on invalid boolean operator", () => {
+      it('should fail on invalid boolean operator', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(() => stubStoryline.testPropositionalCondition({
-          _type: "propositional_condition",
-          boolean_operator: "XOR",
+          _type: 'propositional_condition',
+          boolean_operator: 'XOR',
           conditions: []})).toThrow(/Invalid boolean operator/i);
       });
     });
 
-    describe("testCondition()", () => {
-      it("should recursively evaluate conditions (to true)", () => {
+    describe('testCondition()', () => {
+      it('should recursively evaluate conditions (to true)', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testCondition({
-          _type: "propositional_condition",
-          boolean_operator: "AND",
+          _type: 'propositional_condition',
+          boolean_operator: 'AND',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "bar"
+              operator: '==',
+              rhs: 'bar'
             },
             {
-              _type: "propositional_condition",
-              boolean_operator: "OR",
+              _type: 'propositional_condition',
+              boolean_operator: 'OR',
               conditions: [{
-                _type: "atomic_condition",
+                _type: 'atomic_condition',
                 lhs: true,
-                operator: "==",
+                operator: '==',
                 rhs: true
               }]
             }
         ]})).toBeTruthy();
       });
 
-      it("should recursively evaluate conditions (to false)", () => {
+      it('should recursively evaluate conditions (to false)', () => {
         stubStoryline.state.global = getFooEqualBarState();
         expect(stubStoryline.testCondition({
-          _type: "propositional_condition",
-          boolean_operator: "AND",
+          _type: 'propositional_condition',
+          boolean_operator: 'AND',
           conditions: [
             {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "bar"
+              operator: '==',
+              rhs: 'bar'
             },
             {
-              _type: "propositional_condition",
-              boolean_operator: "OR",
+              _type: 'propositional_condition',
+              boolean_operator: 'OR',
               conditions: [{
-                _type: "atomic_condition",
+                _type: 'atomic_condition',
                 lhs: true,
-                operator: "==",
+                operator: '==',
                 rhs: false
               }]
             }
         ]})).toBeFalsy();
       });
 
-      it("should throw on invalid condition type", () => {
+      it('should throw on invalid condition type', () => {
         stubStoryline.state.global = getFooEqualBarState();
-        expect(() => stubStoryline.testCondition({_type: "invalid"})).toThrow(/Invalid condition type/i);
+        expect(() => stubStoryline.testCondition({_type: 'invalid'})).toThrow(/Invalid condition type/i);
       });
     });
   });
 
-  describe("Event listing", () => {
-    describe("listAvailableEvents()", () => {
-      it("should skip events without the specified trigger", () => {
+  describe('Event listing', () => {
+    describe('listAvailableEvents()', () => {
+      it('should skip events without the specified trigger', () => {
         stubStoryline.events = [{
           id: 1,
           triggers: {}
         }];
 
-        expect(stubStoryline.listAvailableEvents("fake")).toEqual([]);
+        expect(stubStoryline.listAvailableEvents('fake')).toEqual([]);
       });
 
-      it("should return all matching events", () => {
+      it('should return all matching events', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
         stubStoryline.events = [
@@ -796,9 +796,9 @@ describe("Storylines", () => {
             triggers: {
               soft: {
                 condition: {
-                  _type: "atomic_condition",
+                  _type: 'atomic_condition',
                   lhs: true,
-                  operator: "==",
+                  operator: '==',
                   rhs: true
                 },
                 weight: 1
@@ -810,10 +810,10 @@ describe("Storylines", () => {
             triggers: {
               soft: {
                 condition: {
-                  _type: "atomic_condition",
-                  lhs: "bar",
-                  operator: "==",
-                  rhs: buildState(["global", "foo"])
+                  _type: 'atomic_condition',
+                  lhs: 'bar',
+                  operator: '==',
+                  rhs: buildState(['global', 'foo'])
                 },
                 weight: 1
               }
@@ -824,9 +824,9 @@ describe("Storylines", () => {
             triggers: {
               soft: {
                 condition: {
-                  _type: "atomic_condition",
+                  _type: 'atomic_condition',
                   lhs: true,
-                  operator: "==",
+                  operator: '==',
                   rhs: false
                 },
                 weight: 1
@@ -843,12 +843,12 @@ describe("Storylines", () => {
             }
           }
         ];
-        expect(stubStoryline.listAvailableEvents("soft")).toEqual([stubStoryline.events[0], stubStoryline.events[1], stubStoryline.events[3]]);
+        expect(stubStoryline.listAvailableEvents('soft')).toEqual([stubStoryline.events[0], stubStoryline.events[1], stubStoryline.events[3]]);
       });
     });
 
-    describe("listAvailableHardEvents()", () => {
-      it("should call listAvailableEvents('hard')", () => {
+    describe('listAvailableHardEvents()', () => {
+      it('should call listAvailableEvents("hard")', () => {
         stubStoryline.listAvailableEvents = jest.fn();
 
         stubStoryline.listAvailableHardEvents();
@@ -858,8 +858,8 @@ describe("Storylines", () => {
       });
     });
 
-    describe("listAvailableSoftEvents()", () => {
-      it("should call listAvailableEvents('soft')", () => {
+    describe('listAvailableSoftEvents()', () => {
+      it('should call listAvailableEvents("soft")', () => {
         stubStoryline.listAvailableEvents = jest.fn();
 
         stubStoryline.listAvailableSoftEvents();
@@ -870,8 +870,8 @@ describe("Storylines", () => {
     });
   });
 
-  describe("start()", () => {
-    it("should call nextEvent by default", () => {
+  describe('start()', () => {
+    it('should call nextEvent by default', () => {
       stubStoryline.nextEvent = jest.fn();
 
       stubStoryline.start();
@@ -879,7 +879,7 @@ describe("Storylines", () => {
       expect(stubStoryline.nextEvent.mock.calls.length).toBe(1);
     });
 
-    it("should throw if story is already started", () => {
+    it('should throw if story is already started', () => {
       stubStoryline.nextEvent = jest.fn();
 
       stubStoryline.start();
@@ -893,23 +893,23 @@ describe("Storylines", () => {
     });
   });
 
-  describe("respondToEvent()", () => {
-    it("should ensure selected action is available", () => {
+  describe('respondToEvent()', () => {
+    it('should ensure selected action is available', () => {
       stubStoryline.currentEvent = {
         actions: {}
       };
 
-      expect(() => stubStoryline.respondToEvent("FAKEACTION")).toThrow(/Action FAKEACTION is not available/i);
+      expect(() => stubStoryline.respondToEvent('FAKEACTION')).toThrow(/Action FAKEACTION is not available/i);
     });
 
-    it("should apply operations for specified actions", () => {
+    it('should apply operations for specified actions', () => {
       stubStoryline.currentEvent = {
         actions: {
-          "OK": {
+          'OK': {
             operations: [
               {
-                lhs: buildState(["global", "action_ok"]),
-                operator: "=",
+                lhs: buildState(['global', 'action_ok']),
+                operator: '=',
                 rhs: true
               }
             ]
@@ -918,27 +918,27 @@ describe("Storylines", () => {
       };
 
       stubStoryline.nextEvent = jest.fn();
-      stubStoryline.respondToEvent("OK");
-      expect(stubStoryline.state).toHaveProperty("global.action_ok", true);
+      stubStoryline.respondToEvent('OK');
+      expect(stubStoryline.state).toHaveProperty('global.action_ok', true);
     });
 
-    it("should call nextEvent()", () => {
+    it('should call nextEvent()', () => {
       stubStoryline.currentEvent = {
         actions: {
-          "OK": {
+          'OK': {
             operations: []
           }
         }
       };
 
       stubStoryline.nextEvent = jest.fn();
-      stubStoryline.respondToEvent("OK");
+      stubStoryline.respondToEvent('OK');
       expect(stubStoryline.nextEvent.mock.calls.length).toBe(1);
     });
   });
 
-  describe("moveToEvent()", () => {
-    it("should save event in currentEvent", () => {
+  describe('moveToEvent()', () => {
+    it('should save event in currentEvent', () => {
       var event = {
         id: 1,
         on_display: [],
@@ -948,24 +948,24 @@ describe("Storylines", () => {
       expect(stubStoryline.currentEvent).toBe(event);
     });
 
-    it("should notify displayEvent callback", () => {
+    it('should notify displayEvent callback', () => {
       stubStoryline.callbacks.displayEvent = jest.fn();
 
       var event = {
         id: 1,
         on_display: [],
         actions: {
-          "OK": {}
+          'OK': {}
         }
       };
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.callbacks.displayEvent.mock.calls[0][0]).toBe(event.description);
-      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][1]).toEqual(["OK"]);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][1]).toEqual(['OK']);
     });
 
-    it("should apply on_display operations", () => {
+    it('should apply on_display operations', () => {
       var event = {id: 1, on_display: [
         {
           lhs: buildState(['global', 'on_display']),
@@ -979,7 +979,7 @@ describe("Storylines", () => {
       expect(stubStoryline.state).toHaveProperty('global.on_display', true);
     });
 
-    it("should filter actions depending on conditions", () => {
+    it('should filter actions depending on conditions', () => {
       stubStoryline.state.global = getFooEqualBarState();
 
       stubStoryline.callbacks.displayEvent = jest.fn();
@@ -988,38 +988,38 @@ describe("Storylines", () => {
         id: 1,
         on_display: [],
         actions: {
-          "OK": {
+          'OK': {
             condition: {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "bar"
+              operator: '==',
+              rhs: 'bar'
             }
           },
-          "NOTOK": {
+          'NOTOK': {
             condition: {
-              _type: "atomic_condition",
+              _type: 'atomic_condition',
               lhs: buildState(['global', 'foo']),
-              operator: "==",
-              rhs: "notok"
+              operator: '==',
+              rhs: 'notok'
             }
           },
-          "ALWAYS": {}
+          'ALWAYS': {}
         }
       };
 
       stubStoryline.moveToEvent(event);
 
       expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
-      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][1]).toEqual(["OK", "ALWAYS"]);
+      expect(stubStoryline.callbacks.displayEvent.mock.calls[0][1]).toEqual(['OK', 'ALWAYS']);
     });
 
-    it("should store event in a Set if repeatable is false", () => {
+    it('should store event in a Set if repeatable is false', () => {
       var event = {
         id: 1,
         on_display: [],
-        story: "fake",
-        event: "event-1",
+        story: 'fake',
+        event: 'event-1',
         repeatable: false
       };
 
@@ -1027,12 +1027,12 @@ describe("Storylines", () => {
       expect(stubStoryline.state.viewed_events.has(stubStoryline.getEventSlug(event))).toBeTruthy();
     });
 
-    it("should not store event if repeatable is true", () => {
+    it('should not store event if repeatable is true', () => {
       var event = {
         id: 1,
         on_display: [],
-        story: "fake",
-        event: "event-1",
+        story: 'fake',
+        event: 'event-1',
         repeatable: true
       };
 
@@ -1041,20 +1041,20 @@ describe("Storylines", () => {
     });
   });
 
-  describe("nextEvent()", () => {
+  describe('nextEvent()', () => {
     var simpleMatchingEvent = function(id, triggerType) {
       var event = {
         id: id,
-        story: "fake",
-        event: "event-" + id,
+        story: 'fake',
+        event: 'event-' + id,
         triggers: {}
       };
 
       event.triggers[triggerType] = {
         condition: {
-          _type: "atomic_condition",
+          _type: 'atomic_condition',
           lhs: true,
-          operator: "==",
+          operator: '==',
           rhs: true
         },
         weight: 1
@@ -1063,7 +1063,7 @@ describe("Storylines", () => {
       return event;
     };
 
-    it("should throw when no events are available", () => {
+    it('should throw when no events are available', () => {
       stubStoryline.events = [];
 
       expect(() => stubStoryline.nextEvent()).toThrow(/No more events available/i);
@@ -1071,15 +1071,15 @@ describe("Storylines", () => {
       expect(stubStoryline.state.global.no_events_available).toBeTruthy();
     });
 
-    it("should set no_events_available when no events are available, and search for a new event", () => {
+    it('should set no_events_available when no events are available, and search for a new event', () => {
       stubStoryline.events = [{
         id: 1,
         triggers: {
           soft: {
             condition: {
-              _type: "atomic_condition",
-              lhs: buildState(["global", "no_events_available"]),
-              operator: "==",
+              _type: 'atomic_condition',
+              lhs: buildState(['global', 'no_events_available']),
+              operator: '==',
               rhs: true
             },
             weight: 1
@@ -1096,10 +1096,10 @@ describe("Storylines", () => {
       expect(stubStoryline.state.global.no_events_available).toBeTruthy();
     });
 
-    it("should return hard triggers before soft triggers", () => {
+    it('should return hard triggers before soft triggers', () => {
       stubStoryline.events = [
-        simpleMatchingEvent(1, "soft"),
-        simpleMatchingEvent(2, "hard"),
+        simpleMatchingEvent(1, 'soft'),
+        simpleMatchingEvent(2, 'hard'),
       ];
 
       stubStoryline.moveToEvent = jest.fn();
@@ -1109,9 +1109,9 @@ describe("Storylines", () => {
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
     });
 
-    it("should increment current_turn counter", () => {
+    it('should increment current_turn counter', () => {
       stubStoryline.events = [
-        simpleMatchingEvent(1, "soft"),
+        simpleMatchingEvent(1, 'soft'),
       ];
 
       stubStoryline.moveToEvent = jest.fn();
@@ -1120,9 +1120,9 @@ describe("Storylines", () => {
       expect(stubStoryline.state.global.current_turn).toBe(1);
     });
 
-    it("should not set no_events_available when events are available", () => {
+    it('should not set no_events_available when events are available', () => {
       stubStoryline.events = [
-        simpleMatchingEvent(1, "soft"),
+        simpleMatchingEvent(1, 'soft'),
       ];
 
       stubStoryline.moveToEvent = jest.fn();
@@ -1131,9 +1131,9 @@ describe("Storylines", () => {
       expect(stubStoryline.state.global.no_events_available).toBeFalsy();
     });
 
-    it("should return soft triggers when there is no matching hard triggers", () => {
+    it('should return soft triggers when there is no matching hard triggers', () => {
       stubStoryline.events = [
-        simpleMatchingEvent(1, "soft"),
+        simpleMatchingEvent(1, 'soft'),
       ];
 
       stubStoryline.moveToEvent = jest.fn();
@@ -1143,10 +1143,10 @@ describe("Storylines", () => {
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
     });
 
-    it("should skip events already displayed", () => {
+    it('should skip events already displayed', () => {
       stubStoryline.events = [
-        simpleMatchingEvent(1, "hard"),
-        simpleMatchingEvent(2, "soft"),
+        simpleMatchingEvent(1, 'hard'),
+        simpleMatchingEvent(2, 'soft'),
       ];
       stubStoryline.state.viewed_events.add(stubStoryline.getEventSlug(stubStoryline.events[0]));
 
@@ -1158,7 +1158,7 @@ describe("Storylines", () => {
     });
   });
 
-  describe("doEventLottery()", () => {
+  describe('doEventLottery()', () => {
     function generateEventWithWeight(weight) {
       return {
         triggers: {
@@ -1169,7 +1169,7 @@ describe("Storylines", () => {
       };
     }
 
-    it("should do a lottery", () => {
+    it('should do a lottery', () => {
       var events = [
         generateEventWithWeight(1),
         generateEventWithWeight(1),
@@ -1179,7 +1179,7 @@ describe("Storylines", () => {
       expect(stubStoryline.doEventLottery(events)).toBe(events[0]);
     });
 
-    it("should work with only one event", () => {
+    it('should work with only one event', () => {
       var events = [
         generateEventWithWeight(1),
       ];
@@ -1188,7 +1188,7 @@ describe("Storylines", () => {
       expect(stubStoryline.doEventLottery(events)).toBe(events[0]);
     });
 
-    it("should do a lottery based on weights", () => {
+    it('should do a lottery based on weights', () => {
       var events = [
         generateEventWithWeight(1),
         generateEventWithWeight(10),

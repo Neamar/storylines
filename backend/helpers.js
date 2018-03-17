@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /*jshint latedef: nofunc */
 
 const operations = require('./operations.js');
@@ -14,16 +14,16 @@ const ARG_TYPE_STRING         = 3;
 const ARG_TYPE_ARRAY          = 4;
 const ARG_TYPE_STATE_ACCESS   = 5;
 
-const ARG_NULL_VALS  = ["NULL", "null", "Null", "NONE", "none", "None"];
-const ARG_VALS_FALSE = ["FALSE", "false", "False"];
-const ARG_VALS_TRUE  = ["TRUE", "true", "True"];
+const ARG_NULL_VALS  = ['NULL', 'null', 'Null', 'NONE', 'none', 'None'];
+const ARG_VALS_FALSE = ['FALSE', 'false', 'False'];
+const ARG_VALS_TRUE  = ['TRUE', 'true', 'True'];
 const ARG_BOOLEAN_VALS = ARG_VALS_TRUE.concat(ARG_VALS_FALSE);
 
 // In the next 3 arrays, the first element is the name that will be used to replace all the others
-const ARG_STATE_LEVEL_GLOBAL            = ["global", "g"];
-const ARG_STATE_LEVEL_RESOURCES         = ["resources", "r"];
-const ARG_STATE_LEVEL_STORYLINES        = ["storylines", "s"];
-const ARG_STATE_LEVEL_CURRENT_STORYLINE = ["sl"]; // This is replaced in the handling code
+const ARG_STATE_LEVEL_GLOBAL            = ['global', 'g'];
+const ARG_STATE_LEVEL_RESOURCES         = ['resources', 'r'];
+const ARG_STATE_LEVEL_STORYLINES        = ['storylines', 's'];
+const ARG_STATE_LEVEL_CURRENT_STORYLINE = ['sl']; // This is replaced in the handling code
 const ARG_STATE_FIRST_LEVEL = ARG_STATE_LEVEL_GLOBAL.concat(ARG_STATE_LEVEL_RESOURCES).concat(ARG_STATE_LEVEL_STORYLINES).concat(ARG_STATE_LEVEL_CURRENT_STORYLINE);
 
 const SLUG_REGEX = /^[a-z][a-z0-9_]*$/;
@@ -46,18 +46,18 @@ function strip(stripList, string) {
 
 
 function isSlug(potentialSlug) {
-  return typeof potentialSlug === "string" && potentialSlug.match(SLUG_REGEX);
+  return typeof potentialSlug === 'string' && potentialSlug.match(SLUG_REGEX);
 }
 
 
 // ARG_TYPE_STRING
 function isStr(arg) {
-  return ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith('"') && arg.endsWith('"')));
+  return ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith("'") && arg.endsWith("'")));
 }
 
 
 function isArray(arg) {
-  return ((arg.startsWith("[") && arg.endsWith("]")));
+  return ((arg.startsWith('[') && arg.endsWith(']')));
 }
 
 
@@ -81,7 +81,7 @@ function findOperator(codeString) {
   var candidates = YML_ALL_OPERATORS.filter(op => codeString.includes(' ' + op + ' ')).sort((op1, op2) => op1.length - op2.length);
 
   if(candidates.length === 0) {
-    throw new Error("Could not find the operator. Please make sure to delimit it with spaces. Valid operators are: " + YML_ALL_OPERATORS.join(", "));
+    throw new Error('Could not find the operator. Please make sure to delimit it with spaces. Valid operators are: ' + YML_ALL_OPERATORS.join(', '));
   }
   else if(candidates.length === 1) {
     return candidates[0];
@@ -95,7 +95,7 @@ function findOperator(codeString) {
       var currentStart = currentBegin + candidates[i].length - 1;
 
       if(!((candidateBegin <= currentBegin) && (candidateEnd >= currentStart))) {
-        throw new Error("Too many operator candidates: " + candidates);
+        throw new Error('Too many operator candidates: ' + candidates);
       }
 
       // All other candidates were contained in this one, this is the one we want
@@ -137,7 +137,7 @@ function getBooleanArg(arg) {
     return false;
   }
   else {
-    throw new Error("Invalid boolean expression: '" + arg + "'");
+    throw new Error(`Invalid boolean expression: ${arg}`);
   }
 }
 
@@ -154,20 +154,20 @@ function isValidStr(arg) {
 
 function getStrArg(arg) {
   if(!isValidStr(arg)) {
-    throw new Error("'" + arg + "' is an invalid string expression");
+    throw new Error(`${arg} is an invalid string expression`);
   }
-  return strip(['"', "'"], arg);
+  return strip(['\'', '\''], arg);
 }
 
 
 // ARG_TYPE_ARRAY
 function getArray(arg, context) {
-  arg = strip(["[", "]"], arg.trim()).trim();
+  arg = strip(['[', ']'], arg.trim()).trim();
   if(arg === '') {
-    // This has to be here, because ''.split(",") returns '['']', not '[]'...
+    // This has to be here, because ''.split(',') returns '['']', not '[]'...
     return [];
   }
-  return arg.split(",").map(x => getArg(x.trim(), context));
+  return arg.split(',').map(x => getArg(x.trim(), context));
 }
 
 
@@ -190,13 +190,13 @@ function getStateAccess(arg, context) {
     keys[0] = ARG_STATE_LEVEL_STORYLINES[0];
   }
   else if(ARG_STATE_LEVEL_CURRENT_STORYLINE.includes(keys[0])) {
-    keys[0] = "storylines";
+    keys[0] = 'storylines';
     keys.splice(1, 0, context.storyline);
   }
   else {
-    throw new Error("First-Level must be one of " + ARG_STATE_FIRST_LEVEL + ", not " + keys[0]);
+    throw new Error(`First-Level must be one of ${ARG_STATE_FIRST_LEVEL}, not ${keys[0]}`);
   }
-  return {"_type": "state", "data": keys};
+  return {'_type': 'state', 'data': keys};
 }
 
 
@@ -215,7 +215,7 @@ function getArg(arg, context) {
     case ARG_TYPE_STATE_ACCESS:
       return getStateAccess(arg, context);
     default:
-      throw new Error("Invalid expression '" + arg + "'");
+      throw new Error(`Invalid expression '${arg}'`);
   }
 }
 
@@ -227,10 +227,10 @@ function parseYmlCode(codeString, context) {
   var rhs;
   [lhs, rhs] = codeString.split(operator).map(x => x.trim());
   if(lhs === '') {
-    throw new Error("Missing left-hand side");
+    throw new Error('Missing left-hand side');
   }
   if(rhs === '') {
-    throw new Error("Missing right-hand side");
+    throw new Error('Missing right-hand side');
   }
   lhs = getArg(lhs, context);
   rhs = getArg(rhs, context);
@@ -253,24 +253,24 @@ function parseYmlCode(codeString, context) {
  */
 function validateKeyType(object, keyName, keyType, msgNotFound) {
   var objectKeyType = typeof object[keyName];
-  if(objectKeyType === "undefined") {
+  if(objectKeyType === 'undefined') {
     if(msgNotFound === null) {
       // User has instructed not to warn when not found
       return;
     }
-    throw new Error(msgNotFound || ("'" + keyName + "' doesn't exist"));
+    throw new Error(msgNotFound || `'${keyName}' doesn't exist`);
   }
 
 
   if(isSlug(object[keyName])) {
-    objectKeyType = "slug";
+    objectKeyType = 'slug';
   }
   else if(Array.isArray(object[keyName])) {
-    objectKeyType = "array";
+    objectKeyType = 'array';
   }
 
   if((keyType !== null) && !((objectKeyType === keyType) || (Array.isArray(keyType) && keyType.includes(objectKeyType)))) {
-    throw new Error(keyName + " should be of type '" + keyType + "', not '" + objectKeyType + "'");
+    throw new Error(`${keyName} should be of type '${keyType}', not '${objectKeyType}'`);
   }
 }
 

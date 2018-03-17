@@ -1,0 +1,35 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "globals": {
+        "describe": false,
+        "it": false,
+        "expect": false
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "no-console": "off",
+        "no-constant-condition": "off",
+        "indent": [
+            "error",
+            2,
+            {"SwitchCase": 1}
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single",
+            {"avoidEscape": true}
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}

@@ -1,9 +1,9 @@
-"use strict";
-const path = require("path");
-const configTools = require("./config");
-const storylineTools = require("./storyline");
-const eventTools = require("./event");
-const stateTools = require("./state");
+'use strict';
+const path = require('path');
+const configTools = require('./config');
+const storylineTools = require('./storyline');
+const eventTools = require('./event');
+const stateTools = require('./state');
 
 
 function storyBundle(storyPath, storyConfigFile, storylinesFolder) {
@@ -38,8 +38,8 @@ function storyBundle(storyPath, storyConfigFile, storylinesFolder) {
   // Generate default state
   storyConfig.default_state = stateTools.generateDefaultState(storyConfig.resources, storylinesSlugs);
 
-  // "Stamp" the story (makes searching within Github easier)
-  storyConfig._source = "https://github.com/Neamar/storylines";
+  // 'Stamp' the story (makes searching within Github easier)
+  storyConfig._source = 'https://github.com/Neamar/storylines';
   return storyConfig;
 }
 

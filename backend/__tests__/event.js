@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 const event = require('../event'); // jshint ignore:line
 
-describe("event file", () => {
+describe('event file', () => {
   function getBasicEvent() {
     return {
-      description: "Description",
+      description: 'Description',
       event: 'event_slug',
       storyline: 'storyline_slug',
       repeatable: false,
@@ -12,30 +12,30 @@ describe("event file", () => {
     };
   }
 
-  describe("readEvent()", () => {
+  describe('readEvent()', () => {
     it('should read event from disk', () => {
       var r = event.readEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1');
 
-      expect(r).toContain("triggers");
-      expect(r).toContain("g.test");
-      expect(r).toContain("---");
+      expect(r).toContain('triggers');
+      expect(r).toContain('g.test');
+      expect(r).toContain('---');
     });
 
     it('should read event from disk', () => {
       var r = event.readEvent(__dirname + '/mocks/storylines', 'test_storyline_2', 'event_2_1');
 
-      expect(r).toContain("triggers");
-      expect(r).toContain("g.test");
-      expect(r).toContain("---");
+      expect(r).toContain('triggers');
+      expect(r).toContain('g.test');
+      expect(r).toContain('---');
     });
   });
 
-  describe("buildEvent()", function() {
-    it("should fail on invalid event", () => {
+  describe('buildEvent()', function() {
+    it('should fail on invalid event', () => {
       expect(() => event.buildEvent('FAKE', 's', 'e')).toThrow(/valid FrontMatter/);
     });
 
-    it("should transform front matter content to a JavaScript object", () => {
+    it('should transform front matter content to a JavaScript object', () => {
       var e = event.buildEvent(`---
 triggers:
     soft:
@@ -52,7 +52,7 @@ TEST
       expect(e).toHaveProperty('on_display', []);
     });
 
-    it("should parse markdown", () => {
+    it('should parse markdown', () => {
       var e = event.buildEvent(`---
 triggers:
     soft:
@@ -65,7 +65,7 @@ triggers:
     });
   });
 
-  describe("validateEvent()", function() {
+  describe('validateEvent()', function() {
 
     it('should ensure storyline slug is present', () => {
       expect(() => event.validateEvent({})).toThrow(/Missing storyline slug/i);
@@ -91,7 +91,7 @@ triggers:
       expect(event.validateEvent(getBasicEvent())).toEqual(getBasicEvent());
     });
 
-    describe("Trigger validation", () => {
+    describe('Trigger validation', () => {
       it('should ensure triggers is an object', () => {
         var e = getBasicEvent();
         e.triggers = [];
@@ -120,7 +120,7 @@ triggers:
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            condition: "",
+            condition: '',
             weight: false
           }
         };
@@ -132,7 +132,7 @@ triggers:
         var e = getBasicEvent();
         e.triggers = {
           hard: {
-            condition: "",
+            condition: '',
             weight: 15
           }
         };
@@ -153,7 +153,7 @@ triggers:
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            condition: "",
+            condition: '',
             weight: false
           }
         };
@@ -165,7 +165,7 @@ triggers:
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            condition: "",
+            condition: '',
             weight: 15
           }
         };
@@ -174,12 +174,12 @@ triggers:
       });
     });
 
-    describe("Actions validation", () => {
+    describe('Actions validation', () => {
       it('should ensure actions is an object', () => {
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            condition: "",
+            condition: '',
             weight: 15
           }
         };
@@ -192,7 +192,7 @@ triggers:
         var e = getBasicEvent();
         e.triggers = {
           soft: {
-            condition: "",
+            condition: '',
             weight: 15
           }
         };
@@ -228,10 +228,10 @@ triggers:
     });
   });
 
-  describe("on_display operations", () => {
+  describe('on_display operations', () => {
     it('should accept empty on_display', () => {
       var e = getBasicEvent();
-      expect(event.validateEvent(e)).toHaveProperty("event", e.event);
+      expect(event.validateEvent(e)).toHaveProperty('event', e.event);
     });
 
     it('should ensure on_display is an array', () => {
@@ -242,8 +242,8 @@ triggers:
     });
   });
 
-  describe("parseEvent()", () => {
-    describe("Trigger parsing", () => {
+  describe('parseEvent()', () => {
+    describe('Trigger parsing', () => {
       it('should parse enclosed soft condition', () => {
         var e = getBasicEvent();
         e.triggers = {
@@ -258,7 +258,7 @@ triggers:
           soft: {
             condition: {
               '_type': 'atomic_condition',
-              lhs: {"_type": "state", "data": ['global', 'something']},
+              lhs: {'_type': 'state', 'data': ['global', 'something']},
               operator: '==',
               rhs: true
             },
@@ -292,13 +292,13 @@ triggers:
               conditions: [
                 {
                   _type: 'atomic_condition',
-                  lhs: {"_type": "state", "data": ['global', 'something']},
+                  lhs: {'_type': 'state', 'data': ['global', 'something']},
                   operator: '==',
                   rhs: true
                 },
                 {
                   _type: 'atomic_condition',
-                  lhs: {"_type": "state", "data": ['resources', 'foo']},
+                  lhs: {'_type': 'state', 'data': ['resources', 'foo']},
                   operator: '>=',
                   rhs: 150
                 },
@@ -334,13 +334,13 @@ triggers:
               conditions: [
                 {
                   _type: 'atomic_condition',
-                  lhs: {"_type": "state", "data": ['storylines', 'storyline_slug', "something"]},
+                  lhs: {'_type': 'state', 'data': ['storylines', 'storyline_slug', 'something']},
                   operator: '==',
                   rhs: true
                 },
                 {
                   _type: 'atomic_condition',
-                  lhs: {"_type": "state", "data": ['resources', 'foo']},
+                  lhs: {'_type': 'state', 'data': ['resources', 'foo']},
                   operator: '>=',
                   rhs: 150
                 },
@@ -354,8 +354,8 @@ triggers:
       });
     });
 
-    describe("on_display parsing", () => {
-      it("should accept missing on_display key", () => {
+    describe('on_display parsing', () => {
+      it('should accept missing on_display key', () => {
         var e = getBasicEvent();
         var expected = getBasicEvent();
         expect(event.parseEvent(e)).toEqual(expected);
@@ -371,12 +371,12 @@ triggers:
         var expected = getBasicEvent();
         expected.on_display = [
           {
-            lhs: {"_type": "state", "data": ['global', 'something']},
+            lhs: {'_type': 'state', 'data': ['global', 'something']},
             operator: '=',
             rhs: true
           },
           {
-            lhs: {"_type": "state", "data": ['resources', 'foo']},
+            lhs: {'_type': 'state', 'data': ['resources', 'foo']},
             operator: '+=',
             rhs: 150
           },
@@ -386,7 +386,7 @@ triggers:
       });
     });
 
-    describe("Actions parsing", () => {
+    describe('Actions parsing', () => {
       it('should parse enclosed operations', () => {
         var e = getBasicEvent();
         e.actions = {
@@ -403,12 +403,12 @@ triggers:
           OK: {
             operations: [
               {
-                lhs: {"_type": "state", "data": ['global', 'something']},
+                lhs: {'_type': 'state', 'data': ['global', 'something']},
                 operator: '=',
                 rhs: true
               },
               {
-                lhs: {"_type": "state", "data": ['resources', 'foo']},
+                lhs: {'_type': 'state', 'data': ['resources', 'foo']},
                 operator: '+=',
                 rhs: 150
               },
@@ -440,7 +440,7 @@ triggers:
           OK: {
             operations: [
               {
-                lhs: {"_type": "state", "data": ['global', 'something']},
+                lhs: {'_type': 'state', 'data': ['global', 'something']},
                 operator: '=',
                 rhs: true
               },
@@ -449,13 +449,13 @@ triggers:
           KO: {
             condition: {
               _type: 'atomic_condition',
-              lhs: {"_type": "state", "data": ['global', 'testval']},
+              lhs: {'_type': 'state', 'data': ['global', 'testval']},
               operator: '==',
               rhs: 123
             },
             operations: [
               {
-                lhs: {"_type": "state", "data": ['global', 'something']},
+                lhs: {'_type': 'state', 'data': ['global', 'something']},
                 operator: '=',
                 rhs: false
               },
@@ -471,7 +471,7 @@ triggers:
         e.actions = {
           OK: {
             operations: [
-              'sl.something = "ABC"',
+              "sl.something = 'ABC'",
               'r.foo *= 5'
             ]
           }
@@ -482,12 +482,12 @@ triggers:
           OK: {
             operations: [
               {
-                lhs: {"_type": "state", "data": ['storylines', 'storyline_slug', 'something']},
+                lhs: {'_type': 'state', 'data': ['storylines', 'storyline_slug', 'something']},
                 operator: '=',
-                rhs: "ABC"
+                rhs: 'ABC'
               },
               {
-                lhs: {"_type": "state", "data": ['resources', 'foo']},
+                lhs: {'_type': 'state', 'data': ['resources', 'foo']},
                 operator: '*=',
                 rhs: 5
               },
@@ -499,8 +499,8 @@ triggers:
       });
     });
 
-    describe("repeatable parsing", () => {
-      it("should accept missing repeatable key", () => {
+    describe('repeatable parsing', () => {
+      it('should accept missing repeatable key', () => {
         var e = getBasicEvent();
         var expected = getBasicEvent();
         expect(event.parseEvent(e)).toEqual(expected);
@@ -508,7 +508,7 @@ triggers:
 
       it('should ensure repeatable is a boolean', () => {
         var e = getBasicEvent();
-        e.repeatable = "LOL";
+        e.repeatable = 'LOL';
 
         expect(() => event.validateEvent(e)).toThrow(/repeatable should be of type 'boolean', not 'string'/i);
       });
@@ -526,19 +526,19 @@ triggers:
 
   });
 
-  describe("getEvent()", function() {
+  describe('getEvent()', function() {
     it('should read and parse event from disk', () => {
       expect(event.getEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1')).toEqual({
-        event: "event_1_1",
-        storyline: "test_storyline_1",
-        description: "<p>Potentially multiline, markdown description of your event</p>",
+        event: 'event_1_1',
+        storyline: 'test_storyline_1',
+        description: '<p>Potentially multiline, markdown description of your event</p>',
         repeatable: false,
         on_display: [],
         triggers: {
           soft: {
             condition: {
               _type: 'atomic_condition',
-              lhs: {"_type": "state", "data": ['global', 'test']},
+              lhs: {'_type': 'state', 'data': ['global', 'test']},
               operator: '==',
               rhs: true
             },
@@ -549,7 +549,7 @@ triggers:
           OK: {
             operations: [
               {
-                lhs: {"_type": "state", "data": ['global', 'test']},
+                lhs: {'_type': 'state', 'data': ['global', 'test']},
                 operator: '=',
                 rhs: false
               }

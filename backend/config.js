@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const fs = require('fs');
 const frontMatter = require('front-matter');
 
@@ -22,7 +22,7 @@ function readStoryConfig(storyPath, storyConfigFile) {
  */
 function buildStoryConfig(configContent) {
   if(!frontMatter.test(configContent)) {
-    throw new Error("Config must be a valid FrontMatter file.");
+    throw new Error('Config must be a valid FrontMatter file.');
   }
 
   var fm = frontMatter(configContent);
@@ -42,13 +42,13 @@ function buildStoryConfig(configContent) {
  * @throws on invalid resource
  */
 function validateResource(resource) {
-  helpers.validateKeyType(resource, "description", "string", "Missing resource description");
-  helpers.validateKeyType(resource, "format", "string", "Missing resource format");
-  if(resource.format.indexOf("%s") === -1) {
-    throw new Error("Invalid resource format; must contain a %s");
+  helpers.validateKeyType(resource, 'description', 'string', 'Missing resource description');
+  helpers.validateKeyType(resource, 'format', 'string', 'Missing resource format');
+  if(resource.format.indexOf('%s') === -1) {
+    throw new Error('Invalid resource format; must contain a %s');
   }
-  helpers.validateKeyType(resource, "display_name", "string", "Missing resource display_name");
-  helpers.validateKeyType(resource, "default", null, "Missing resource default value");
+  helpers.validateKeyType(resource, 'display_name', 'string', 'Missing resource display_name');
+  helpers.validateKeyType(resource, 'default', null, 'Missing resource default value');
 }
 
 
@@ -59,19 +59,19 @@ function validateResource(resource) {
  * @throws on invalid config
  */
 function validateConfig(config) {
-  helpers.validateKeyType(config, "version", "number", "Missing version number");
+  helpers.validateKeyType(config, 'version', 'number', 'Missing version number');
 
   if(SUPPORTED_VERSIONS.indexOf(config.version) === -1) {
-    throw new Error("Unsupported version. Version should be one of '" + SUPPORTED_VERSIONS.join() + "', not '"  + config.version  + "'");
+    throw new Error(`Unsupported version. Version should be one of ${SUPPORTED_VERSIONS.join()}, not ${config.version}`);
   }
 
-  helpers.validateKeyType(config, "story_title", "string", "Missing story title.");
-  helpers.validateKeyType(config, "story_description", "string", "Missing story description.");
-  helpers.validateKeyType(config, "resources", "object", "Missing resources definition.");
+  helpers.validateKeyType(config, 'story_title', 'string', 'Missing story title.');
+  helpers.validateKeyType(config, 'story_description', 'string', 'Missing story description.');
+  helpers.validateKeyType(config, 'resources', 'object', 'Missing resources definition.');
 
   var badSlugs = Object.keys(config.resources).filter(resource => !(helpers.isSlug(resource)));
   if(badSlugs.length > 0) {
-    throw new Error("Invalid resource slug: '" + badSlugs.join() + "'");
+    throw new Error(`Invalid resource slug: '${badSlugs.join()}'`);
   }
   Object.values(config.resources).forEach(validateResource);
 

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 
 // Display an event in the Jumbotron
@@ -20,7 +20,7 @@ window.displayEvent = function displayEvent(description, actions, respondToEvent
   document.getElementById('event').innerHTML = eventHTML;
 
   document.querySelectorAll('#event a.btn').forEach((item) => {
-    item.addEventListener("click", function(e) {
+    item.addEventListener('click', function(e) {
       e.preventDefault();
       respondToEventCb(this.innerHTML);
     });
@@ -33,7 +33,7 @@ window.displayResources = function displayResources(resourcesDefinition, resourc
   let resourcesHTML = Object.keys(resourcesDefinition).map(r => {
     let resourceDefinition = resourcesDefinition[r];
     return `<span class="resource-holder"><span class="resource-name">${resourceDefinition.display_name}</span>: ${resourceDefinition.format.replace('%s', resourcesValues[r])}</span>`;
-  }).join(" ");
+  }).join(' ');
 
   document.getElementById('resources').innerHTML = resourcesHTML;
 };

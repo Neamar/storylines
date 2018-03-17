@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
-const bundle = require("./bundle.js");
+const bundle = require('./bundle.js');
 
 if(process.argv.length !== 3 && process.argv.length !== 4) {
-  throw new Error("Invalid call. Usage: storyline path/to/story [outputfile]");
+  throw new Error('Invalid call. Usage: storyline path/to/story [outputfile]');
 }
 
 

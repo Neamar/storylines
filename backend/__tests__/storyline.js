@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 const storyline = require('../storyline');
 
 
-describe("storyline file", () => {
-  describe("getStorylinesSlugs()", () => {
+describe('storyline file', () => {
+  describe('getStorylinesSlugs()', () => {
     it('should read storylines from disk', () => {
       var storylines = storyline.getStorylinesSlugs(__dirname + '/mocks', 'storylines');
 
@@ -15,7 +15,7 @@ describe("storyline file", () => {
     });
   });
 
-  describe("getEventsSlugs()", () => {
+  describe('getEventsSlugs()', () => {
     it('should read events from disk', () => {
       var events = storyline.getEventsSlugs(__dirname + '/mocks', 'storylines', 'test_storyline_1');
 

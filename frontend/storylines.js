@@ -9,15 +9,15 @@ class Storylines {
    */
   constructor(story, callbacks) {
     if(!story) {
-      throw new Error("Story is required");
+      throw new Error('Story is required');
     }
     if(!callbacks) {
-      throw new Error("Callbacks object is required");
+      throw new Error('Callbacks object is required');
     }
 
     ['displayEvent', 'displayResources'].forEach((k) => {
       if(!callbacks[k]) {
-        throw new Error("Missing required callback: " + k);
+        throw new Error('Missing required callback: ' + k);
       }
     });
 
@@ -41,7 +41,7 @@ class Storylines {
 
   start() {
     if(this.currentEvent) {
-      throw new Error("Storyline already started!");
+      throw new Error('Storyline already started!');
     }
 
     this.nextEvent();
@@ -53,7 +53,7 @@ class Storylines {
 
   /**
   * Return all events currently matching the Reader's state
-  * on triggerType ("soft" or "hard") only.
+  * on triggerType ('soft' or 'hard') only.
   */
   listAvailableEvents(triggerType) {
     return this.events.filter(e => {
@@ -77,11 +77,11 @@ class Storylines {
   }
 
   listAvailableHardEvents() {
-    return this.listAvailableEvents("hard");
+    return this.listAvailableEvents('hard');
   }
 
   listAvailableSoftEvents() {
-    return this.listAvailableEvents("soft");
+    return this.listAvailableEvents('soft');
   }
 
   /**
@@ -110,14 +110,14 @@ class Storylines {
     this.state.global.current_turn += 1;
 
     let hardEvents = this.listAvailableHardEvents();
-    this.log("Matching hard events: ", hardEvents);
+    this.log('Matching hard events: ', hardEvents);
     if(hardEvents.length > 0) {
       this.moveToEvent(hardEvents[0]);
       return;
     }
 
     let softEvents = this.listAvailableSoftEvents();
-    this.log("Matching soft events: ", hardEvents);
+    this.log('Matching soft events: ', hardEvents);
     if(softEvents.length > 0) {
       let softEvent = this.doEventLottery(softEvents);
       this.moveToEvent(softEvent);
@@ -131,7 +131,7 @@ class Storylines {
       return;
     }
 
-    throw new Error("No more events available, no listeners on no_events_available.");
+    throw new Error('No more events available, no listeners on no_events_available.');
   }
 
   /**
@@ -178,14 +178,14 @@ class Storylines {
   * Evaluate specified condition
   */
   testCondition(condition) {
-    if(condition._type === "atomic_condition") {
+    if(condition._type === 'atomic_condition') {
       return this.testAtomicCondition(condition);
     }
-    else if(condition._type === "propositional_condition") {
+    else if(condition._type === 'propositional_condition') {
       return this.testPropositionalCondition(condition);
     }
 
-    throw new Error("Invalid condition type " + condition._type);
+    throw new Error('Invalid condition type ' + condition._type);
   }
 
   /**
@@ -210,7 +210,7 @@ class Storylines {
       case '!=':
         return lhs !== rhs;
       default:
-        throw new Error("Invalid operator " + condition.operator);
+        throw new Error('Invalid operator ' + condition.operator);
     }
   }
 
@@ -224,7 +224,7 @@ class Storylines {
       case 'OR':
         return condition.conditions.some(c => this.testCondition(c));
       default:
-        throw new Error("Invalid boolean operator " + condition.boolean_operator);
+        throw new Error('Invalid boolean operator ' + condition.boolean_operator);
     }
   }
 
@@ -240,7 +240,7 @@ class Storylines {
     let lhs = this.resolveStatePath(operation.lhs, true);
 
     if(lhs.missingOnLastLevel && operation.operator !== '=') {
-      throw new Error("Can't apply compound operator on undefined");
+      throw new Error('Can\'t apply compound operator on undefined');
     }
 
     let rhs = this.resolveValue(operation.rhs);
@@ -265,7 +265,7 @@ class Storylines {
         lhs.parent[lhs.key] %= rhs;
         break;
       default:
-        throw new Error("Invalid operator " + operation.operator);
+        throw new Error('Invalid operator ' + operation.operator);
     }
   }
 
@@ -282,8 +282,8 @@ class Storylines {
 
   /*
    * Resolve any value (potentially a dotted state access) to its primitive value.
-   * "ABC" => ABC
-   * {_type: "state", data:["global", "something"]} == this.state.global.something
+   * 'ABC' => ABC
+   * {_type: 'state', data:['global', 'something']} == this.state.global.something
    */
   resolveValue(value) {
     if(!this.isStateAccess(value)) {
@@ -301,7 +301,7 @@ class Storylines {
    */
   resolveStatePath(statePath, throwOnMissing) {
     if(!this.isStateAccess(statePath)) {
-      throw new Error("Must be a state access! " + statePath);
+      throw new Error('Must be a state access! ' + statePath);
     }
 
     // Clone the array, as we're going to destroy it
@@ -311,7 +311,7 @@ class Storylines {
       var path = shiftableStatePath.shift();
       if(!(path in value)) {
         if(throwOnMissing) {
-          throw new Error("Trying to access non-existing path in state: " + statePath.data.join("."));
+          throw new Error('Trying to access non-existing path in state: ' + statePath.data.join('.'));
         }
         return {
           parent: value,
@@ -336,12 +336,12 @@ class Storylines {
   }
 
   getEventSlug(event) {
-    return event.story + "/" + event.event;
+    return event.story + '/' + event.event;
   }
 
   log() {
     /* istanbul ignore next */
-    if(environment === "browser") {
+    if(environment === 'browser') {
       console.log.apply(console, arguments);
     }
   }
@@ -358,8 +358,8 @@ class Storylines {
 // Allow for easy testing in the backend
 try {
   module.exports = Storylines;
-  environment = "node";
+  environment = 'node';
 } catch(e) {
   /* istanbul ignore next */
-  environment = "browser";
+  environment = 'browser';
 }
