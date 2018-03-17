@@ -31,11 +31,11 @@ describe("event file", () => {
   });
 
   describe("buildEvent()", function() {
-    test("should fail on invalid event", () => {
+    it("should fail on invalid event", () => {
       expect(() => event.buildEvent('FAKE', 's', 'e')).toThrow(/valid FrontMatter/);
     });
 
-    test("should transform front matter content to a JavaScript object", () => {
+    it("should transform front matter content to a JavaScript object", () => {
       var e = event.buildEvent(`---
 triggers:
     soft:
@@ -52,7 +52,7 @@ TEST
       expect(e).toHaveProperty('on_display', []);
     });
 
-    test("should parse markdown", () => {
+    it("should parse markdown", () => {
       var e = event.buildEvent(`---
 triggers:
     soft:
@@ -355,7 +355,7 @@ triggers:
     });
 
     describe("on_display parsing", () => {
-      test("should accept missing on_display key", () => {
+      it("should accept missing on_display key", () => {
         var e = getBasicEvent();
         var expected = getBasicEvent();
         expect(event.parseEvent(e)).toEqual(expected);
@@ -500,7 +500,7 @@ triggers:
     });
 
     describe("repeatable parsing", () => {
-      test("should accept missing repeatable key", () => {
+      it("should accept missing repeatable key", () => {
         var e = getBasicEvent();
         var expected = getBasicEvent();
         expect(event.parseEvent(e)).toEqual(expected);

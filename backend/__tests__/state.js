@@ -12,7 +12,7 @@ describe("State", () => {
   }
 
   describe("generateDefaultState()", () => {
-    test("should generate a default state from valid resources values",() => {
+    it("should generate a default state from valid resources values",() => {
       expect(state.generateDefaultState(getDefaultResources(), [])).toEqual({
         global: {
           current_turn: 0,
@@ -24,7 +24,7 @@ describe("State", () => {
       });
     });
 
-    test("should generate a default state from storylines",() => {
+    it("should generate a default state from storylines",() => {
       expect(state.generateDefaultState({}, ['sl1', 'sl2'])).toEqual({
         global: {
           current_turn: 0,
