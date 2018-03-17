@@ -21,8 +21,8 @@ window.displayEvent = function displayEvent(description, actions, respondToEvent
 
   document.querySelectorAll('#event a.btn').forEach((item) => {
     item.addEventListener("click", function(e) {
-      respondToEventCb(this.innerHTML);
       e.preventDefault();
+      respondToEventCb(this.innerHTML);
     });
   });
 };
