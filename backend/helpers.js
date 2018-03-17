@@ -52,7 +52,7 @@ function isSlug(potentialSlug) {
 
 // ARG_TYPE_STRING
 function isStr(arg) {
-  return ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith("'") && arg.endsWith("'")));
+  return ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith('"') && arg.endsWith('"')));
 }
 
 
@@ -137,7 +137,7 @@ function getBooleanArg(arg) {
     return false;
   }
   else {
-    throw new Error(`Invalid boolean expression: ${arg}`);
+    throw new Error(`Invalid boolean expression: '${arg}'`);
   }
 }
 
@@ -156,7 +156,7 @@ function getStrArg(arg) {
   if(!isValidStr(arg)) {
     throw new Error(`${arg} is an invalid string expression`);
   }
-  return strip(['\'', '\''], arg);
+  return strip(['\'', '"'], arg);
 }
 
 
