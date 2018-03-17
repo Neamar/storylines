@@ -19,5 +19,5 @@ if(!process.argv[3]) {
   console.log(JSON.stringify(b));
 }
 else {
-  require('fs').writeFileSync(process.argv[3], JSON.stringify(b, null, 2))
+  require('fs').writeFileSync(process.argv[3], JSON.stringify(b, null, 2));
 }
