@@ -482,7 +482,7 @@ triggers:
           OK: {
             operations: [
               {
-                lhs: {"_type": "state", "data": ['storylines', 'current_storyline', 'something']},
+                lhs: {"_type": "state", "data": ['storylines', 'storyline_slug', 'something']},
                 operator: '=',
                 rhs: "ABC"
               },

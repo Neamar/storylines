@@ -237,8 +237,8 @@ describe("helpers", () => {
     });
 
     test('should expand complex shorthands in state access', () => {
-      expect(helpers.parseYmlCode('sl.something == true')).toEqual({
-        lhs: {_type: "state", data: ["storylines", "current_storyline", "something"]},
+      expect(helpers.parseYmlCode('sl.something == true', {storyline: "a_storyline"})).toEqual({
+        lhs: {_type: "state", data: ["storylines", "a_storyline", "something"]},
         operator: "==",
         rhs: true
       });
