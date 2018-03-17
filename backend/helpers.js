@@ -161,23 +161,23 @@ function getStrArg(arg) {
 
 
 // ARG_TYPE_ARRAY
-function getArray(arg) {
+function getArray(arg, context) {
   arg = strip(["[", "]"], arg.trim()).trim();
   if(arg === '') {
     // This has to be here, because ''.split(",") returns '['']', not '[]'...
     return [];
   }
-  return arg.split(",").map(x => getArg(x.trim()));
+  return arg.split(",").map(x => getArg(x.trim(), context));
 }
 
 
-function getArrayArg(arg) {
-  return getArray(arg);
+function getArrayArg(arg, context) {
+  return getArray(arg, context);
 }
 
 
 // ARG_TYPE_STATE_ACCESS
-function getStateAccess(arg) {
+function getStateAccess(arg, context) {
   var keys = arg.trim().split('.');
 
   if(ARG_STATE_LEVEL_GLOBAL.includes(keys[0])) {
@@ -191,7 +191,7 @@ function getStateAccess(arg) {
   }
   else if(ARG_STATE_LEVEL_CURRENT_STORYLINE.includes(keys[0])) {
     keys[0] = "storylines";
-    keys.splice(1, 0, "current_storyline");
+    keys.splice(1, 0, context.storyline);
   }
   else {
     throw new Error("First-Level must be one of " + ARG_STATE_FIRST_LEVEL + ", not " + keys[0]);
@@ -200,7 +200,7 @@ function getStateAccess(arg) {
 }
 
 
-function getArg(arg) {
+function getArg(arg, context) {
   switch(getArgType(arg)) {
     case ARG_TYPE_NULL:
       return null;
@@ -211,16 +211,16 @@ function getArg(arg) {
     case ARG_TYPE_STRING:
       return getStrArg(arg);
     case ARG_TYPE_ARRAY:
-      return getArrayArg(arg);
+      return getArrayArg(arg, context);
     case ARG_TYPE_STATE_ACCESS:
-      return getStateAccess(arg);
+      return getStateAccess(arg, context);
     default:
       throw new Error("Invalid expression '" + arg + "'");
   }
 }
 
 
-function parseYmlCode(codeString) {
+function parseYmlCode(codeString, context) {
   // For now, at least, we suppose there is at least one whitespace before and after the operators
   var operator = findOperator(codeString);
   var lhs;
@@ -232,8 +232,8 @@ function parseYmlCode(codeString) {
   if(rhs === '') {
     throw new Error("Missing right-hand side");
   }
-  lhs = getArg(lhs);
-  rhs = getArg(rhs);
+  lhs = getArg(lhs, context);
+  rhs = getArg(rhs, context);
 
   return {
     lhs: lhs,

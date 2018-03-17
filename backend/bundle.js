@@ -18,11 +18,9 @@ function storyBundle(storyPath, storyConfigFile, storylinesFolder) {
   var storylinesSlugs = storylineTools.getStorylinesSlugs(storyPath, storylinesFolder);
   storylinesSlugs.forEach(function(storylineSlug) {
     var eventsSlugs = storylineTools.getEventsSlugs(storyPath, storylinesFolder, storylineSlug);
-
     var storylineEvents = eventsSlugs.map(function(eventSlug) {
       return eventTools.getEvent(path.join(storyPath, storylinesFolder), storylineSlug, eventSlug);
     });
-
     storyEvents = storyEvents.concat(storylineEvents);
   });
 

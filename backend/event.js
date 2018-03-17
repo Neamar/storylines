@@ -91,55 +91,55 @@ function validateEvent(eventObject) {
 }
 
 
-function parseTrigger(triggerObject) {
+function parseTrigger(triggerObject, context) {
   validateTrigger(triggerObject); // this should have been checked by parseTriggers, but what if we call parseTrigger directly?
-  triggerObject.condition = conditionsTools.parseCondition(triggerObject.condition);
+  triggerObject.condition = conditionsTools.parseCondition(triggerObject.condition, context);
   return triggerObject;
 }
 
 
-function parseTriggers(eventObject) {
+function parseTriggers(eventObject, context) {
   validateTriggers(eventObject.triggers);
 
   TRIGGER_TYPES.forEach(type => {
     if(eventObject.triggers && eventObject.triggers[type]) {
-      eventObject.triggers[type] = parseTrigger(eventObject.triggers[type]);
+      eventObject.triggers[type] = parseTrigger(eventObject.triggers[type], context);
     }
   });
   return eventObject;
 }
 
 
-function parseOperations(actionObject) {
-  // actionObject can be null: action has no effect, but this will let the engine chose a new event with a soft condition
+function parseOperations(actionObject, context) {
+  // actionObject can be null: action has no effect, but this will let the engine choose a new event with a soft condition
   if(actionObject && actionObject.operations) {
-    actionObject.operations = actionObject.operations.map(helpers.parseYmlCode);
+    actionObject.operations = actionObject.operations.map(o => helpers.parseYmlCode(o, context));
   }
   return actionObject;
 }
 
 
-function parseConditions(actionObject) {
-  // actionObject can be null: action has no effect, but this will let the engine chose a new event with a soft condition
+function parseConditions(actionObject, context) {
+  // actionObject can be null: action has no effect, but this will let the engine choose a new event with a soft condition
   if(actionObject && actionObject.condition) {
-    actionObject.condition = conditionsTools.parseCondition(actionObject.condition);
+    actionObject.condition = conditionsTools.parseCondition(actionObject.condition, context);
   }
   return actionObject;
 }
 
 
-function parseActions(eventObject) {
+function parseActions(eventObject, context) {
   if(eventObject.actions) {
-    Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName]));
-    Object.keys(eventObject.actions || []).forEach(actionName => parseConditions(eventObject.actions[actionName]));
+    Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName], context));
+    Object.keys(eventObject.actions || []).forEach(actionName => parseConditions(eventObject.actions[actionName], context));
   }
   return eventObject;
 }
 
 
-function parseOnDisplay(eventObject) {
+function parseOnDisplay(eventObject, context) {
   if(eventObject.on_display) {
-    eventObject.on_display = eventObject.on_display.map(helpers.parseYmlCode);
+    eventObject.on_display = eventObject.on_display.map(o => helpers.parseYmlCode(o, context));
   }
   return eventObject;
 }
@@ -152,9 +152,12 @@ function parseOnDisplay(eventObject) {
  * @throws on invalid event
  */
 function parseEvent(eventObject) {
-  parseTriggers(eventObject);
-  parseActions(eventObject);
-  parseOnDisplay(eventObject);
+  let context = {
+    storyline: eventObject.storyline
+  };
+  parseTriggers(eventObject, context);
+  parseActions(eventObject, context);
+  parseOnDisplay(eventObject, context);
   return eventObject;
 }
 

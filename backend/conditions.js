@@ -6,9 +6,9 @@ const BOOLEAN_OPERATORS = ['AND', 'OR'];
 
 const helpers = require('./helpers.js');
 
-module.exports.parseCondition = function parseCondition(input) {
+module.exports.parseCondition = function parseCondition(input, context) {
   if((typeof input) === 'string') {
-    var condition = helpers.parseYmlCode(input);
+    var condition = helpers.parseYmlCode(input, context);
     if(!YML_OPERATORS.includes(condition.operator)) {
       throw new Error("Invalid operator: " + condition.operator);
     }
@@ -25,6 +25,6 @@ module.exports.parseCondition = function parseCondition(input) {
   }
   var op = keys[0];
   var results = {_type: 'propositional_condition', boolean_operator: op};
-  results.conditions = input[op].map(x => parseCondition(x));
+  results.conditions = input[op].map(x => parseCondition(x, context));
   return results;
 };
