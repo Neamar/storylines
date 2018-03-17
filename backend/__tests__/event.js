@@ -276,7 +276,7 @@ triggers:
             condition: {
               'AND': [
                 'global.something == true',
-                'resources.foo >= 150'
+                'sl.foo >= 150'
               ]
             },
             weight: 1,
@@ -298,7 +298,7 @@ triggers:
                 },
                 {
                   _type: 'atomic_condition',
-                  lhs: {'_type': 'state', 'data': ['resources', 'foo']},
+                  lhs: {'_type': 'state', 'data': ['storylines', 'storyline_slug', 'foo']},
                   operator: '>=',
                   rhs: 150
                 },
