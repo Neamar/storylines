@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 const state = require('../state.js');
 
 
-describe("State", () => {
+describe('State', () => {
   function getDefaultResources() {
     return {
       R1: {
@@ -11,8 +11,8 @@ describe("State", () => {
     };
   }
 
-  describe("generateDefaultState()", () => {
-    it("should generate a default state from valid resources values",() => {
+  describe('generateDefaultState()', () => {
+    it('should generate a default state from valid resources values',() => {
       expect(state.generateDefaultState(getDefaultResources(), [])).toEqual({
         global: {
           current_turn: 0,
@@ -24,7 +24,7 @@ describe("State", () => {
       });
     });
 
-    it("should generate a default state from storylines",() => {
+    it('should generate a default state from storylines',() => {
       expect(state.generateDefaultState({}, ['sl1', 'sl2'])).toEqual({
         global: {
           current_turn: 0,
