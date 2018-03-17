@@ -4,39 +4,39 @@ const helpers = require('../helpers.js');
 
 describe("helpers", () => {
   describe("isSlug()", () => {
-    test('should return true on a valid slug', () => {
+    it('should return true on a valid slug', () => {
       expect(helpers.isSlug("valid_slug")).toBeTruthy();
     });
 
-    test('should return false on a slug with spaces', () => {
+    it('should return false on a slug with spaces', () => {
       expect(helpers.isSlug("invalid slug")).toBeFalsy();
     });
 
-    test('should return true on a single lowercase letter', () => {
+    it('should return true on a single lowercase letter', () => {
       expect(helpers.isSlug("x")).toBeTruthy();
     });
 
-    test('should return false on a slug starting with a number', () => {
+    it('should return false on a slug starting with a number', () => {
       expect(helpers.isSlug("1slug")).toBeFalsy();
     });
   });
 
   describe("getBooleanArg", () => {
-    test("'true' should return true", () => {
+    it("'true' should return true", () => {
       expect(helpers.getBooleanArg("true")).toBeTruthy();
     });
 
-    test("'false' should return false", () => {
+    it("'false' should return false", () => {
       expect(helpers.getBooleanArg("false")).toBeFalsy();
     });
 
-    test("(Almost) anything else should throw ('True', 'TRUE', 'False', and 'FALSE' are accepted)", () => {
+    it("(Almost) anything else should throw ('True', 'TRUE', 'False', and 'FALSE' are accepted)", () => {
       expect(() => helpers.getBooleanArg("FaLSE")).toThrow(/Invalid boolean expression: 'FaLSE'/i);
     });
   });
 
   describe("parseYmlCode()", () => {
-    test('should parse strings', () => {
+    it('should parse strings', () => {
       expect(helpers.parseYmlCode('"something" == "something"')).toEqual({
         lhs: "something",
         operator: "==",
@@ -44,11 +44,11 @@ describe("helpers", () => {
       });
     });
 
-    test('should throw on multiple operators', () => {
+    it('should throw on multiple operators', () => {
       expect(() => helpers.parseYmlCode('"something" += == "something"')).toThrow(/Too many operator candidates:/i);
     });
 
-    test('should parse strings with spaces', () => {
+    it('should parse strings with spaces', () => {
       expect(helpers.parseYmlCode('"to be or not to be" == "something"')).toEqual({
         lhs: "to be or not to be",
         operator: "==",
@@ -56,7 +56,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should parse strings looking like dot notation', () => {
+    it('should parse strings looking like dot notation', () => {
       expect(helpers.parseYmlCode('"global.something" == "something"')).toEqual({
         lhs: "global.something",
         operator: "==",
@@ -64,7 +64,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should not do shorthand expansion on strings', () => {
+    it('should not do shorthand expansion on strings', () => {
       expect(helpers.parseYmlCode('"sl.something" == "something"')).toEqual({
         lhs: "sl.something",
         operator: "==",
@@ -72,7 +72,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should allow for single quotes', () => {
+    it('should allow for single quotes', () => {
       expect(helpers.parseYmlCode("'something' == 'something'")).toEqual({
         lhs: "something",
         operator: "==",
@@ -80,7 +80,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should allow for mixed single quotes and double quotes', () => {
+    it('should allow for mixed single quotes and double quotes', () => {
       expect(helpers.parseYmlCode("'something' == \"something\"")).toEqual({
         lhs: "something",
         operator: "==",
@@ -88,19 +88,19 @@ describe("helpers", () => {
       });
     });
 
-    test('should fail on invalid lhs with double quote delimiter in string', () => {
+    it('should fail on invalid lhs with double quote delimiter in string', () => {
       expect(() => helpers.parseYmlCode('"something"foo" == true')).toThrow(/is an invalid string expression/i);
     });
 
-    test('should fail on invalid lhs with single quote delimiter in string', () => {
+    it('should fail on invalid lhs with single quote delimiter in string', () => {
       expect(() => helpers.parseYmlCode("'something'foo' == true")).toThrow(/is an invalid string expression/i);
     });
 
-    test('should fail on invalid lhs with strings', () => {
+    it('should fail on invalid lhs with strings', () => {
       expect(() => helpers.parseYmlCode('"something" "foo" == true')).toThrow(/is an invalid string expression/i);
     });
 
-    test('should parse booleans', () => {
+    it('should parse booleans', () => {
       expect(helpers.parseYmlCode('"something" == true')).toEqual({
         lhs: "something",
         operator: "==",
@@ -108,7 +108,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should parse floats', () => {
+    it('should parse floats', () => {
       expect(helpers.parseYmlCode('"Pi" == 3.1415926')).toEqual({
         lhs: "Pi",
         operator: "==",
@@ -116,11 +116,11 @@ describe("helpers", () => {
       });
     });
 
-    test('should fail on invalid lhs with booleans', () => {
+    it('should fail on invalid lhs with booleans', () => {
       expect(() => helpers.parseYmlCode('true false == true')).toThrow(/Invalid expression/i);
     });
 
-    test('should parse empty arrays', () => {
+    it('should parse empty arrays', () => {
       expect(helpers.parseYmlCode('"something" == []')).toEqual({
         lhs: "something",
         operator: "==",
@@ -128,7 +128,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should parse arrays', () => {
+    it('should parse arrays', () => {
       expect(helpers.parseYmlCode('"something" == ["test"]')).toEqual({
         lhs: "something",
         operator: "==",
@@ -136,7 +136,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should parse access to the state', () => {
+    it('should parse access to the state', () => {
       expect(helpers.parseYmlCode('global.something == true')).toEqual({
         lhs: {_type: "state", data: ["global", "something"]},
         operator: "==",
@@ -144,7 +144,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should allow for access to the state on both sides', () => {
+    it('should allow for access to the state on both sides', () => {
       expect(helpers.parseYmlCode('global.something %= global.something_else')).toEqual({
         lhs: {_type: "state", data: ["global", "something"]},
         operator: "%=",
@@ -152,7 +152,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should allow the null keyword', () => {
+    it('should allow the null keyword', () => {
       expect(helpers.parseYmlCode('global.something = null')).toEqual({
         lhs: {_type: "state", data: ["global", "something"]},
         operator: "=",
@@ -160,7 +160,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should parse access to the state and allow index notation', () => {
+    it('should parse access to the state and allow index notation', () => {
       expect(helpers.parseYmlCode('global.something.0 == true')).toEqual({
         lhs: {_type: "state", data: ["global", "something", "0"]},
         operator: "==",
@@ -168,23 +168,23 @@ describe("helpers", () => {
       });
     });
 
-    test('should fail on invalid state access (space)', () => {
+    it('should fail on invalid state access (space)', () => {
       expect(() => helpers.parseYmlCode('global.something something == true')).toThrow(/Invalid expression/i);
     });
 
-    test('should fail on invalid state access (character)', () => {
+    it('should fail on invalid state access (character)', () => {
       expect(() => helpers.parseYmlCode('global.àcôté == true')).toThrow(/Invalid expression/i);
     });
 
-    test('should fail on invalid state access (non alpha first char)', () => {
+    it('should fail on invalid state access (non alpha first char)', () => {
       expect(() => helpers.parseYmlCode('global.1test == true')).toThrow(/Invalid expression/i);
     });
 
-    test('should fail on invalid lhs with index notation', () => {
+    it('should fail on invalid lhs with index notation', () => {
       expect(() => helpers.parseYmlCode('global.something[1] == true')).toThrow(/Invalid expression/i);
     });
 
-    test('should parse advanced operators', () => {
+    it('should parse advanced operators', () => {
       expect(helpers.parseYmlCode('"First Lieutenant" IN global.crew.officers')).toEqual({
         lhs: "First Lieutenant",
         operator: "IN",
@@ -192,7 +192,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should work with contrived examples', () => {
+    it('should work with contrived examples', () => {
       expect(helpers.parseYmlCode('"+= ==" NOT IN global.crew.officers')).toEqual({
         lhs: "+= ==",
         operator: "NOT IN",
@@ -200,7 +200,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should allow for nested access to the state', () => {
+    it('should allow for nested access to the state', () => {
       expect(helpers.parseYmlCode('resources.something.deeper.nested == true')).toEqual({
         lhs: {_type: "state", data: ["resources", "something", "deeper", "nested"]},
         operator: "==",
@@ -208,23 +208,23 @@ describe("helpers", () => {
       });
     });
 
-    test('should require an operator', () => {
+    it('should require an operator', () => {
       expect(() => helpers.parseYmlCode('global.something.deeper.nested')).toThrow(/Could not find the operator/i);
     });
 
-    test('should require a valid operator', () => {
+    it('should require a valid operator', () => {
       expect(() => helpers.parseYmlCode('global.something @ true')).toThrow(/Could not find the operator/i);
     });
 
-    test('should require a rhs', () => {
+    it('should require a rhs', () => {
       expect(() => helpers.parseYmlCode('global.something == ')).toThrow(/Missing right-hand side/i);
     });
 
-    test('should require a lhs', () => {
+    it('should require a lhs', () => {
       expect(() => helpers.parseYmlCode(' == true')).toThrow(/Missing left-hand side/i);
     });
 
-    test('should expand shorthands in state access', () => {
+    it('should expand shorthands in state access', () => {
       expect(helpers.parseYmlCode('g.something == true')).toEqual({
         lhs: {_type: "state", data: ["global", "something"]},
         operator: "==",
@@ -232,11 +232,11 @@ describe("helpers", () => {
       });
     });
 
-    test('should require valid first level', () => {
+    it('should require valid first level', () => {
       expect(() => helpers.parseYmlCode('invalid.something == "something"')).toThrow(/First-Level must be one of/i);
     });
 
-    test('should expand complex shorthands in state access', () => {
+    it('should expand complex shorthands in state access', () => {
       expect(helpers.parseYmlCode('sl.something == true', {storyline: "a_storyline"})).toEqual({
         lhs: {_type: "state", data: ["storylines", "a_storyline", "something"]},
         operator: "==",
@@ -244,7 +244,7 @@ describe("helpers", () => {
       });
     });
 
-    test('should only expand shorthands in first level', () => {
+    it('should only expand shorthands in first level', () => {
       expect(helpers.parseYmlCode('s.g.something == "a string"')).toEqual({
         lhs: {_type: "state", data: ["storylines", "g", "something"]},
         operator: "==",
@@ -254,35 +254,35 @@ describe("helpers", () => {
   });
 
   describe("validateKeyType", () => {
-    test('should work for a simple string case', () => {
+    it('should work for a simple string case', () => {
       expect(helpers.validateKeyType({"test": ""}, "test", "string"));
     });
 
-    test('should work for a simple number case', () => {
+    it('should work for a simple number case', () => {
       expect(helpers.validateKeyType({"test": 42}, "test", "number"));
     });
 
-    test('should work for a simple array case', () => {
+    it('should work for a simple array case', () => {
       expect(helpers.validateKeyType({"test": []}, "test", "array"));
     });
 
-    test('should work for a simple object case', () => {
+    it('should work for a simple object case', () => {
       expect(helpers.validateKeyType({"test": {}}, "test", "object"));
     });
 
-    test('should not work for wrong type', () => {
+    it('should not work for wrong type', () => {
       expect(() => helpers.validateKeyType({"test": ""}, "test", "object")).toThrow(/test should be of type 'object', not 'string'/i);
     });
 
-    test('should throw if the key does not exist', () => {
+    it('should throw if the key does not exist', () => {
       expect(() => helpers.validateKeyType({"test": ""}, "oops", "object")).toThrow(/'oops' doesn't exist/i);
     });
 
-    test('should throw the error message if specified', () => {
+    it('should throw the error message if specified', () => {
       expect(() => helpers.validateKeyType({"test": ""}, "oops", "object", "404 Not Found")).toThrow("404 Not Found");
     });
 
-    test('should accept string if type is null', () => {
+    it('should accept string if type is null', () => {
       expect(helpers.validateKeyType({"test": ""}, "test", null, "404 Not Found"));
     });
   });
