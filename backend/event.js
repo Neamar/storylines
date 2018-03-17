@@ -1,6 +1,8 @@
 "use strict";
 const fs = require('fs');
 const frontMatter = require('front-matter');
+var marked = require("marked");
+
 const helpers = require('./helpers');
 const conditionsTools = require('./conditions');
 
@@ -27,7 +29,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
   var fm = frontMatter(eventContent);
   var event = fm.attributes;
-  event.description = fm.body.trim();
+  event.description = marked(fm.body.trim());
   event.event = eventSlug;
   event.storyline = storylineSlug;
   event.repeatable = event.repeatable || false;

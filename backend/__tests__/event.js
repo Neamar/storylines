@@ -51,6 +51,18 @@ TEST
       expect(e).toHaveProperty('repeatable', false);
       expect(e).toHaveProperty('on_display', []);
     });
+
+    test("should parse markdown", () => {
+      var e = event.buildEvent(`---
+triggers:
+    soft:
+        condition: g.test == true
+---
+*Hello*
+`, 'storyline_slug', 'event_slug');
+
+      expect(e).toHaveProperty('description', '<p><em>Hello</em></p>\n');
+    });
   });
 
   describe("validateEvent()", function() {
