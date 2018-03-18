@@ -311,6 +311,30 @@ triggers:
         expect(event.parseEvent(e)).toEqual(expected);
       });
 
+      it('should use an implicit weight of 1', () => {
+        var e = getBasicEvent();
+        e.triggers = {
+          hard: {
+            condition: 'global.something == true',
+          }
+        };
+
+        var expected = getBasicEvent();
+        expected.triggers = {
+          hard: {
+            condition: {
+              _type: 'atomic_condition',
+              lhs: {'_type': 'state', 'data': ['global', 'something']},
+              operator: '==',
+              rhs: true
+            },
+            weight: 1,
+          }
+        };
+
+        expect(event.parseEvent(e)).toEqual(expected);
+      });
+
       it('should replace shorthands', () => {
         var e = getBasicEvent();
         e.triggers = {

@@ -40,7 +40,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
 
 function validateTrigger(trigger) {
   helpers.validateKeyType(trigger, 'condition', ['string', 'object'], 'Triggers must include condition');
-  helpers.validateKeyType(trigger, 'weight', 'number', 'Triggers must include a weight');
+  helpers.validateKeyType(trigger, 'weight', 'number', null);
 }
 
 
@@ -93,6 +93,7 @@ function validateEvent(eventObject) {
 function parseTrigger(triggerObject, context) {
   validateTrigger(triggerObject); // this should have been checked by parseTriggers, but what if we call parseTrigger directly?
   triggerObject.condition = conditionsTools.parseCondition(triggerObject.condition, context);
+  triggerObject.weight = triggerObject.weight || 1;
   return triggerObject;
 }
 
