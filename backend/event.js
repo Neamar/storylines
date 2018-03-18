@@ -30,6 +30,12 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
   var fm = frontMatter(eventContent);
   var event = fm.attributes;
   event.description = marked(fm.body).trim();
+
+  // Do some automatic improvements on text
+  event.description = event.description.replace(/---/g, '&mdash;');
+  event.description = event.description.replace(/--/g, '&ndash;');
+  event.description = event.description.replace(/\.\.\./g, '&hellip;');
+
   event.event = eventSlug;
   event.storyline = storylineSlug;
   event.repeatable = event.repeatable || false;

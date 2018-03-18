@@ -58,10 +58,10 @@ triggers:
     soft:
         condition: g.test == true
 ---
-*Hello*
+*Hello...*
 `, 'storyline_slug', 'event_slug');
 
-      expect(e).toHaveProperty('description', '<p><em>Hello</em></p>');
+      expect(e).toHaveProperty('description', '<p><em>Hello&hellip;</em></p>');
     });
   });
 

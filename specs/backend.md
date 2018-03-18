@@ -162,6 +162,8 @@ Here are the possible keys:
     - `operations`, an optional list of operations that will be applied if this action is chosen. See "Conditions & operations" below for details.
 * `repeatable`, a boolean, defaults to `false`. A non-repeatable event is guaranteed to only be displayed once to the user.
 
+The markdown text will be parsed with [marked](https://www.npmjs.com/package/marked). Some text improvements might be done automatically (`--` to `–`, '...' to '…', etc.)
+
 ## Conditions & operations
 ### Conditions
 *Conditions* are a way to express a conditional test on the current `State`. They are of two types: "atomic" or "propositional".
