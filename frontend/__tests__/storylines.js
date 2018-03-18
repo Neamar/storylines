@@ -1024,7 +1024,7 @@ describe('Storylines', () => {
       };
 
       stubStoryline.moveToEvent(event);
-      expect(stubStoryline.state.viewed_events.has(stubStoryline.getEventSlug(event))).toBeTruthy();
+      expect(stubStoryline.state.viewed_events[stubStoryline.getEventSlug(event)]).toBeTruthy();
     });
 
     it('should not store event if repeatable is true', () => {
@@ -1037,7 +1037,7 @@ describe('Storylines', () => {
       };
 
       stubStoryline.moveToEvent(event);
-      expect(stubStoryline.state.viewed_events.entries).toHaveProperty('length', 0);
+      expect(Object.keys(stubStoryline.state.viewed_events)).toHaveProperty('length', 0);
     });
   });
 
@@ -1148,7 +1148,7 @@ describe('Storylines', () => {
         simpleMatchingEvent(1, 'hard'),
         simpleMatchingEvent(2, 'soft'),
       ];
-      stubStoryline.state.viewed_events.add(stubStoryline.getEventSlug(stubStoryline.events[0]));
+      stubStoryline.state.viewed_events[stubStoryline.getEventSlug(stubStoryline.events[0])] = true;
 
       stubStoryline.moveToEvent = jest.fn();
 

@@ -29,7 +29,7 @@ class Storylines {
 
     // Clone default state
     this.state = Object.assign({}, story.default_state);
-    this.state.viewed_events = new Set();
+    this.state.viewed_events = {};
 
 
     // Save functions to interact with UI
@@ -63,7 +63,7 @@ class Storylines {
       }
 
       // Discard if event has repeatable=false and is already in viewed_events
-      if(!e.repeatable && this.state.viewed_events.has(this.getEventSlug(e))) {
+      if(!e.repeatable && this.state.viewed_events[this.getEventSlug(e)]) {
         return false;
       }
 
@@ -155,7 +155,7 @@ class Storylines {
 
     if(!event.repeatable) {
       // Event isn't repeatable, store it in a Set to make sure we don't pick it again.
-      this.state.viewed_events.add(this.getEventSlug(event));
+      this.state.viewed_events[this.getEventSlug(event)] = true;
     }
   }
 

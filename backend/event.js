@@ -134,7 +134,7 @@ function parseOperations(actionObject, context) {
 }
 
 
-function parseConditions(actionObject, context) {
+function parseActionCondition(actionObject, context) {
   // actionObject can be null: action has no effect, but this will let the engine choose a new event with a soft condition
   if(actionObject && actionObject.condition) {
     actionObject.condition = conditionsTools.parseCondition(actionObject.condition, context);
@@ -146,7 +146,7 @@ function parseConditions(actionObject, context) {
 function parseActions(eventObject, context) {
   if(eventObject.actions) {
     Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName], context));
-    Object.keys(eventObject.actions || []).forEach(actionName => parseConditions(eventObject.actions[actionName], context));
+    Object.keys(eventObject.actions || []).forEach(actionName => parseActionCondition(eventObject.actions[actionName], context));
   }
   return eventObject;
 }
