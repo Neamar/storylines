@@ -48,7 +48,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug, storyConfig) {
   event.event = eventSlug;
   event.storyline = storylineSlug;
   event.repeatable = event.repeatable || false;
-  event.on_display = [];
+  event.on_display = event.on_display || [];
   return event;
 }
 
