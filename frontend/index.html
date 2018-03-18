@@ -47,6 +47,8 @@ function startStory(story) {
   debugTooltip.addEventListener('mouseenter', () => {
     debugTooltip.title = JSON.stringify(storyline.state, null, 4);
   });
+
+  Array.from(document.getElementsByClassName('story-title')).forEach(e => e.textContent = storyline.title);
 }
 
 
