@@ -6,14 +6,14 @@ window.displayEvent = function displayEvent(description, actions, respondToEvent
   let eventHTML = `
 <div class="jumbotron">
   <p>${description}</p>
-  <p class="lead">
+  <div class="btn-group-vertical container">
 `;
 
   actions.forEach(a => {
-    eventHTML += `<a class="btn btn-primary btn-lg" href="#${a}" role="button">${a}</a> `;
+    eventHTML += `<a class="btn btn-primary btn-lg btn-block btn-outline-primary" href="#${a}" role="button">${a}</a> `;
   });
 
-  eventHTML += `</p>
+  eventHTML += `</div>
 </div>
 `;
 
