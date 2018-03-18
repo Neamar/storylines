@@ -37,7 +37,7 @@
   },
   "events": [
     {
-      "story": "red_planet",
+      "storyline": "red_planet",
       "event": "arrival",
       "weight": 1,
       "triggers": {
@@ -75,7 +75,7 @@
       }
     },
     {
-      "story": "red_planet",
+      "storyline": "red_planet",
       "event": "announcement",
       "weight": 1,
       "triggers": {
@@ -115,7 +115,7 @@
       }
     },
     {
-      "story": "red_planet",
+      "storyline": "red_planet",
       "event": "leaving",
       "weight": 1,
       "triggers": {
