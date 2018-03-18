@@ -4,7 +4,8 @@
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
   "bin": {
-    "storylines": "./backend/compile.js"
+    "storylines": "./backend/compile.js",
+    "storylines-chart": "node fuzzer/index.js"
   },
   "scripts": {
     "local": "node frontend.js",
