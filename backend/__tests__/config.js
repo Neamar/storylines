@@ -30,9 +30,9 @@ TEST
     });
   });
 
-  describe('validateConfig()', function() {
+  describe.only('validateConfig()', function() {
     function getBasicConfig() {
-      return {version: 1, story_title: 'TEST', story_description: 'TEST', resources: {}};
+      return {version: 1, locale: 'en_GB', story_title: 'TEST', story_description: 'TEST', resources: {}};
     }
 
     it('should ensure version is present', () => {
@@ -48,28 +48,32 @@ TEST
       expect(() => config.validateConfig({version: 2})).toThrow(/Unsupported version. Version should be one of/i);
     });
 
+    it('should ensure locale is present', () => {
+      expect(() => config.validateConfig({version: 1})).toThrow(/Missing story locale/i);
+    });
+
     it('should ensure story_title is present', () => {
-      expect(() => config.validateConfig({version: 1})).toThrow(/Missing story title/i);
+      expect(() => config.validateConfig({version: 1, locale: 'en_GB'})).toThrow(/Missing story title/i);
     });
 
     it('should ensure story_title is a string', () => {
-      expect(() => config.validateConfig({version: 1, story_title: 1})).toThrow(/story_title should be of type 'string', not/i);
+      expect(() => config.validateConfig({version: 1, locale: 'en_GB', story_title: 1})).toThrow(/story_title should be of type 'string', not/i);
     });
 
     it('should ensure story_description is present', () => {
-      expect(() => config.validateConfig({version: 1, story_title: 'TEST'})).toThrow(/Missing story description/i);
+      expect(() => config.validateConfig({version: 1, locale: 'en_GB', story_title: 'TEST'})).toThrow(/Missing story description/i);
     });
 
     it('should ensure story_description is a string', () => {
-      expect(() => config.validateConfig({version: 1, story_title: 'TEST', story_description: 1})).toThrow(/story_description should be of type 'string', not/i);
+      expect(() => config.validateConfig({version: 1, locale: 'en_GB', story_title: 'TEST', story_description: 1})).toThrow(/story_description should be of type 'string', not/i);
     });
 
     it('should ensure resources is present (can be empty)', () => {
-      expect(() => config.validateConfig({version: 1, story_title: 'TEST', story_description: 'TEST'})).toThrow(/Missing resources definition/i);
+      expect(() => config.validateConfig({version: 1, locale: 'en_GB', story_title: 'TEST', story_description: 'TEST'})).toThrow(/Missing resources definition/i);
     });
 
     it('should ensure resources is an object', () => {
-      expect(() => config.validateConfig({version: 1, story_title: 'TEST', story_description: 'TEST', resources: 'this should throw an error'})).toThrow(/resources should be of type 'object', not/i);
+      expect(() => config.validateConfig({version: 1, locale: 'en_GB', story_title: 'TEST', story_description: 'TEST', resources: 'this should throw an error'})).toThrow(/resources should be of type 'object', not/i);
     });
 
     it('should work with the most basic config', () => {

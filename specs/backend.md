@@ -38,6 +38,7 @@ A valid file **must** contain the following keys:
 ---
 version: 1
 story_title: "Title of your story"
+locale: 'en_GB'
 resources:
     "resource1":
         description: "Resource description"
@@ -58,6 +59,7 @@ In this document, the term "config" means the values defined in this file.
 
 * `version` integer, constant, **must** always be 1.
 * `story_title`, string, your story name
+* `locale`, string, a valid locale (`en_GB`, `de_DE`, etc.)
 * `resources`, object, a list of all your resources. The keys will be used when generating the state and must be slugified (no spaces, no special characters), the values describe:
     - `description`, string, more information about what this resource is about
     - `format`, string, a placeholder containing a `%s` token. This will be used every time the value is presented to the *Reader*, to format it appropriately. A *format* without a `%s` is invalid.
@@ -163,6 +165,7 @@ Here are the possible keys:
 * `repeatable`, a boolean, defaults to `false`. A non-repeatable event is guaranteed to only be displayed once to the user.
 
 The markdown text will be parsed with [marked](https://www.npmjs.com/package/marked). Some text improvements might be done automatically (`--` to `–`, '...' to '…', etc.)
+Depending on the selected locale, some automatic improvements can also be made to your text.
 
 ## Conditions & operations
 ### Conditions

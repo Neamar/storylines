@@ -65,6 +65,7 @@ function validateConfig(config) {
     throw new Error(`Unsupported version. Version should be one of ${SUPPORTED_VERSIONS.join()}, not ${config.version}`);
   }
 
+  helpers.validateKeyType(config, 'locale', 'string', 'Missing story locale.');
   helpers.validateKeyType(config, 'story_title', 'string', 'Missing story title.');
   helpers.validateKeyType(config, 'story_description', 'string', 'Missing story description.');
   helpers.validateKeyType(config, 'resources', 'object', 'Missing resources definition.');

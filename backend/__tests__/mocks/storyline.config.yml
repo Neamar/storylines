@@ -1,5 +1,6 @@
 ---
 version: 1
+locale: en_GB
 story_title: "Title for your story"
 resources:
     "resource1":
