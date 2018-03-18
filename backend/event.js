@@ -22,7 +22,7 @@ function readEvent(storyPath, storylineSlug, eventSlug) {
  * @param eventContent raw file content
  * @return event object
  */
-function buildEvent(eventContent, storylineSlug, eventSlug) {
+function buildEvent(eventContent, storylineSlug, eventSlug, storyConfig) {
   if(!frontMatter.test(eventContent)) {
     throw new Error('Event must be a valid FrontMatter file.');
   }
@@ -35,6 +35,13 @@ function buildEvent(eventContent, storylineSlug, eventSlug) {
   event.description = event.description.replace(/---/g, '&mdash;');
   event.description = event.description.replace(/--/g, '&ndash;');
   event.description = event.description.replace(/\.\.\./g, '&hellip;');
+
+  if(storyConfig.locale === 'fr_FR') {
+    event.description = event.description.replace(/ !/g, '&nbsp;!');
+    event.description = event.description.replace(/ \?/g, '&nbsp;?');
+    event.description = event.description.replace(/ :/g, '&nbsp;:');
+    event.description = event.description.replace(/ ;/g, '&nbsp;;');
+  }
 
   event.event = eventSlug;
   event.storyline = storylineSlug;
@@ -172,9 +179,9 @@ function parseEvent(eventObject) {
  * Retrieve the event for a given story in a given storyline
  * @return a complete event
  */
-function getEvent(storyPath, storylineSlug, eventSlug) {
+function getEvent(storyPath, storylineSlug, eventSlug, storyConfig) {
   var eventContent = readEvent(storyPath, storylineSlug, eventSlug);
-  var eventObject = buildEvent(eventContent, storylineSlug, eventSlug);
+  var eventObject = buildEvent(eventContent, storylineSlug, eventSlug, storyConfig);
   return parseEvent(eventObject);
 }
 

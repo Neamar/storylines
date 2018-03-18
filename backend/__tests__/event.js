@@ -42,7 +42,7 @@ triggers:
         condition: g.test == true
 ---
 TEST
-`, 'storyline_slug', 'event_slug');
+`, 'storyline_slug', 'event_slug', {locale: 'en_GB'});
 
       expect(e).toHaveProperty('description', '<p>TEST</p>');
       expect(e).toHaveProperty('event', 'event_slug');
@@ -59,9 +59,21 @@ triggers:
         condition: g.test == true
 ---
 *Hello...*
-`, 'storyline_slug', 'event_slug');
+`, 'storyline_slug', 'event_slug', {locale: 'en_GB'});
 
       expect(e).toHaveProperty('description', '<p><em>Hello&hellip;</em></p>');
+    });
+
+    it('should apply locale rules', () => {
+      var e = event.buildEvent(`---
+triggers:
+    soft:
+        condition: g.test == true
+---
+Bonjour !
+`, 'storyline_slug', 'event_slug', {locale: 'fr_FR'});
+
+      expect(e).toHaveProperty('description', '<p>Bonjour&nbsp;!</p>');
     });
   });
 
@@ -552,7 +564,7 @@ triggers:
 
   describe('getEvent()', function() {
     it('should read and parse event from disk', () => {
-      expect(event.getEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1')).toEqual({
+      expect(event.getEvent(__dirname + '/mocks/storylines', 'test_storyline_1', 'event_1_1', {locale: 'en_GB'})).toEqual({
         event: 'event_1_1',
         storyline: 'test_storyline_1',
         description: '<p>Potentially multiline, markdown description of your event</p>',

@@ -30,7 +30,7 @@ TEST
     });
   });
 
-  describe.only('validateConfig()', function() {
+  describe('validateConfig()', function() {
     function getBasicConfig() {
       return {version: 1, locale: 'en_GB', story_title: 'TEST', story_description: 'TEST', resources: {}};
     }
@@ -148,6 +148,7 @@ TEST
     it('should read and parse config from disk', () => {
       expect(config.getConfig(__dirname + '/mocks', 'storyline.config.yml')).toEqual({
         version: 1,
+        locale: 'en_GB',
         story_title: 'Title for your story',
         story_description: 'Potentially multiline, markdown description of your story',
         resources: {
