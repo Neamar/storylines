@@ -336,7 +336,7 @@ class Storylines {
   }
 
   getEventSlug(event) {
-    return event.story + '/' + event.event;
+    return event.storyline + '/' + event.event;
   }
 
   log() {
