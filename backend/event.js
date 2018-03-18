@@ -41,6 +41,8 @@ function buildEvent(eventContent, storylineSlug, eventSlug, storyConfig) {
     event.description = event.description.replace(/ \?/g, '&nbsp;?');
     event.description = event.description.replace(/ :/g, '&nbsp;:');
     event.description = event.description.replace(/ ;/g, '&nbsp;;');
+    event.description = event.description.replace(/ »/g, '&nbsp;»');
+    event.description = event.description.replace(/« /g, '«&nbsp;');
   }
 
   event.event = eventSlug;
