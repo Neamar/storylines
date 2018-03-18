@@ -4,8 +4,8 @@
 const fs = require("fs");
 const Storyline = require('../frontend/storylines.js');
 
-if(process.argv.length !== 3) {
-  throw new Error('Invalid call. Usage: npm run fuzzer --  path/to/story');
+if(process.argv.length < 3) {
+  throw new Error('Invalid call. Usage: npm run fuzzer --  path/to/story [path_to_raw] [path_to_dot_file]');
 }
 
 const paths = {};
@@ -79,7 +79,9 @@ const originalState = cloneState(storyline.state);
 
 walkTree(originalState, chainOfEvents);
 
-console.log(path);
+if(process.argv.length > 3) {
+  fs.writeFileSync(process.argv[3], JSON.stringify(paths, null, 2));
+}
 
 let graph = "digraph G {\n";
 Object.keys(paths).forEach(function(from) {
@@ -93,4 +95,6 @@ Object.keys(paths).forEach(function(from) {
 graph += "}";
 
 
-console.log(graph);
+if(process.argv.length > 4) {
+  fs.writeFileSync(process.argv[4], graph);
+}
