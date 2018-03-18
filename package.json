@@ -5,7 +5,7 @@
   "main": "backend/compile.js",
   "bin": {
     "storylines": "./backend/compile.js",
-    "storylines-chart": "node fuzzer/index.js"
+    "storylines-chart": "./fuzzer/index.js"
   },
   "scripts": {
     "local": "node frontend.js",
