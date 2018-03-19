@@ -45,7 +45,7 @@ function walkTree(state, chainOfEvents) {
     storyline.state = cloneState(state);
     storyline.currentEvent = currentEvent;
 
-    console.log(`Selecting "${action}" on ${currentEventSlug}`, JSON.stringify(chainOfEvents.map(e => e.replace(/[^/]+/, ''))), state);
+    console.log(`Selecting "${action}" on ${currentEventSlug}`, JSON.stringify(chainOfEvents), state);
     // Overwrite original nextEvent function
     storyline.nextEvent = function() {
       let hardEvents = storyline.listAvailableHardEvents();
