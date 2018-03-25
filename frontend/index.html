@@ -31,7 +31,13 @@
 
         <div class="container tab-pane fade" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
           <div class="btn-group-vertical container">
-            <a class="btn btn-primary btn-lg btn-block btn-outline-primary" href="#" role="button" id="debug-next-event">nextEvent()</a>
+            <a class="btn btn-primary btn-lg btn-block btn-outline-primary mb-1" href="#" role="button" id="debug-next-event">nextEvent()</a>
+          </div>
+          <input type="text" class="form-control mb-1" id="debug-state-title" placeholder="State name" list="debug-available-states">
+          <datalist id="debug-available-states"></datalist>
+          <div class="mb-5">
+            <a class="btn btn-primary btn-block btn-outline-primary" href="#" role="button" id="debug-state-save">Save current state</a>
+            <a class="btn btn-primary btn-block btn-outline-primary" href="#" role="button" id="debug-state-load">Load state</a>
           </div>
           <textarea id="debug-state"></textarea>
         </div>
@@ -41,7 +47,7 @@
     <script src="./storylines.js"></script>
     <script>
 "use strict";
-/* global Storylines, alert, $ */
+/* global Storylines, alert */
 var storyline;
 function startStory(story) {
   var callbacks = {
@@ -51,22 +57,6 @@ function startStory(story) {
 
   storyline = new Storylines(story, callbacks);
   storyline.start();
-
-  $('#nav-debug-tab[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-    console.log(e);
-    $('#debug-state').val(JSON.stringify(storyline.state, null, 4));
-  });
-
-  $('#debug-state').on('change', function() {
-    storyline.state = JSON.parse(this.value);
-    storyline.updateResourcesUI();
-  });
-
-  $('#debug-next-event').click(function(e) {
-    e.preventDefault();
-    storyline.nextEvent();
-    $('#nav-story-tab').tab('show');
-  });
 
   Array.from(document.getElementsByClassName('story-title')).forEach(e => e.textContent = storyline.title);
 }
@@ -83,9 +73,9 @@ fetch(storyUrl)
   });
 
     </script>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="debug.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </body>
