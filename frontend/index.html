@@ -16,23 +16,32 @@
       <a class="navbar-brand story-title" href="#">Storylines</a>
       <span class="navbar-text mr-auto" id="resources">
       </span>
-      <span class="navbar-text">
-        <a href=# id="debug" data-toggle="tooltip" data-html="true" title="State (unitialized yet)">Debug</a>
-      </span>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-story-tab" data-toggle="tab" href="#nav-story" role="tab" aria-controls="nav-story" aria-selected="true">Story</a>
+        <a class="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" href="#nav-debug" role="tab" aria-controls="nav-debug" aria-selected="false">Debug</a>
+      </div>
     </nav>
 
     <h1 class="story-title">Storylines</h1>
+      <div class="tab-content">
+        <div class="container tab-pane fade show active" id="nav-story" role="tabpanel" aria-labelledby="nav-story-tab">
+          <div id="event">
+          </div>
+        </div>
 
-    <div class="container">
-      <div id="event">
+        <div class="container tab-pane fade" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
+          <div class="btn-group-vertical container">
+            <a class="btn btn-primary btn-lg btn-block btn-outline-primary" href="#" role="button" id="debug-next-event">nextEvent()</a>
+          </div>
+          <textarea id="debug-state"></textarea>
+        </div>
       </div>
-    </div>
 
     <script src="./storylines-web.js"></script>
     <script src="./storylines.js"></script>
     <script>
 "use strict";
-/* global Storylines, alert */
+/* global Storylines, alert, $ */
 var storyline;
 function startStory(story) {
   var callbacks = {
@@ -43,9 +52,20 @@ function startStory(story) {
   storyline = new Storylines(story, callbacks);
   storyline.start();
 
-  var debugTooltip = document.getElementById('debug');
-  debugTooltip.addEventListener('mouseenter', () => {
-    debugTooltip.title = JSON.stringify(storyline.state, null, 4);
+  $('#nav-debug-tab[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+    console.log(e);
+    $('#debug-state').val(JSON.stringify(storyline.state, null, 4));
+  });
+
+  $('#debug-state').on('change', function() {
+    storyline.state = JSON.parse(this.value);
+    storyline.updateResourcesUI();
+  });
+
+  $('#debug-next-event').click(function(e) {
+    e.preventDefault();
+    storyline.nextEvent();
+    $('#nav-story-tab').tab('show');
   });
 
   Array.from(document.getElementsByClassName('story-title')).forEach(e => e.textContent = storyline.title);

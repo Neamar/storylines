@@ -5,3 +5,9 @@ blockquote {
 .btn {
   white-space: normal
 }
+
+#debug-state {
+  font-family: monospace;
+  width: 100%;
+  height: 700px;
+}
