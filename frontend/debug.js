@@ -53,6 +53,7 @@ $(function() {
     }
 
     storyline.state = states[stateName];
+    storyline.currentEvent = null;
     storyline.nextEvent();
     debugState();
     moveToStoryTab();
