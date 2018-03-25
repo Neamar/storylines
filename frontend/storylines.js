@@ -107,6 +107,11 @@ class Storylines {
    * If still empty, set a value on the state informing no events are currently available.
    */
   nextEvent() {
+    if(this.currentEvent && !this.currentEvent.repeatable) {
+      // Event isn't repeatable, store it to make sure we don't pick it again.
+      this.state.viewed_events[this.getEventSlug(this.currentEvent)] = true;
+    }
+
     this.state.global.current_turn += 1;
 
     let hardEvents = this.listAvailableHardEvents();
@@ -152,11 +157,6 @@ class Storylines {
     });
 
     this.callbacks.displayEvent(event.description, actions, this.respondToEvent.bind(this));
-
-    if(!event.repeatable) {
-      // Event isn't repeatable, store it in a Set to make sure we don't pick it again.
-      this.state.viewed_events[this.getEventSlug(event)] = true;
-    }
   }
 
   /**

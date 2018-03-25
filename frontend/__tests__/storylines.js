@@ -1013,41 +1013,18 @@ describe('Storylines', () => {
       expect(stubStoryline.callbacks.displayEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.callbacks.displayEvent.mock.calls[0][1]).toEqual(['OK', 'ALWAYS']);
     });
-
-    it('should store event in a Set if repeatable is false', () => {
-      var event = {
-        id: 1,
-        on_display: [],
-        story: 'fake',
-        event: 'event-1',
-        repeatable: false
-      };
-
-      stubStoryline.moveToEvent(event);
-      expect(stubStoryline.state.viewed_events[stubStoryline.getEventSlug(event)]).toBeTruthy();
-    });
-
-    it('should not store event if repeatable is true', () => {
-      var event = {
-        id: 1,
-        on_display: [],
-        story: 'fake',
-        event: 'event-1',
-        repeatable: true
-      };
-
-      stubStoryline.moveToEvent(event);
-      expect(Object.keys(stubStoryline.state.viewed_events)).toHaveProperty('length', 0);
-    });
   });
 
   describe('nextEvent()', () => {
     var simpleMatchingEvent = function(id, triggerType) {
       var event = {
         id: id,
+        repeatable: false,
         story: 'fake',
         event: 'event-' + id,
-        triggers: {}
+        triggers: {},
+        on_display: [],
+        operations: []
       };
 
       event.triggers[triggerType] = {
@@ -1155,6 +1132,29 @@ describe('Storylines', () => {
       stubStoryline.nextEvent();
       expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
+    });
+
+    it('should store current event in viewed_events if repeatable is false', () => {
+      stubStoryline.currentEvent = simpleMatchingEvent(1, 'hard');
+      var expectedSlug = stubStoryline.getEventSlug(stubStoryline.currentEvent);
+      stubStoryline.events = [
+        simpleMatchingEvent(2, 'hard'),
+      ];
+
+      stubStoryline.nextEvent();
+      expect(stubStoryline.state.viewed_events[expectedSlug]).toBeTruthy();
+    });
+
+    it('should not store event if repeatable is true', () => {
+      stubStoryline.currentEvent = simpleMatchingEvent(1, 'hard');
+      stubStoryline.currentEvent.repeatable = true;
+      var expectedSlug = stubStoryline.getEventSlug(stubStoryline.currentEvent);
+      stubStoryline.events = [
+        simpleMatchingEvent(2, 'hard'),
+      ];
+
+      stubStoryline.nextEvent();
+      expect(stubStoryline.state.viewed_events[expectedSlug]).toBeFalsy();
     });
   });
 
