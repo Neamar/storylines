@@ -182,9 +182,16 @@ function parseEvent(eventObject) {
  * @return a complete event
  */
 function getEvent(storyPath, storylineSlug, eventSlug, storyConfig) {
-  var eventContent = readEvent(storyPath, storylineSlug, eventSlug);
-  var eventObject = buildEvent(eventContent, storylineSlug, eventSlug, storyConfig);
-  return parseEvent(eventObject);
+  try {
+    var eventContent = readEvent(storyPath, storylineSlug, eventSlug);
+    var eventObject = buildEvent(eventContent, storylineSlug, eventSlug, storyConfig);
+
+    return parseEvent(eventObject);
+  }
+  catch(e) {
+    e.message = `${storylineSlug}/${eventSlug}: ${e.message}`;
+    throw e;
+  }
 }
 
 
