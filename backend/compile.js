@@ -3,7 +3,7 @@
 
 const bundle = require('./bundle.js');
 
-if(process.argv.length !== 3 && process.argv.length !== 4) {
+if (process.argv.length !== 3 && process.argv.length !== 4) {
   throw new Error('Invalid call. Usage: storyline path/to/story [outputfile]');
 }
 
@@ -15,7 +15,7 @@ const STORYLINES_FOLDER = 'storylines';
 
 var b = bundle.storyBundle(STORY_PATH, STORY_CONFIG_FILE, STORYLINES_FOLDER);
 
-if(!process.argv[3]) {
+if (!process.argv[3]) {
   console.log(JSON.stringify(b));
 }
 else {

@@ -11,7 +11,6 @@
     "local": "node frontend.js",
     "compile": "node backend/compile.js",
     "lint": "jshint backend/ frontend/",
-    "style": "jscs .",
     "fuzzer": "node fuzzer/index.js",
     "test": "jest --coverage"
   },

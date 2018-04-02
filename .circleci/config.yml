@@ -23,8 +23,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # Check for style
-      - run: npm run-script style
+      # Lint source code
       - run: npm run-script lint
       # Run test suite
       - run: npm test

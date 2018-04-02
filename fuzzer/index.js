@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-const fs = require("fs");
+const fs = require('fs');
 const Storyline = require('../frontend/storylines.js');
 
-if(process.argv.length < 3) {
+if (process.argv.length < 3) {
   throw new Error('Invalid call. Usage: npm run fuzzer --  path/to/story [path_to_raw] [path_to_dot_file]');
 }
 
@@ -12,7 +12,7 @@ const paths = {};
 const story = JSON.parse(fs.readFileSync(process.argv[2]).toString());
 let currentActions = [];
 const callbacks = {
-  displayEvent:  function(event, actions) {
+  displayEvent: function(event, actions) {
     currentActions = actions;
   },
   displayResources: function() {}
@@ -36,7 +36,7 @@ function walkTree(state, chainOfEvents) {
   chainOfEvents = chainOfEvents.slice(0);
   chainOfEvents.push(currentEventSlug);
 
-  if(!paths[currentEventSlug]) {
+  if (!paths[currentEventSlug]) {
     paths[currentEventSlug] = {};
   }
 
@@ -50,13 +50,13 @@ function walkTree(state, chainOfEvents) {
     storyline.nextEvent = function() {
       let hardEvents = storyline.listAvailableHardEvents();
 
-      if(hardEvents.length > 0) {
-        if(!paths[currentEventSlug][action]) {
+      if (hardEvents.length > 0) {
+        if (!paths[currentEventSlug][action]) {
           paths[currentEventSlug][action] = {};
         }
 
         let newEventSlug = storyline.getEventSlug(hardEvents[0]);
-        if(!paths[currentEventSlug][action][newEventSlug] || paths[currentEventSlug][action][newEventSlug].length > chainOfEvents.length) {
+        if (!paths[currentEventSlug][action][newEventSlug] || paths[currentEventSlug][action][newEventSlug].length > chainOfEvents.length) {
           paths[currentEventSlug][action][newEventSlug] = chainOfEvents;
         }
       }
@@ -79,11 +79,11 @@ const originalState = cloneState(storyline.state);
 
 walkTree(originalState, chainOfEvents);
 
-if(process.argv.length > 3) {
+if (process.argv.length > 3) {
   fs.writeFileSync(process.argv[3], JSON.stringify(paths, null, 2));
 }
 
-let graph = "digraph G {\n";
+let graph = 'digraph G {\n';
 Object.keys(paths).forEach(function(from) {
   Object.keys(paths[from]).forEach(function(transition) {
     Object.keys(paths[from][transition]).forEach(function(to) {
@@ -92,9 +92,9 @@ Object.keys(paths).forEach(function(from) {
   });
 });
 
-graph += "}";
+graph += '}';
 
 
-if(process.argv.length > 4) {
+if (process.argv.length > 4) {
   fs.writeFileSync(process.argv[4], graph);
 }

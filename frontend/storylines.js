@@ -8,15 +8,15 @@ class Storylines {
    *    Required keys: displayEvent, displayResources
    */
   constructor(story, callbacks) {
-    if(!story) {
+    if (!story) {
       throw new Error('Story is required');
     }
-    if(!callbacks) {
+    if (!callbacks) {
       throw new Error('Callbacks object is required');
     }
 
     ['displayEvent', 'displayResources'].forEach((k) => {
-      if(!callbacks[k]) {
+      if (!callbacks[k]) {
         throw new Error('Missing required callback: ' + k);
       }
     });
@@ -40,7 +40,7 @@ class Storylines {
   }
 
   start() {
-    if(this.currentEvent) {
+    if (this.currentEvent) {
       throw new Error('Storyline already started!');
     }
 
@@ -58,16 +58,16 @@ class Storylines {
   listAvailableEvents(triggerType) {
     return this.events.filter(e => {
       // Discard if event doesn't have any triggers of this type
-      if(!e.triggers[triggerType]) {
+      if (!e.triggers[triggerType]) {
         return false;
       }
 
       // Discard if event has repeatable=false and is already in viewed_events
-      if(!e.repeatable && this.state.viewed_events[this.getEventSlug(e)]) {
+      if (!e.repeatable && this.state.viewed_events[this.getEventSlug(e)]) {
         return false;
       }
 
-      if(!e.triggers[triggerType].condition) {
+      if (!e.triggers[triggerType].condition) {
         return true;
       }
 
@@ -92,7 +92,7 @@ class Storylines {
     let sum = events.reduce((sum, e) => sum + e.triggers.soft.weight, 0);
     let number = Math.floor(sum * this.random());
     return events.find(event => {
-      if(number < event.triggers.soft.weight) {
+      if (number < event.triggers.soft.weight) {
         return true;
       }
 
@@ -107,7 +107,7 @@ class Storylines {
    * If still empty, set a value on the state informing no events are currently available.
    */
   nextEvent() {
-    if(this.currentEvent && !this.currentEvent.repeatable) {
+    if (this.currentEvent && !this.currentEvent.repeatable) {
       // Event isn't repeatable, store it to make sure we don't pick it again.
       this.state.viewed_events[this.getEventSlug(this.currentEvent)] = true;
     }
@@ -116,20 +116,20 @@ class Storylines {
 
     let hardEvents = this.listAvailableHardEvents();
     this.log('Matching hard events: ', hardEvents);
-    if(hardEvents.length > 0) {
+    if (hardEvents.length > 0) {
       this.moveToEvent(hardEvents[0]);
       return;
     }
 
     let softEvents = this.listAvailableSoftEvents();
     this.log('Matching soft events: ', hardEvents);
-    if(softEvents.length > 0) {
+    if (softEvents.length > 0) {
       let softEvent = this.doEventLottery(softEvents);
       this.moveToEvent(softEvent);
       return;
     }
 
-    if(!this.state.global.no_events_available) {
+    if (!this.state.global.no_events_available) {
       this.state.global.no_events_available = true;
       this.state.global.current_turn -= 1;
       this.nextEvent();
@@ -149,7 +149,7 @@ class Storylines {
 
     let actions = Object.keys(event.actions || []).filter(a => {
       let actionData = event.actions[a];
-      if(!actionData.condition) {
+      if (!actionData.condition) {
         return true;
       }
 
@@ -163,7 +163,7 @@ class Storylines {
    * Pick an action on the current event
    */
   respondToEvent(action) {
-    if(!(action in this.currentEvent.actions)) {
+    if (!(action in this.currentEvent.actions)) {
       throw new Error(`Action ${action} is not available in event ${this.currentEvent.event}`);
     }
 
@@ -178,10 +178,10 @@ class Storylines {
   * Evaluate specified condition
   */
   testCondition(condition) {
-    if(condition._type === 'atomic_condition') {
+    if (condition._type === 'atomic_condition') {
       return this.testAtomicCondition(condition);
     }
-    else if(condition._type === 'propositional_condition') {
+    else if (condition._type === 'propositional_condition') {
       return this.testPropositionalCondition(condition);
     }
 
@@ -196,7 +196,7 @@ class Storylines {
     let lhs = this.resolveValue(condition.lhs);
     let rhs = this.resolveValue(condition.rhs);
 
-    switch(condition.operator) {
+    switch (condition.operator) {
       case '==':
         return lhs === rhs;
       case '>':
@@ -218,7 +218,7 @@ class Storylines {
   * Test the specified proposition (atomic conditions with logical connectors such as AND or OR)
   */
   testPropositionalCondition(condition) {
-    switch(condition.boolean_operator) {
+    switch (condition.boolean_operator) {
       case 'AND':
         return condition.conditions.every(c => this.testCondition(c));
       case 'OR':
@@ -239,13 +239,13 @@ class Storylines {
   applyOperation(operation) {
     let lhs = this.resolveStatePath(operation.lhs, true);
 
-    if(lhs.missingOnLastLevel && operation.operator !== '=') {
+    if (lhs.missingOnLastLevel && operation.operator !== '=') {
       throw new Error('Can\'t apply compound operator on undefined');
     }
 
     let rhs = this.resolveValue(operation.rhs);
 
-    switch(operation.operator) {
+    switch (operation.operator) {
       case '=':
         lhs.parent[lhs.key] = rhs;
         break;
@@ -273,7 +273,7 @@ class Storylines {
    * Return true if the specified value contains an access to the current state (and false for constant values)
    */
   isStateAccess(value) {
-    if(!value._type || value._type !== 'state') {
+    if (!value._type || value._type !== 'state') {
       return false;
     }
 
@@ -286,7 +286,7 @@ class Storylines {
    * {_type: 'state', data:['global', 'something']} == this.state.global.something
    */
   resolveValue(value) {
-    if(!this.isStateAccess(value)) {
+    if (!this.isStateAccess(value)) {
       return value;
     }
 
@@ -300,17 +300,17 @@ class Storylines {
    * unless `throwOnMissing` is defined
    */
   resolveStatePath(statePath, throwOnMissing) {
-    if(!this.isStateAccess(statePath)) {
+    if (!this.isStateAccess(statePath)) {
       throw new Error('Must be a state access! ' + statePath);
     }
 
     // Clone the array, as we're going to destroy it
     let shiftableStatePath = statePath.data.slice(0);
     let value = this.state;
-    while(true) {
+    while (true) {
       var path = shiftableStatePath.shift();
-      if(!(path in value)) {
-        if(throwOnMissing) {
+      if (!(path in value)) {
+        if (throwOnMissing) {
           throw new Error('Trying to access non-existing path in state: ' + statePath.data.join('.'));
         }
         return {
@@ -323,7 +323,7 @@ class Storylines {
 
       value = value[path];
 
-      if(shiftableStatePath.length === 1) {
+      if (shiftableStatePath.length === 1) {
         var exists = (shiftableStatePath[0] in value);
         return {
           parent: value,
@@ -341,7 +341,7 @@ class Storylines {
 
   log() {
     /* istanbul ignore next */
-    if(environment === 'browser') {
+    if (environment === 'browser') {
       console.log.apply(console, arguments);
     }
   }
@@ -359,7 +359,8 @@ class Storylines {
 try {
   module.exports = Storylines;
   environment = 'node';
-} catch(e) {
+}
+catch (e) {
   /* istanbul ignore next */
   environment = 'browser';
 }
