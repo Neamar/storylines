@@ -1,5 +1,5 @@
 'use strict';
-/*jshint latedef: nofunc */
+/* jshint latedef: nofunc */
 
 const operations = require('./operations.js');
 const conditions = require('./conditions.js');
@@ -32,13 +32,13 @@ function strip(stripList, string) {
   var beginIndex = 0;
   var  endIndex = string.length - 1;
 
-  while(stripList.includes(string[beginIndex])) {
+  while (stripList.includes(string[beginIndex])) {
     beginIndex += 1;
   }
-  if(beginIndex >= endIndex) {
+  if (beginIndex >= endIndex) {
     return '';
   }
-  while(stripList.includes(string[endIndex])) {
+  while (stripList.includes(string[endIndex])) {
     endIndex -= 1;
   }
   return string.substring(beginIndex, endIndex + 1);
@@ -63,11 +63,11 @@ function isArray(arg) {
 
 function isStateAccess(arg) {
   var keys = arg.trim().split('.');
-  if(keys.length < 2) {
+  if (keys.length < 2) {
     return false;
   }
-  for(var i = 1; i < keys.length; i += 1) {
-    if(!isSlug(keys[i]) && isNaN(keys[i])) {
+  for (var i = 1; i < keys.length; i += 1) {
+    if (!isSlug(keys[i]) && isNaN(keys[i])) {
       return false;
     }
   }
@@ -80,21 +80,21 @@ function findOperator(codeString) {
   // 'IN' is included in 'NOT IN' so we need to look for the longer match (if one contains the other)
   var candidates = YML_ALL_OPERATORS.filter(op => codeString.includes(' ' + op + ' ')).sort((op1, op2) => op1.length - op2.length);
 
-  if(candidates.length === 0) {
+  if (candidates.length === 0) {
     throw new Error('Could not find the operator. Please make sure to delimit it with spaces. Valid operators are: ' + YML_ALL_OPERATORS.join(', '));
   }
-  else if(candidates.length === 1) {
+  else if (candidates.length === 1) {
     return candidates[0];
   }
   else {
     var candidate = candidates[candidates.length - 1];
-    for(var i = 0; i < candidates.length; i += 1) {
+    for (var i = 0; i < candidates.length; i += 1) {
       var candidateBegin = codeString.indexOf(' ' + candidate + ' ');
       var candidateEnd = candidateBegin + candidate.length - 1;
       var currentBegin = codeString.indexOf(' ' + candidates[i] + ' ');
       var currentStart = currentBegin + candidates[i].length - 1;
 
-      if(!((candidateBegin <= currentBegin) && (candidateEnd >= currentStart))) {
+      if (!((candidateBegin <= currentBegin) && (candidateEnd >= currentStart))) {
         throw new Error('Too many operator candidates: ' + candidates);
       }
 
@@ -106,22 +106,22 @@ function findOperator(codeString) {
 
 
 function getArgType(arg) {
-  if(ARG_NULL_VALS.includes(arg)) {
+  if (ARG_NULL_VALS.includes(arg)) {
     return ARG_TYPE_NULL;
   }
-  if(ARG_BOOLEAN_VALS.includes(arg)) {
+  if (ARG_BOOLEAN_VALS.includes(arg)) {
     return ARG_TYPE_BOOLEAN;
   }
-  if(!isNaN(arg - parseFloat(arg))) {
+  if (!isNaN(arg - parseFloat(arg))) {
     return ARG_TYPE_NUMERAL;
   }
-  if(isStr(arg)) {
+  if (isStr(arg)) {
     return ARG_TYPE_STRING;
   }
-  if(isArray(arg)) {
+  if (isArray(arg)) {
     return ARG_TYPE_ARRAY;
   }
-  if(isStateAccess(arg)) {
+  if (isStateAccess(arg)) {
     return ARG_TYPE_STATE_ACCESS;
   }
   return null;
@@ -130,10 +130,10 @@ function getArgType(arg) {
 
 // ARG_TYPE_BOOLEAN
 function getBooleanArg(arg) {
-  if(ARG_VALS_TRUE.includes(arg)) {
+  if (ARG_VALS_TRUE.includes(arg)) {
     return true;
   }
-  else if(ARG_VALS_FALSE.includes(arg)) {
+  else if (ARG_VALS_FALSE.includes(arg)) {
     return false;
   }
   else {
@@ -145,7 +145,7 @@ function getBooleanArg(arg) {
 function isValidStr(arg) {
   var strDelimiter = arg.charAt(0);
 
-  if(strip([strDelimiter], arg).includes(strDelimiter)) {
+  if (strip([strDelimiter], arg).includes(strDelimiter)) {
     return false;
   }
   return true;
@@ -153,7 +153,7 @@ function isValidStr(arg) {
 
 
 function getStrArg(arg) {
-  if(!isValidStr(arg)) {
+  if (!isValidStr(arg)) {
     throw new Error(`${arg} is an invalid string expression`);
   }
   return strip(['\'', '"'], arg);
@@ -163,7 +163,7 @@ function getStrArg(arg) {
 // ARG_TYPE_ARRAY
 function getArray(arg, context) {
   arg = strip(['[', ']'], arg.trim()).trim();
-  if(arg === '') {
+  if (arg === '') {
     // This has to be here, because ''.split(',') returns '['']', not '[]'...
     return [];
   }
@@ -180,16 +180,16 @@ function getArrayArg(arg, context) {
 function getStateAccess(arg, context) {
   var keys = arg.trim().split('.');
 
-  if(ARG_STATE_LEVEL_GLOBAL.includes(keys[0])) {
+  if (ARG_STATE_LEVEL_GLOBAL.includes(keys[0])) {
     keys[0] = ARG_STATE_LEVEL_GLOBAL[0];
   }
-  else if(ARG_STATE_LEVEL_RESOURCES.includes(keys[0])) {
+  else if (ARG_STATE_LEVEL_RESOURCES.includes(keys[0])) {
     keys[0] = ARG_STATE_LEVEL_RESOURCES[0];
   }
-  else if(ARG_STATE_LEVEL_STORYLINES.includes(keys[0])) {
+  else if (ARG_STATE_LEVEL_STORYLINES.includes(keys[0])) {
     keys[0] = ARG_STATE_LEVEL_STORYLINES[0];
   }
-  else if(ARG_STATE_LEVEL_CURRENT_STORYLINE.includes(keys[0])) {
+  else if (ARG_STATE_LEVEL_CURRENT_STORYLINE.includes(keys[0])) {
     keys[0] = 'storylines';
     keys.splice(1, 0, context.storyline);
   }
@@ -201,7 +201,7 @@ function getStateAccess(arg, context) {
 
 
 function getArg(arg, context) {
-  switch(getArgType(arg)) {
+  switch (getArgType(arg)) {
     case ARG_TYPE_NULL:
       return null;
     case ARG_TYPE_BOOLEAN:
@@ -226,10 +226,10 @@ function parseYmlCode(codeString, context) {
   var lhs;
   var rhs;
   [lhs, rhs] = codeString.split(operator).map(x => x.trim());
-  if(lhs === '') {
+  if (lhs === '') {
     throw new Error('Missing left-hand side');
   }
-  if(rhs === '') {
+  if (rhs === '') {
     throw new Error('Missing right-hand side');
   }
   lhs = getArg(lhs, context);
@@ -253,8 +253,8 @@ function parseYmlCode(codeString, context) {
  */
 function validateKeyType(object, keyName, keyType, msgNotFound) {
   var objectKeyType = typeof object[keyName];
-  if(objectKeyType === 'undefined') {
-    if(msgNotFound === null) {
+  if (objectKeyType === 'undefined') {
+    if (msgNotFound === null) {
       // User has instructed not to warn when not found
       return;
     }
@@ -262,14 +262,14 @@ function validateKeyType(object, keyName, keyType, msgNotFound) {
   }
 
 
-  if(isSlug(object[keyName])) {
+  if (isSlug(object[keyName])) {
     objectKeyType = 'slug';
   }
-  else if(Array.isArray(object[keyName])) {
+  else if (Array.isArray(object[keyName])) {
     objectKeyType = 'array';
   }
 
-  if((keyType !== null) && !((objectKeyType === keyType) || (Array.isArray(keyType) && keyType.includes(objectKeyType)))) {
+  if ((keyType !== null) && !((objectKeyType === keyType) || (Array.isArray(keyType) && keyType.includes(objectKeyType)))) {
     throw new Error(`${keyName} should be of type '${keyType}', not '${objectKeyType}'`);
   }
 }

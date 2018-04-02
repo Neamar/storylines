@@ -26,7 +26,7 @@ function storyBundle(storyPath, storyConfigFile, storylinesFolder) {
 
   // Sort events for consistency
   storyEvents = storyEvents.sort((e1, e2) => {
-    if(e1.storyline === e2.storyline) {
+    if (e1.storyline === e2.storyline) {
       return e1.event > e2.event ? 1 : -1;
     }
     return e1.storyline > e2.storyline ? 1 : -1;

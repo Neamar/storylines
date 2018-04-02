@@ -2,7 +2,7 @@
 
 
 module.exports.generateDefaultState = function generateDefaultState(resources, storylineSlugs) {
-  /*jshint unused:false */
+  /* jshint unused:false */
   var defaultResources = {};
   Object.keys(resources || []).forEach(key => defaultResources[key] = resources[key].default);
   var defaultStorylines = {};

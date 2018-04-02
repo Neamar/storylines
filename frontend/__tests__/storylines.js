@@ -580,7 +580,7 @@ describe('Storylines', () => {
               operator: '==',
               rhs: true
             }
-        ]})).toBeTruthy();
+          ]})).toBeTruthy();
       });
 
       it('should return false when using AND and one condition fails', () => {
@@ -601,7 +601,7 @@ describe('Storylines', () => {
               operator: '==',
               rhs: false
             }
-        ]})).toBeFalsy();
+          ]})).toBeFalsy();
       });
 
       it('should return true when using OR and at least one condition passes', () => {
@@ -622,7 +622,7 @@ describe('Storylines', () => {
               operator: '==',
               rhs: true
             }
-        ]})).toBeTruthy();
+          ]})).toBeTruthy();
       });
 
       it('should return true when using OR and all conditions pass', () => {
@@ -643,7 +643,7 @@ describe('Storylines', () => {
               operator: '==',
               rhs: true
             }
-        ]})).toBeTruthy();
+          ]})).toBeTruthy();
       });
 
       it('should evaluate more than two matching conditions', () => {
@@ -670,7 +670,7 @@ describe('Storylines', () => {
               operator: '==',
               rhs: false
             }
-        ]})).toBeFalsy();
+          ]})).toBeFalsy();
       });
 
       it('should evaluate even when there is only one condition', () => {
@@ -685,7 +685,7 @@ describe('Storylines', () => {
               operator: '==',
               rhs: true
             },
-        ]})).toBeTruthy();
+          ]})).toBeTruthy();
       });
 
       it('should return false when using OR and all conditions fail', () => {
@@ -706,7 +706,7 @@ describe('Storylines', () => {
               operator: '==',
               rhs: false
             }
-        ]})).toBeFalsy();
+          ]})).toBeFalsy();
       });
 
       it('should fail on invalid boolean operator', () => {
@@ -741,7 +741,7 @@ describe('Storylines', () => {
                 rhs: true
               }]
             }
-        ]})).toBeTruthy();
+          ]})).toBeTruthy();
       });
 
       it('should recursively evaluate conditions (to false)', () => {
@@ -766,7 +766,7 @@ describe('Storylines', () => {
                 rhs: false
               }]
             }
-        ]})).toBeFalsy();
+          ]})).toBeFalsy();
       });
 
       it('should throw on invalid condition type', () => {

@@ -23,7 +23,7 @@ function readEvent(storyPath, storylineSlug, eventSlug) {
  * @return event object
  */
 function buildEvent(eventContent, storylineSlug, eventSlug, storyConfig) {
-  if(!frontMatter.test(eventContent)) {
+  if (!frontMatter.test(eventContent)) {
     throw new Error('Event must be a valid FrontMatter file.');
   }
 
@@ -36,7 +36,7 @@ function buildEvent(eventContent, storylineSlug, eventSlug, storyConfig) {
   event.description = event.description.replace(/--/g, '&ndash;');
   event.description = event.description.replace(/\.\.\./g, '&hellip;');
 
-  if(storyConfig.locale === 'fr_FR') {
+  if (storyConfig.locale === 'fr_FR') {
     event.description = event.description.replace(/ !/g, '&nbsp;!');
     event.description = event.description.replace(/ \?/g, '&nbsp;?');
     event.description = event.description.replace(/ :/g, '&nbsp;:');
@@ -61,7 +61,7 @@ function validateTrigger(trigger) {
 
 function validateTriggers(triggersObject) {
   Object.keys(triggersObject || []).forEach(key => {
-    if(!TRIGGER_TYPES.includes(key)) {
+    if (!TRIGGER_TYPES.includes(key)) {
       throw new Error(`Triggers cannot be '${key}'. Possible types are: ${TRIGGER_TYPES.join(', ')}`);
     }
     validateTrigger(triggersObject[key]);
@@ -90,12 +90,12 @@ function validateEvent(eventObject) {
   helpers.validateKeyType(eventObject, 'repeatable', 'boolean', null);
 
   helpers.validateKeyType(eventObject, 'triggers', 'object', null);
-  if(eventObject.triggers) {
+  if (eventObject.triggers) {
     validateTriggers(eventObject.triggers);
   }
 
   helpers.validateKeyType(eventObject, 'actions', 'object', null);
-  if(eventObject.actions) {
+  if (eventObject.actions) {
     validateActions(eventObject.actions);
   }
 
@@ -117,7 +117,7 @@ function parseTriggers(eventObject, context) {
   validateTriggers(eventObject.triggers);
 
   TRIGGER_TYPES.forEach(type => {
-    if(eventObject.triggers && eventObject.triggers[type]) {
+    if (eventObject.triggers && eventObject.triggers[type]) {
       eventObject.triggers[type] = parseTrigger(eventObject.triggers[type], context);
     }
   });
@@ -127,7 +127,7 @@ function parseTriggers(eventObject, context) {
 
 function parseOperations(actionObject, context) {
   // actionObject can be null: action has no effect, but this will let the engine choose a new event with a soft condition
-  if(actionObject && actionObject.operations) {
+  if (actionObject && actionObject.operations) {
     actionObject.operations = actionObject.operations.map(o => helpers.parseYmlCode(o, context));
   }
   return actionObject;
@@ -136,7 +136,7 @@ function parseOperations(actionObject, context) {
 
 function parseActionCondition(actionObject, context) {
   // actionObject can be null: action has no effect, but this will let the engine choose a new event with a soft condition
-  if(actionObject && actionObject.condition) {
+  if (actionObject && actionObject.condition) {
     actionObject.condition = conditionsTools.parseCondition(actionObject.condition, context);
   }
   return actionObject;
@@ -144,7 +144,7 @@ function parseActionCondition(actionObject, context) {
 
 
 function parseActions(eventObject, context) {
-  if(eventObject.actions) {
+  if (eventObject.actions) {
     Object.keys(eventObject.actions || []).forEach(actionName => parseOperations(eventObject.actions[actionName], context));
     Object.keys(eventObject.actions || []).forEach(actionName => parseActionCondition(eventObject.actions[actionName], context));
   }
@@ -153,7 +153,7 @@ function parseActions(eventObject, context) {
 
 
 function parseOnDisplay(eventObject, context) {
-  if(eventObject.on_display) {
+  if (eventObject.on_display) {
     eventObject.on_display = eventObject.on_display.map(o => helpers.parseYmlCode(o, context));
   }
   return eventObject;
@@ -188,7 +188,7 @@ function getEvent(storyPath, storylineSlug, eventSlug, storyConfig) {
 
     return parseEvent(eventObject);
   }
-  catch(e) {
+  catch (e) {
     e.message = `${storylineSlug}/${eventSlug}: ${e.message}`;
     throw e;
   }

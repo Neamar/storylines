@@ -4,7 +4,7 @@ const frontMatter = require('front-matter');
 
 const helpers = require('./helpers');
 
-const SUPPORTED_VERSIONS = [1.0, ];
+const SUPPORTED_VERSIONS = [1.0,];
 
 /**
  * Retrieve the YML config for a given story from disk
@@ -21,7 +21,7 @@ function readStoryConfig(storyPath, storyConfigFile) {
  * @return config object
  */
 function buildStoryConfig(configContent) {
-  if(!frontMatter.test(configContent)) {
+  if (!frontMatter.test(configContent)) {
     throw new Error('Config must be a valid FrontMatter file.');
   }
 
@@ -44,7 +44,7 @@ function buildStoryConfig(configContent) {
 function validateResource(resource) {
   helpers.validateKeyType(resource, 'description', 'string', 'Missing resource description');
   helpers.validateKeyType(resource, 'format', 'string', 'Missing resource format');
-  if(resource.format.indexOf('%s') === -1) {
+  if (resource.format.indexOf('%s') === -1) {
     throw new Error('Invalid resource format; must contain a %s');
   }
   helpers.validateKeyType(resource, 'display_name', 'string', 'Missing resource display_name');
@@ -61,7 +61,7 @@ function validateResource(resource) {
 function validateConfig(config) {
   helpers.validateKeyType(config, 'version', 'number', 'Missing version number');
 
-  if(SUPPORTED_VERSIONS.indexOf(config.version) === -1) {
+  if (SUPPORTED_VERSIONS.indexOf(config.version) === -1) {
     throw new Error(`Unsupported version. Version should be one of ${SUPPORTED_VERSIONS.join()}, not ${config.version}`);
   }
 
@@ -71,7 +71,7 @@ function validateConfig(config) {
   helpers.validateKeyType(config, 'resources', 'object', 'Missing resources definition.');
 
   var badSlugs = Object.keys(config.resources).filter(resource => !(helpers.isSlug(resource)));
-  if(badSlugs.length > 0) {
+  if (badSlugs.length > 0) {
     throw new Error(`Invalid resource slug: '${badSlugs.join()}'`);
   }
   Object.values(config.resources).forEach(validateResource);

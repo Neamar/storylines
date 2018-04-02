@@ -3,7 +3,7 @@
 
 $(function() {
   function getStates() {
-    return JSON.parse(window.localStorage.getItem('states') || "{}");
+    return JSON.parse(window.localStorage.getItem('states') || '{}');
   }
 
   function debugState() {
@@ -31,7 +31,7 @@ $(function() {
   $('#debug-state-save').click(function(e) {
     e.preventDefault();
     let stateName = stateTitleInput.val();
-    if(!stateName) {
+    if (!stateName) {
       stateTitleInput.addClass('is-invalid');
       stateTitleInput.focus();
       return;
@@ -46,7 +46,7 @@ $(function() {
     e.preventDefault();
     let stateName = stateTitleInput.val();
     let states = getStates();
-    if(!states[stateName]) {
+    if (!states[stateName]) {
       stateTitleInput.addClass('is-invalid');
       stateTitleInput.focus();
       return;
@@ -60,5 +60,5 @@ $(function() {
   });
 
 
-  $('#debug-available-states').html(Object.keys(getStates()).map(s => `<option value="${s}" />`).join("\n"));
+  $('#debug-available-states').html(Object.keys(getStates()).map(s => `<option value="${s}" />`).join('\n'));
 });
