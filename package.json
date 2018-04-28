@@ -10,7 +10,7 @@
   "scripts": {
     "local": "node frontend.js",
     "compile": "node backend/compile.js",
-    "lint": "jshint backend/ frontend/",
+    "lint": "eslint .",
     "fuzzer": "node fuzzer/index.js",
     "test": "jest --coverage"
   },
@@ -31,6 +31,7 @@
     "marked": "^0.3.17"
   },
   "devDependencies": {
+    "eslint": "^4.19.1",
     "jscs": "^3.0.7",
     "jshint": "^2.9.5"
   },
