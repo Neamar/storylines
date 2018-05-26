@@ -2,7 +2,7 @@
 const fs = require('fs');
 const program = require('commander');
 const nodemon = require('nodemon');
-const frontend = require('./frontend');
+
 
 const storyPath = '/tmp/storylines-story-wip.json';
 const executablePath = `${__dirname}/storylines-compile.js`;

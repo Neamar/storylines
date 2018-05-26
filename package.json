@@ -7,7 +7,7 @@
     "storylines": "./bin/storylines.js"
   },
   "scripts": {
-    "local": "node frontend.js",
+    "local": "node bin/frontend.js",
     "lint": "eslint .",
     "fuzzer": "node fuzzer/index.js",
     "storylines": "node bin/storylines.js",
