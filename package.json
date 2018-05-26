@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/Neamar/storylines#readme",
   "dependencies": {
+    "commander": "^2.15.1",
     "express": "^4.16.2",
     "front-matter": "^2.3.0",
     "jest": "^22.1.4",
