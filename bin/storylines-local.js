@@ -40,14 +40,26 @@ function setupStoryWatcher() {
   });
 }
 
+
+function runServer() {
+  const express = require('express');
+  const app = express();
+
+  app.get('/story.json', function(req, res) {
+    console.log('Serving story');
+    res.send(currentStory);
+  });
+  app.use(express.static(__dirname + '/../frontend'));
+
+  app.listen(3000, () => console.log('Frontend app listening on port 3000!\nhttp://localhost:3000/'));
+
+}
+
 program
   .arguments('<story>')
   .action(function(story) {
     setupStoryWatcher();
     setupStorylineWatcher(story);
-    frontend.get('/story.json', function(req, res) {
-      console.log('Serving story');
-      res.send(currentStory);
-    });
+    runServer();
   })
   .parse(process.argv);
