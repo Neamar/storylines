@@ -4,14 +4,13 @@
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
   "bin": {
-    "storylines": "./backend/compile.js",
-    "storylines-chart": "./fuzzer/index.js"
+    "storylines": "./bin/storylines.js"
   },
   "scripts": {
-    "local": "node frontend.js",
-    "compile": "node backend/compile.js",
+    "local": "node bin/frontend.js",
     "lint": "eslint .",
     "fuzzer": "node fuzzer/index.js",
+    "storylines": "node bin/storylines.js",
     "test": "jest --coverage"
   },
   "repository": {
@@ -25,10 +24,12 @@
   },
   "homepage": "https://github.com/Neamar/storylines#readme",
   "dependencies": {
+    "commander": "^2.15.1",
     "express": "^4.16.2",
     "front-matter": "^2.3.0",
     "jest": "^22.1.4",
-    "marked": "^0.3.17"
+    "marked": "^0.3.17",
+    "nodemon": "^1.17.5"
   },
   "devDependencies": {
     "eslint": "^4.19.1"
