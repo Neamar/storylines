@@ -4,13 +4,13 @@ const program = require('commander');
 const nodemon = require('nodemon');
 
 
-const storyPath = '/tmp/storylines-story-wip.json';
+const compiledStoryPath = '/tmp/storylines-story-wip.json';
 const executablePath = `${__dirname}/storylines-compile.js`;
 let currentStory = {};
 
 // Compile the story on changes
 function setupStorylineWatcher(story) {
-  nodemon(`-e js,md ${executablePath} ${story} ${storyPath}`);
+  nodemon(`-e js,md ${executablePath} ${story} ${compiledStoryPath}`);
   nodemon.on('start', function() {
     console.log('App has started');
   }).on('quit', function() {
@@ -24,9 +24,10 @@ function setupStorylineWatcher(story) {
 
 // Watch the story.json for change
 function setupStoryWatcher() {
-  let watcher = fs.watch(storyPath, function() {
+  let watcher = fs.watch(compiledStoryPath, function() {
     try {
-      currentStory = JSON.parse(fs.readFileSync(storyPath).toString());
+      var jsonContent = fs.readFileSync(compiledStoryPath).toString();
+      currentStory = JSON.parse(jsonContent);
       console.log('Updated story.json');
     }
     catch (e) {
@@ -58,6 +59,7 @@ function runServer() {
 program
   .arguments('<story>')
   .action(function(story) {
+    fs.writeFileSync(compiledStoryPath, '{}');
     setupStoryWatcher();
     setupStorylineWatcher(story);
     runServer();
