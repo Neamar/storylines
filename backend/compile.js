@@ -3,21 +3,20 @@
 
 const bundle = require('./bundle.js');
 
-if (process.argv.length !== 3 && process.argv.length !== 4) {
-  throw new Error('Invalid call. Usage: storyline path/to/story [outputfile]');
-}
+module.exports = function compileStory(storyPath, outputPath) {
+  const STORY_CONFIG_FILE = 'storyline.config.yml';
+  const STORYLINES_FOLDER = 'storylines';
 
+  if (storyPath[0] !== '/') {
+    storyPath = process.cwd() + '/' + storyPath;
+  }
 
-const STORY_PATH = process.argv[2];
-const STORY_CONFIG_FILE = 'storyline.config.yml';
-const STORYLINES_FOLDER = 'storylines';
+  var b = bundle.storyBundle(storyPath, STORY_CONFIG_FILE, STORYLINES_FOLDER);
 
-
-var b = bundle.storyBundle(STORY_PATH, STORY_CONFIG_FILE, STORYLINES_FOLDER);
-
-if (!process.argv[3]) {
-  console.log(JSON.stringify(b));
-}
-else {
-  require('fs').writeFileSync(process.argv[3], JSON.stringify(b, null, 2));
-}
+  if (!outputPath) {
+    console.log(JSON.stringify(b));
+  }
+  else {
+    require('fs').writeFileSync(outputPath, JSON.stringify(b, null, 2));
+  }
+};
