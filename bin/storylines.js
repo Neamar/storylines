@@ -4,6 +4,6 @@ const program = require('commander');
 
 program
   .version(require('../package.json').version)
-  .command('compile <story> [output]', 'compile the story and writes it to stdout or output')
-  .command('list', 'list packages installed', {isDefault: true})
+  .command('compile <story> [output]', 'compile the story and write to stdout or output')
+  .command('graph <story> [raw] [dot]', 'graph all possible options and write to raw and dot (graphviz) files')
   .parse(process.argv);

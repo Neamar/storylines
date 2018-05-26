@@ -4,8 +4,8 @@ const program = require('commander');
 const compile = require('../backend/compile.js');
 
 program
-  .arguments('<cmd> [env]')
-  .action(function(cmd, env) {
-    compile(cmd, env);
+  .arguments('<story> [output]')
+  .action(function(story, output) {
+    compile(story, output);
   })
   .parse(process.argv);
