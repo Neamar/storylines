@@ -42,7 +42,7 @@ module.exports = function(storyPath, rawPath, dotPath) {
       storyline.state = cloneState(state);
       storyline.currentEvent = currentEvent;
 
-      console.log(`Selecting "${action}" on ${currentEventSlug}`, JSON.stringify(chainOfEvents));
+      // console.log(`Selecting "${action}" on ${currentEventSlug}`, JSON.stringify(chainOfEvents), state);
       // Overwrite original nextEvent function
       storyline.nextEvent = function() {
         let hardEvents = storyline.listAvailableHardEvents();
