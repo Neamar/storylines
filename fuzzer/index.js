@@ -5,7 +5,7 @@ const fs = require('fs');
 const Storyline = require('../frontend/storylines.js');
 
 module.exports = function(storyPath, rawPath, dotPath) {
-  const paths = {};
+  const stories = new Set();
   const story = JSON.parse(fs.readFileSync(storyPath).toString());
   let currentActions = [];
   const callbacks = {
@@ -24,7 +24,7 @@ module.exports = function(storyPath, rawPath, dotPath) {
   }
 
 
-  function walkTree(state, chainOfEvents) {
+  function walkTree(state, chainOfEvents, depth) {
     let actionsAtThisPoint = currentActions;
 
     let currentEvent = storyline.currentEvent;
@@ -33,38 +33,29 @@ module.exports = function(storyPath, rawPath, dotPath) {
     chainOfEvents = chainOfEvents.slice(0);
     chainOfEvents.push(currentEventSlug);
 
-    if (!paths[currentEventSlug]) {
-      paths[currentEventSlug] = {};
-    }
-
     actionsAtThisPoint.forEach(function(action) {
       // Reset state
       storyline.state = cloneState(state);
       storyline.currentEvent = currentEvent;
 
-      // console.log(`Selecting "${action}" on ${currentEventSlug}`, JSON.stringify(chainOfEvents), state);
+      console.log(`${' '.repeat(depth * 2)}"${action}" on ${currentEventSlug}`);
       // Overwrite original nextEvent function
       storyline.nextEvent = function() {
-        let hardEvents = storyline.listAvailableHardEvents();
-
-        if (hardEvents.length > 0) {
-          if (!paths[currentEventSlug][action]) {
-            paths[currentEventSlug][action] = {};
-          }
-
-          let newEventSlug = storyline.getEventSlug(hardEvents[0]);
-          if (!paths[currentEventSlug][action][newEventSlug] || paths[currentEventSlug][action][newEventSlug].length > chainOfEvents.length) {
-            paths[currentEventSlug][action][newEventSlug] = chainOfEvents;
-          }
-        }
-
         // Call original implementation
         storyline._nextEvent();
 
+        // If we're done with the current story, add it to our Set and backtrack
+        if (storyline.state.global.no_events_available) {
+          stories.add(chainOfEvents.join(','));
+          return;
+        }
+
+        // Clone our state and recursively keep going
         let newState = cloneState(storyline.state);
-        walkTree(newState, chainOfEvents);
+        walkTree(newState, chainOfEvents, depth + 1);
       };
 
+      // This will in turn call our nextEvent() function
       storyline.respondToEvent(action);
     });
   }
@@ -74,19 +65,53 @@ module.exports = function(storyPath, rawPath, dotPath) {
   const originalState = cloneState(storyline.state);
 
 
-  walkTree(originalState, chainOfEvents);
+  // Walk all the paths!
+  walkTree(originalState, chainOfEvents, 0);
 
+  console.log(stories);
+  // Transform the stories (currently, stringified) to a structure that can be dealt with easily
+  const allStories = Array.from(stories).map(s => s.split(','));
+  const allStorylines = storyline.events.reduce((acc, event) => acc.add(event.storyline), new Set());
   if (rawPath) {
-    fs.writeFileSync(rawPath, JSON.stringify(paths, null, 2));
+    fs.writeFileSync(rawPath, JSON.stringify(Array.from(stories).map(s => s.split(',')), null, 2));
   }
 
-  let graph = 'digraph G {\n';
-  Object.keys(paths).forEach(function(from) {
-    Object.keys(paths[from]).forEach(function(transition) {
-      Object.keys(paths[from][transition]).forEach(function(to) {
-        graph += `  "${from}" -> "${to}"\n`;
+  function buildRelationsWithinStoryline(storyline) {
+    const relations = {};
+    const storylinePrefix = storyline + '/';
+    allStories.forEach(function(story) {
+      let lastKnownEventInStoryline = null;
+      story.forEach(function(event) {
+        if (event.startsWith(storylinePrefix)) {
+          if (!lastKnownEventInStoryline) {
+            lastKnownEventInStoryline = event;
+            return;
+          }
+
+          relations[lastKnownEventInStoryline] = relations[lastKnownEventInStoryline] || new Set();
+          relations[lastKnownEventInStoryline].add(event);
+          lastKnownEventInStoryline = event;
+        }
       });
     });
+    return relations;
+  }
+
+
+  let graph = 'digraph G {';
+  allStorylines.forEach(function(storyline) {
+    graph += `\nsubgraph cluster_${storyline} {\n
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    label = "${storyline}";\n`;
+    const relations = buildRelationsWithinStoryline(storyline);
+    Object.keys(relations).forEach(function(from) {
+      Array.from(relations[from]).forEach(function(to) {
+        graph += `    "${from}" -> "${to}"\n`;
+      });
+    });
+    graph += '}';
   });
 
   graph += '}';
