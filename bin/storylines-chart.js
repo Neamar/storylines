@@ -1,7 +1,7 @@
 'use strict';
 const program = require('commander');
 
-const fuzzer = require('../fuzzer/index.js');
+const fuzzer = require('../chart/index.js');
 
 program
   .arguments('<story> [raw] [dot]')

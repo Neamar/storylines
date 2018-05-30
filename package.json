@@ -9,7 +9,6 @@
   "scripts": {
     "local": "node bin/frontend.js",
     "lint": "eslint .",
-    "fuzzer": "node fuzzer/index.js",
     "storylines": "node bin/storylines.js",
     "test": "jest --coverage"
   },
