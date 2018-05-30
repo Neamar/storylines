@@ -81,6 +81,7 @@ module.exports = function(storyPath, rawPath, dotPath) {
     const storylinePrefix = storyline + '/';
     allStories.forEach(function(story) {
       let lastKnownEventInStoryline = null;
+      let lastEventWasInStoryline = false;
       story.forEach(function(event) {
         if (event.startsWith(storylinePrefix)) {
           if (!lastKnownEventInStoryline) {
@@ -88,9 +89,24 @@ module.exports = function(storyPath, rawPath, dotPath) {
             return;
           }
 
-          relations[lastKnownEventInStoryline] = relations[lastKnownEventInStoryline] || new Set();
-          relations[lastKnownEventInStoryline].add(event);
+          if (!relations[lastKnownEventInStoryline]) {
+            relations[lastKnownEventInStoryline] = {
+              direct: new Set(),
+              indirect: new Set()
+            };
+          }
+
+          if (lastEventWasInStoryline) {
+            relations[lastKnownEventInStoryline].direct.add(event);
+          }
+          else {
+            relations[lastKnownEventInStoryline].indirect.add(event);
+          }
           lastKnownEventInStoryline = event;
+          lastEventWasInStoryline = true;
+        }
+        else {
+          lastEventWasInStoryline = false;
         }
       });
     });
@@ -107,8 +123,15 @@ module.exports = function(storyPath, rawPath, dotPath) {
     label = "${storyline}";\n`;
     const relations = buildRelationsWithinStoryline(storyline);
     Object.keys(relations).forEach(function(from) {
-      Array.from(relations[from]).forEach(function(to) {
-        graph += `    "${from}" -> "${to}"\n`;
+      Array.from(relations[from].direct).forEach(function(to) {
+        // Skip direct edges that are sometimes indirect
+        if (!relations[from].indirect.has(to)) {
+          graph += `    "${from}" -> "${to}"\n`;
+        }
+      });
+
+      Array.from(relations[from].indirect).forEach(function(to) {
+        graph += `    "${from}" -> "${to}" [style="dashed"];\n`;
       });
     });
     graph += '}';
