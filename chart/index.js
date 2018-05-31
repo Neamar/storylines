@@ -33,6 +33,12 @@ module.exports = function(storyPath, rawPath, dotPath) {
     chainOfEvents = chainOfEvents.slice(0);
     chainOfEvents.push(currentEventSlug);
 
+    // If we can't do anything anymore, just store the story and backtrack
+    if (actionsAtThisPoint.length === 0) {
+      stories.add(chainOfEvents.join(','));
+      return;
+    }
+
     actionsAtThisPoint.forEach(function(action) {
       // Reset state
       storyline.state = cloneState(state);
@@ -43,12 +49,6 @@ module.exports = function(storyPath, rawPath, dotPath) {
       storyline.nextEvent = function() {
         // Call original implementation
         storyline._nextEvent();
-
-        // If we're done with the current story, add it to our Set and backtrack
-        if (storyline.state.global.no_events_available) {
-          stories.add(chainOfEvents.join(','));
-          return;
-        }
 
         // Clone our state and recursively keep going
         let newState = cloneState(storyline.state);
@@ -85,7 +85,9 @@ module.exports = function(storyPath, rawPath, dotPath) {
       story.forEach(function(event) {
         if (event.startsWith(storylinePrefix)) {
           if (!lastKnownEventInStoryline) {
+            // Initial event
             lastKnownEventInStoryline = event;
+            lastEventWasInStoryline = true;
             return;
           }
 
@@ -112,7 +114,6 @@ module.exports = function(storyPath, rawPath, dotPath) {
     });
     return relations;
   }
-
 
   let graph = 'digraph G {';
   allStorylines.forEach(function(storyline) {
