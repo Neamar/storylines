@@ -4,7 +4,7 @@
 const fs = require('fs');
 const Storyline = require('../frontend/storylines.js');
 
-module.exports = function(storyPath, rawPath, dotPath) {
+module.exports = function(storyPath, rawPath, dotPath, verbose) {
   const stories = new Set();
   const story = JSON.parse(fs.readFileSync(storyPath).toString());
   let currentActions = [];
@@ -44,7 +44,9 @@ module.exports = function(storyPath, rawPath, dotPath) {
       storyline.state = cloneState(state);
       storyline.currentEvent = currentEvent;
 
-      console.log(`${' '.repeat(depth * 2)}"${action}" on ${currentEventSlug}`);
+      if(verbose) {
+        console.log(`${' '.repeat(depth * 2)}"${action}" on ${currentEventSlug}`);
+      }
       // Overwrite original nextEvent function
       storyline.nextEvent = function() {
         // Call original implementation
@@ -76,6 +78,14 @@ module.exports = function(storyPath, rawPath, dotPath) {
     fs.writeFileSync(rawPath, JSON.stringify(Array.from(stories).map(s => s.split(',')), null, 2));
   }
 
+  function getDefaultNode() {
+    return {
+      isEntryPoint: false,
+      isExitPoint: false,
+      direct: new Set(),
+      indirect: new Set()
+    };
+  }
   function buildRelationsWithinStoryline(storyline) {
     const relations = {};
     const storylinePrefix = storyline + '/';
@@ -88,14 +98,16 @@ module.exports = function(storyPath, rawPath, dotPath) {
             // Initial event
             lastKnownEventInStoryline = event;
             lastEventWasInStoryline = true;
+
+            if (!relations[event]) {
+              relations[event] = getDefaultNode();
+            }
+            relations[event].isEntryPoint = true;
             return;
           }
 
           if (!relations[lastKnownEventInStoryline]) {
-            relations[lastKnownEventInStoryline] = {
-              direct: new Set(),
-              indirect: new Set()
-            };
+            relations[lastKnownEventInStoryline] = getDefaultNode();
           }
 
           if (lastEventWasInStoryline) {
@@ -111,6 +123,10 @@ module.exports = function(storyPath, rawPath, dotPath) {
           lastEventWasInStoryline = false;
         }
       });
+
+      // if (lastKnownEventInStoryline) {
+      //   relations[lastKnownEventInStoryline].isExitPoint = true;
+      // }
     });
     return relations;
   }
@@ -120,10 +136,14 @@ module.exports = function(storyPath, rawPath, dotPath) {
     graph += `\nsubgraph cluster_${storyline} {\n
     style=filled;
     color=lightgrey;
-    node [style=filled,color=white];
+    node [style=filled,color=black,shape=box,fillcolor=white];
     label = "${storyline}";\n`;
     const relations = buildRelationsWithinStoryline(storyline);
     Object.keys(relations).forEach(function(from) {
+      if (relations[from].isEntryPoint || relations[from].isExitPoint) {
+        graph += `    "${from}" [style="filled,bold,rounded"]\n`;
+      }
+
       Array.from(relations[from].direct).forEach(function(to) {
         // Skip direct edges that are sometimes indirect
         if (!relations[from].indirect.has(to)) {
