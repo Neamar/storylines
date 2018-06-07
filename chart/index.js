@@ -124,9 +124,13 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
         }
       });
 
-      // if (lastKnownEventInStoryline) {
-      //   relations[lastKnownEventInStoryline].isExitPoint = true;
-      // }
+      if (lastKnownEventInStoryline) {
+        if (!relations[lastKnownEventInStoryline]) {
+          relations[lastKnownEventInStoryline] = getDefaultNode();
+        }
+
+        relations[lastKnownEventInStoryline].isExitPoint = true;
+      }
     });
     return relations;
   }
@@ -141,7 +145,15 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     const relations = buildRelationsWithinStoryline(storyline);
     Object.keys(relations).forEach(function(from) {
       if (relations[from].isEntryPoint || relations[from].isExitPoint) {
-        graph += `    "${from}" [style="filled,bold,rounded"]\n`;
+        let attributes = ['filled'];
+        if (relations[from].isEntryPoint) {
+          attributes.push('bold');
+        }
+        if (relations[from].isExitPoint) {
+          attributes.push('rounded');
+          attributes.push('dotted');
+        }
+        graph += `    "${from}" [style="${attributes.join(',')}"]\n`;
       }
 
       Array.from(relations[from].direct).forEach(function(to) {
