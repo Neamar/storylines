@@ -44,7 +44,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
       storyline.state = cloneState(state);
       storyline.currentEvent = currentEvent;
 
-      if(verbose) {
+      if (verbose) {
         console.log(`${' '.repeat(depth * 2)}"${action}" on ${currentEventSlug}`);
       }
       // Overwrite original nextEvent function
