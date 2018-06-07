@@ -1,6 +1,6 @@
 {
   "name": "storylines",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Will you go down a hole or up a hill?",
   "main": "backend/compile.js",
   "bin": {
