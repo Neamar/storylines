@@ -33,7 +33,8 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     chainOfEvents = chainOfEvents.slice(0);
     chainOfEvents.push(currentEventSlug);
 
-    // If we can't do anything anymore, just store the story and backtrack
+    // If the current event doesn't have any available action,
+    // Backtrack
     if (actionsAtThisPoint.length === 0) {
       stories.add(chainOfEvents.join(','));
       return;
@@ -50,9 +51,12 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
       // Overwrite original nextEvent function
       storyline.nextEvent = function() {
         // Call original implementation
+        // This will pick the next event,
+        // update the state
+        // and update currentActions with a new event
         storyline._nextEvent();
 
-        // Clone our state and recursively keep going
+        // Clone our new state and recursively keep going
         let newState = cloneState(storyline.state);
         walkTree(newState, chainOfEvents, depth + 1);
       };
