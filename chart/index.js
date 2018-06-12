@@ -9,6 +9,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   let totalStories = 0;
 
   const stories = new Set();
+  const states = new Set();
   const story = JSON.parse(fs.readFileSync(storyPath).toString());
   let currentActions = [];
   const callbacks = {
@@ -22,12 +23,17 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   storyline.start();
 
 
-  function cloneState(state) {
-    return JSON.parse(JSON.stringify(state));
+  function serializeState(state) {
+    return JSON.stringify(state);
   }
 
 
-  function walkTree(state, chainOfEvents, depth) {
+  function deserializeState(serializedState) {
+    return JSON.parse(serializedState);
+  }
+
+
+  function walkTree(serializedState, chainOfEvents, depth) {
     totalStories += 1;
 
     let actionsAtThisPoint = currentActions;
@@ -45,9 +51,18 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
       return;
     }
 
+    if (states.has(serializedState)) {
+      // We've already seen this state before,
+      // We don't need to do anything as it's been covered in another iteration
+      // console.log('⤦');
+      return;
+    }
+    // Add the current state to known states
+    states.add(serializedState);
+
     actionsAtThisPoint.forEach(function(action) {
       // Reset state
-      storyline.state = cloneState(state);
+      storyline.state = deserializeState(serializedState);
       storyline.currentEvent = currentEvent;
 
       if (verbose) {
@@ -61,9 +76,9 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
         // and update currentActions with a new event
         storyline._nextEvent();
 
-        // Clone our new state and recursively keep going
-        let newState = cloneState(storyline.state);
-        walkTree(newState, chainOfEvents, depth + 1);
+        // Serialize our new state and recursively keep going
+        let serializedState = serializeState(storyline.state);
+        walkTree(serializedState, chainOfEvents, depth + 1);
       };
 
       // This will in turn call our nextEvent() function
@@ -73,11 +88,11 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
 
 
   const chainOfEvents = [];
-  const originalState = cloneState(storyline.state);
+  const originalSerializedState = serializeState(storyline.state);
 
 
   // Walk all the paths!
-  walkTree(originalState, chainOfEvents, 0);
+  walkTree(originalSerializedState, chainOfEvents, 0);
 
   // Transform the stories (currently, stringified) to a structure that can be dealt with easily
   const allStories = Array.from(stories).map(s => s.split(','));
