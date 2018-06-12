@@ -5,6 +5,9 @@ const fs = require('fs');
 const Storyline = require('../frontend/storylines.js');
 
 module.exports = function(storyPath, rawPath, dotPath, verbose) {
+  let startDate = new Date();
+  let totalStories = 0;
+
   const stories = new Set();
   const story = JSON.parse(fs.readFileSync(storyPath).toString());
   let currentActions = [];
@@ -25,6 +28,8 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
 
 
   function walkTree(state, chainOfEvents, depth) {
+    totalStories += 1;
+
     let actionsAtThisPoint = currentActions;
 
     let currentEvent = storyline.currentEvent;
@@ -74,7 +79,6 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   // Walk all the paths!
   walkTree(originalState, chainOfEvents, 0);
 
-  console.log(stories);
   // Transform the stories (currently, stringified) to a structure that can be dealt with easily
   const allStories = Array.from(stories).map(s => s.split(','));
   const allStorylines = storyline.events.reduce((acc, event) => acc.add(event.storyline), new Set());
@@ -183,4 +187,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   else {
     console.log(graph);
   }
+
+  let endDate = new Date();
+  console.log(`Generated ${totalStories} stories in ${endDate - startDate}ms`);
 };
