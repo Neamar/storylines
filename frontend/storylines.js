@@ -239,7 +239,7 @@ class Storylines {
   applyOperation(operation) {
     let lhs = this.resolveStatePath(operation.lhs, true);
 
-    if (lhs.missingOnLastLevel && operation.operator !== '=') {
+    if (lhs.missingOnLastLevel && operation.operator !== '='  && operation.operator !== '||=') {
       throw new Error('Can\'t apply compound operator on undefined');
     }
 
@@ -263,6 +263,9 @@ class Storylines {
         break;
       case '%=':
         lhs.parent[lhs.key] %= rhs;
+        break;
+      case '||=':
+        lhs.parent[lhs.key] = lhs.parent[lhs.key] || rhs;
         break;
       default:
         throw new Error('Invalid operator ' + operation.operator);

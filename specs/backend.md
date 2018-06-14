@@ -213,6 +213,7 @@ Both `lhs` and `rhs` must be either a constant value (strings must be enclosed i
 * `>=`, greater than or equal to
 * `<=`, less than or equal to
 * `!=`, different
+* `||=`, "if empty" operator
 * `IN`, contains.
     - For objects, will test if the `lhs` key exists within `rhs`
     - For arrays, will test if `lhs` is included in `rhs`

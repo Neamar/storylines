@@ -333,6 +333,25 @@ describe('Storylines', () => {
         expect(stubStoryline.state).toHaveProperty('global.foo', 3);
       });
 
+      it('should work on ||= operator', () => {
+        stubStoryline.state.global = getFooEqualBarState(10);
+
+        stubStoryline.applyOperation({
+          lhs: buildState(['global', 'foo']),
+          operator: '||=',
+          rhs: 2
+        });
+
+        stubStoryline.applyOperation({
+          lhs: buildState(['global', 'bar']),
+          operator: '||=',
+          rhs: 2
+        });
+
+        expect(stubStoryline.state).toHaveProperty('global.foo', 10);
+        expect(stubStoryline.state).toHaveProperty('global.bar', 2);
+      });
+
       it('should fail on unknown operator', () => {
         stubStoryline.state.global = getFooEqualBarState();
 
