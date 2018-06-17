@@ -240,7 +240,7 @@ class Storylines {
     let lhs = this.resolveStatePath(operation.lhs, true);
 
     if (lhs.missingOnLastLevel && operation.operator !== '='  && operation.operator !== '||=') {
-      throw new Error('Can\'t apply compound operator on undefined');
+      throw new Error('Can\'t apply compound operator on undefined (' + JSON.stringify(operation) + ')');
     }
 
     let rhs = this.resolveValue(operation.rhs);
