@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs');
+const crypto = require('crypto');
 const Storyline = require('../frontend/storylines.js');
 
 module.exports = function(storyPath, rawPath, dotPath, verbose) {
@@ -51,14 +52,15 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
       return;
     }
 
-    if (states.has(serializedState)) {
+    let stateHash = crypto.createHash('md5').update(serializedState).digest('hex');
+    if (states.has(stateHash)) {
       // We've already seen this state before,
       // We don't need to do anything as it's been covered in another iteration
       // console.log('⤦');
       return;
     }
     // Add the current state to known states
-    states.add(serializedState);
+    states.add(stateHash);
 
     actionsAtThisPoint.forEach(function(action) {
       // Reset state
@@ -105,6 +107,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     return {
       isEntryPoint: false,
       isExitPoint: false,
+      isFinal: false,
       direct: new Set(),
       indirect: new Set()
     };
@@ -147,13 +150,27 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
         }
       });
 
-      if (lastKnownEventInStoryline) {
+      // By convention, only detect "exit points" for stories that ended with end/end
+      // Other end-states might exist (character death) but we don't want to use them to define exit point
+      // as the character might just be halfway through the story when he died.
+      if (lastKnownEventInStoryline && story[story.length - 1] === 'end/end') {
         if (!relations[lastKnownEventInStoryline]) {
           relations[lastKnownEventInStoryline] = getDefaultNode();
         }
 
         relations[lastKnownEventInStoryline].isExitPoint = true;
       }
+
+      // Identify final events too
+      let lastEvent = story[story.length - 1];
+      if (!relations[lastEvent]) {
+        relations[lastEvent] = getDefaultNode();
+      }
+      if (lastEvent == lastKnownEventInStoryline) {
+        relations[lastEvent].isFinal = true;
+        relations[lastEvent].isExitPoint = true;
+      }
+
     });
     return relations;
   }
@@ -167,8 +184,9 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     label = "${storyline}";\n`;
     const relations = buildRelationsWithinStoryline(storyline);
     Object.keys(relations).forEach(function(from) {
-      if (relations[from].isEntryPoint || relations[from].isExitPoint) {
+      if (relations[from].isEntryPoint || relations[from].isExitPoint || relations[from].isFinal) {
         let attributes = ['filled'];
+        let color = 'black';
         if (relations[from].isEntryPoint) {
           attributes.push('bold');
         }
@@ -176,7 +194,10 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
           attributes.push('rounded');
           attributes.push('dotted');
         }
-        graph += `    "${from}" [style="${attributes.join(',')}"]\n`;
+        if (relations[from].isFinal) {
+          color = 'red';
+        }
+        graph += `    "${from}" [style="${attributes.join(',')}",color=${color}]\n`;
       }
 
       Array.from(relations[from].direct).forEach(function(to) {
