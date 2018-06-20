@@ -35,7 +35,6 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
 
 
   function walkTree(serializedState, chainOfEvents, depth) {
-    totalStories += 1;
 
     let actionsAtThisPoint = currentActions;
 
@@ -48,6 +47,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     // If the current event doesn't have any available action,
     // Backtrack
     if (actionsAtThisPoint.length === 0) {
+      totalStories += 1;
       stories.add(chainOfEvents.join(','));
       return;
     }
