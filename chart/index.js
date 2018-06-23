@@ -8,6 +8,7 @@ const Storyline = require('../frontend/storylines.js');
 module.exports = function(storyPath, rawPath, dotPath, verbose) {
   let startDate = new Date();
   let totalStories = 0;
+  let lastPercentage = 0;
 
   const stories = new Set();
   const states = new Set();
@@ -33,7 +34,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     return JSON.parse(serializedState);
   }
 
-
+  console.log('Exploring storylines...');
   function walkTree(serializedState, chainOfEvents, depth, leftProgress, rightProgress) {
 
     let actionsAtThisPoint = currentActions;
@@ -72,6 +73,10 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
       if (verbose) {
         console.log(`${' '.repeat(depth * 2)}"${action}" on ${currentEventSlug} (${progressPercentage}%)`);
       }
+      if (Math.floor(progressPercentage) !== lastPercentage) {
+        lastPercentage = Math.floor(progressPercentage);
+        console.log(`Progress: ${lastPercentage}%`);
+      }
       // Overwrite original nextEvent function
       storyline.nextEvent = function() {
         // Call original implementation
@@ -85,7 +90,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
         walkTree(serializedState, chainOfEvents, depth + 1, progressPercentage, nextProgressPercentage);
       };
 
-      // This will in turn call our nextEvent() function
+      // This will in turn call our custom nextEvent() function
       storyline.respondToEvent(action);
     });
   }
@@ -98,11 +103,21 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   // Walk all the paths!
   walkTree(originalSerializedState, chainOfEvents, 0, 0, 100);
 
+  console.log('Went through all stories, now organizing data.');
+
+  // Free up state memory, we won't need this anymore
+  states.clear();
+
   // Transform the stories (currently, stringified) to a structure that can be dealt with easily
   const allStories = Array.from(stories).map(s => s.split(','));
+
+  // Free up stories set, we won't need it anymore
+  stories.clear();
+
   const allStorylines = storyline.events.reduce((acc, event) => acc.add(event.storyline), new Set());
   if (rawPath) {
-    fs.writeFileSync(rawPath, JSON.stringify(Array.from(stories).map(s => s.split(',')), null, 2));
+    console.log('Writing raw stories');
+    fs.writeFileSync(rawPath, JSON.stringify(allStories), null, 2);
   }
 
   function getDefaultNode() {
@@ -177,6 +192,8 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     return relations;
   }
 
+  console.log('And bulding graph.');
+
   let graph = 'digraph G {';
   allStorylines.forEach(function(storyline) {
     graph += `\nsubgraph cluster_${storyline} {\n
@@ -227,5 +244,5 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   }
 
   let endDate = new Date();
-  console.log(`Generated ${totalStories} stories in ${endDate - startDate}ms`);
+  console.log(`Generated ${totalStories} stories in ${Math.round((endDate - startDate) / 1000)}s`);
 };
