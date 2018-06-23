@@ -34,7 +34,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   }
 
 
-  function walkTree(serializedState, chainOfEvents, depth) {
+  function walkTree(serializedState, chainOfEvents, depth, leftProgress, rightProgress) {
 
     let actionsAtThisPoint = currentActions;
 
@@ -62,13 +62,15 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     // Add the current state to known states
     states.add(stateHash);
 
-    actionsAtThisPoint.forEach(function(action) {
+    actionsAtThisPoint.forEach(function(action, index) {
       // Reset state
       storyline.state = deserializeState(serializedState);
       storyline.currentEvent = currentEvent;
 
+      let progressPercentage = leftProgress + (rightProgress - leftProgress) / actionsAtThisPoint.length * index;
+      let nextProgressPercentage = leftProgress + (rightProgress - leftProgress) / actionsAtThisPoint.length * (index + 1);
       if (verbose) {
-        console.log(`${' '.repeat(depth * 2)}"${action}" on ${currentEventSlug}`);
+        console.log(`${' '.repeat(depth * 2)}"${action}" on ${currentEventSlug} (${progressPercentage}%)`);
       }
       // Overwrite original nextEvent function
       storyline.nextEvent = function() {
@@ -80,7 +82,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
 
         // Serialize our new state and recursively keep going
         let serializedState = serializeState(storyline.state);
-        walkTree(serializedState, chainOfEvents, depth + 1);
+        walkTree(serializedState, chainOfEvents, depth + 1, progressPercentage, nextProgressPercentage);
       };
 
       // This will in turn call our nextEvent() function
@@ -94,7 +96,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
 
 
   // Walk all the paths!
-  walkTree(originalSerializedState, chainOfEvents, 0);
+  walkTree(originalSerializedState, chainOfEvents, 0, 0, 100);
 
   // Transform the stories (currently, stringified) to a structure that can be dealt with easily
   const allStories = Array.from(stories).map(s => s.split(','));
