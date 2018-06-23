@@ -77,21 +77,13 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
         lastPercentage = Math.floor(progressPercentage);
         console.log(`Progress: ${lastPercentage}%`);
       }
-      // Overwrite original nextEvent function
-      storyline.nextEvent = function() {
-        // Call original implementation
-        // This will pick the next event,
-        // update the state
-        // and update currentActions with a new event
-        storyline._nextEvent();
 
-        // Serialize our new state and recursively keep going
-        let serializedState = serializeState(storyline.state);
-        walkTree(serializedState, chainOfEvents, depth + 1, progressPercentage, nextProgressPercentage);
-      };
-
-      // This will in turn call our custom nextEvent() function
+      // This will synchronously move to the next event
       storyline.respondToEvent(action);
+
+      // Serialize our new state and recursively keep going
+      let newSerializedState = serializeState(storyline.state);
+      walkTree(newSerializedState, chainOfEvents, depth + 1, progressPercentage, nextProgressPercentage);
     });
   }
 
