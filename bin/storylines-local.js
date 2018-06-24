@@ -22,16 +22,21 @@ function setupStorylineWatcher(story) {
 }
 
 
+let emptyOrInvalidTimeout;
 // Watch the story.json for change
 function setupStoryWatcher() {
   let watcher = fs.watch(compiledStoryPath, function() {
     try {
       var jsonContent = fs.readFileSync(compiledStoryPath).toString();
       currentStory = JSON.parse(jsonContent);
+
+      // If we were successful, discard previous message if it wasn't displayed yet
+      // (the process always truncates the file first, so without this protection we'd display "Empty json" on every change)
+      clearTimeout(emptyOrInvalidTimeout);
       console.log('Updated story.json');
     }
     catch (e) {
-      console.log('Empty or invalid story.json');
+      emptyOrInvalidTimeout = setTimeout(() => console.log('Empty or invalid story.json'), 500);
     }
 
     // On some platforms, we watch for the inode, which doesn't change when the file is rewritten.
