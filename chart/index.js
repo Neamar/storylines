@@ -108,8 +108,13 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
 
   const allStorylines = storyline.events.reduce((acc, event) => acc.add(event.storyline), new Set());
   if (rawPath) {
-    console.log('Writing raw stories');
-    fs.writeFileSync(rawPath, JSON.stringify(allStories), null, 2);
+    if (totalStories < 1000000) {
+      console.log('Writing raw stories');
+      fs.writeFileSync(rawPath, JSON.stringify(allStories), null, 2);
+    }
+    else {
+      console.log('Storyline is too big, not writing raw stories');
+    }
   }
 
   function getDefaultNode() {
