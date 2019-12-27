@@ -23,15 +23,15 @@
   },
   "homepage": "https://github.com/Neamar/storylines#readme",
   "dependencies": {
-    "commander": "^2.20.0",
+    "commander": "^4.0.1",
     "express": "^4.17.1",
     "front-matter": "^3.0.2",
-    "jest": "^24.8.0",
-    "marked": "^0.7.0",
-    "nodemon": "^1.19.1"
+    "jest": "^24.9.0",
+    "marked": "^0.8.0",
+    "nodemon": "^2.0.2"
   },
   "devDependencies": {
-    "eslint": "^6.1.0"
+    "eslint": "^6.8.0"
   },
   "jest": {
     "collectCoverage": true,
