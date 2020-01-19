@@ -63,7 +63,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
     // Add the current state to known states
     states.add(stateHash);
 
-    actionsAtThisPoint.forEach(function(action, index) {
+    actionsAtThisPoint.forEach(function doAction(action, index) {
       // Reset state
       storyline.state = deserializeState(serializedState);
       storyline.currentEvent = currentEvent;
