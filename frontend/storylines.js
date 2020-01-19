@@ -314,12 +314,13 @@ class Storylines {
       throw new Error('Must be a state access! ' + statePath);
     }
 
-    // Clone the array, as we're going to destroy it
-    // TODO: simply use index access for speed.
-    let shiftableStatePath = statePath.data.slice(0);
+    let stateAccess = statePath.data;
+    let currentIndex = 0;
     let value = this.state;
     while (true) {
-      var path = shiftableStatePath.shift();
+      var path = stateAccess[currentIndex];
+      currentIndex++;
+
       if (!(path in value)) {
         if (throwOnMissing) {
           throw new Error('Trying to access non-existing path in state: ' + statePath.data.join('.'));
@@ -334,11 +335,12 @@ class Storylines {
 
       value = value[path];
 
-      if (shiftableStatePath.length === 1) {
-        var exists = (shiftableStatePath[0] in value);
+      // Once we're parsing the last item, we need a special behavior to return missingOnLastLevel (and not throw)
+      if (currentIndex == stateAccess.length - 1) {
+        var exists = (stateAccess[currentIndex] in value);
         return {
           parent: value,
-          key: shiftableStatePath[0],
+          key: stateAccess[currentIndex],
           missing: !exists,
           missingOnLastLevel: !exists
         };
