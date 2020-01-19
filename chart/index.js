@@ -24,6 +24,73 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   storyline._nextEvent = storyline.nextEvent;
   storyline.start();
 
+  // Store state dependencies for each event
+  function generateDependencies(events) {
+    const dependencies = {};
+    events.forEach(event => {
+      const eventDependencies = new Set();
+      let addStateDependency = (operation) => {
+        // Recursive looping for conditions with AND or OR
+        if (operation._type === 'propositional_condition') {
+          operation.conditions.forEach(addStateDependency);
+          return;
+        }
+
+        if (operation.lhs._type === 'state') {
+          eventDependencies.add(operation.lhs.data.join('.'));
+        }
+        if (operation.rhs._type === 'state') {
+          eventDependencies.add(operation.rhs.data.join('.'));
+        }
+      };
+
+      // Add on_display
+      event.on_display.forEach(addStateDependency);
+      // Add actions operations and conditions
+      Object.keys(event.actions || []).forEach(action => {
+        event.actions[action].operations.forEach(addStateDependency);
+        event.actions[action].condition && addStateDependency(event.actions[action].condition);
+      });
+      // Add trigger conditions
+      Object.keys(event.triggers).forEach(triggerType => {
+        addStateDependency(event.triggers[triggerType].condition);
+      });
+
+      // Store all dependencies on our main object
+      dependencies[storyline.getEventSlug(event)] = eventDependencies;
+    });
+
+    return dependencies;
+  }
+  const dependencies = generateDependencies(storyline.events);
+
+  function pruneState(events, state) {
+    let viewedEvents = new Set(Object.keys(state.viewed_events));
+    let potentialRemainingEvents = events.filter(e => !viewedEvents.has(storyline.getEventSlug(e)));
+    let requiredRemainingState = potentialRemainingEvents.reduce((a, e) => {
+      dependencies[storyline.getEventSlug(e)].forEach(d => a.add(d));
+      return a;
+    }, new Set());
+
+    function pruner(item, path) {
+      Object.keys(item).forEach(subItem => {
+        let p = [...path, subItem];
+        if (item[subItem] instanceof Object) {
+          if (path.length > 0 || subItem != 'viewed_events') {
+            pruner(item[subItem], p);
+          }
+        }
+        else {
+          let dottedPath = p.join('.');
+          if (!requiredRemainingState.has(dottedPath)) {
+            delete item[subItem];
+          }
+        }
+      });
+    }
+    pruner(state, []);
+    return state;
+  }
 
   function serializeState(state) {
     return JSON.stringify(state);
@@ -81,8 +148,10 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
       // This will synchronously move to the next event
       storyline.respondToEvent(action);
 
+      // Prune state
+      let prunedState = pruneState(storyline.events, storyline.state);
       // Serialize our new state and recursively keep going
-      let newSerializedState = serializeState(storyline.state);
+      let newSerializedState = serializeState(prunedState);
       walkTree(newSerializedState, chainOfEvents, depth + 1, progressPercentage, nextProgressPercentage);
     });
   }
