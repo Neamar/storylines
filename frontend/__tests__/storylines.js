@@ -31,7 +31,6 @@ describe('Storylines', () => {
       story_description: 'description',
       default_state: {
         global: {
-          current_turn: 0,
         }
       }
     };
@@ -1063,7 +1062,6 @@ describe('Storylines', () => {
       stubStoryline.events = [];
 
       expect(() => stubStoryline.nextEvent()).toThrow(/No more events available/i);
-      expect(stubStoryline.state.global.current_turn).toBe(1);
       expect(stubStoryline.state.global.no_events_available).toBeTruthy();
     });
 
@@ -1088,7 +1086,6 @@ describe('Storylines', () => {
       stubStoryline.nextEvent();
       expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[0]);
-      expect(stubStoryline.state.global.current_turn).toBe(1);
       expect(stubStoryline.state.global.no_events_available).toBeTruthy();
     });
 
@@ -1103,17 +1100,6 @@ describe('Storylines', () => {
       stubStoryline.nextEvent();
       expect(stubStoryline.moveToEvent.mock.calls.length).toBe(1);
       expect(stubStoryline.moveToEvent.mock.calls[0][0]).toBe(stubStoryline.events[1]);
-    });
-
-    it('should increment current_turn counter', () => {
-      stubStoryline.events = [
-        simpleMatchingEvent(1, 'soft'),
-      ];
-
-      stubStoryline.moveToEvent = jest.fn();
-
-      stubStoryline.nextEvent();
-      expect(stubStoryline.state.global.current_turn).toBe(1);
     });
 
     it('should not set no_events_available when events are available', () => {

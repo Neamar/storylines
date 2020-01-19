@@ -114,8 +114,6 @@ class Storylines {
       this.state.viewed_events[this.getEventSlug(this.currentEvent)] = true;
     }
 
-    this.state.global.current_turn += 1;
-
     let hardEvents = this.listAvailableHardEvents();
     this.log('Matching hard events: ', hardEvents);
     if (hardEvents.length > 0) {
@@ -133,7 +131,6 @@ class Storylines {
 
     if (!this.state.global.no_events_available) {
       this.state.global.no_events_available = true;
-      this.state.global.current_turn -= 1;
       this.nextEvent();
       return;
     }

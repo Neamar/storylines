@@ -24,7 +24,6 @@
   },
   "default_state": {
     "global": {
-      "current_turn": 0
     },
     "resources": {
       "crew": 30,
@@ -44,9 +43,9 @@
         "hard": {
           "condition": {
             "_type": "atomic_condition",
-            "lhs": {"_type": "state", "data":["global", "current_turn"]},
+            "lhs": {"_type": "state", "data":["r", "crew"]},
             "operator": "==",
-            "rhs": 1
+            "rhs": {"_type": "state", "data":["r", "crew"]},
           },
           "weight": 1
         }

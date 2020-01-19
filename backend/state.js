@@ -9,7 +9,6 @@ module.exports.generateDefaultState = function generateDefaultState(resources, s
   storylineSlugs.forEach(key => defaultStorylines[key] = {});
   return {
     global: {
-      current_turn: 0,
     },
     resources: defaultResources,
     storylines: defaultStorylines
