@@ -27,23 +27,24 @@ class Storylines {
     this.title = story.story_title;
     this.description = story.story_description;
 
-    // Clone default state
-    this.state = Object.assign({}, story.default_state);
+    // Deep clone default state
+    this.state = JSON.parse(JSON.stringify(story.default_state));
     this.state.viewed_events = {};
-
 
     // Save functions to interact with UI
     this.callbacks = callbacks;
 
-    // Start game
+    // Display initial resources
     this.updateResourcesUI();
   }
 
+  /**
+   * Initiate first event on the story
+   */
   start() {
     if (this.currentEvent) {
       throw new Error('Storyline already started!');
     }
-
     this.nextEvent();
   }
 
@@ -67,6 +68,7 @@ class Storylines {
         return false;
       }
 
+      // Triggers without conditions are always followed
       if (!e.triggers[triggerType].condition) {
         return true;
       }
@@ -228,13 +230,16 @@ class Storylines {
     }
   }
 
+  /**
+   * Apply an array of operations to update the Reader's state
+   */
   applyOperations(operations) {
     operations.forEach(o => this.applyOperation(o));
     this.updateResourcesUI();
   }
 
   /**
-   * Apply an operation to update the Reader's state
+   * Apply a single operation to update the Reader's state
    */
   applyOperation(operation) {
     let lhs = this.resolveStatePath(operation.lhs, true);
@@ -299,8 +304,10 @@ class Storylines {
 
   /**
    * Given a path within the state, find the associated value
-   * By default, return null for missing value,
-   * unless `throwOnMissing` is defined
+   * By default, return {missing: true} for missing values
+   * unless `throwOnMissing` is defined, in which case we'll throw when we're missing more than the last element in the state.
+   * If the only missing element is the last one, we'll also return {missingOnLastLevel: true}
+   * Finally, if the value does exist, we return {parent, key} to allow easy access of the specified state element (and also ease assignment through the parent property)
    */
   resolveStatePath(statePath, throwOnMissing) {
     if (!this.isStateAccess(statePath)) {
@@ -308,6 +315,7 @@ class Storylines {
     }
 
     // Clone the array, as we're going to destroy it
+    // TODO: simply use index access for speed.
     let shiftableStatePath = statePath.data.slice(0);
     let value = this.state;
     while (true) {

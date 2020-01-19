@@ -110,7 +110,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
   if (rawPath) {
     if (totalStories < 1000000) {
       console.log('Writing raw stories');
-      fs.writeFileSync(rawPath, JSON.stringify(allStories), null, 2);
+      fs.writeFileSync(rawPath, JSON.stringify(allStories, null, 2));
     }
     else {
       console.log('Storyline is too big, not writing raw stories');
@@ -126,6 +126,7 @@ module.exports = function(storyPath, rawPath, dotPath, verbose) {
       indirect: new Set()
     };
   }
+
   function buildRelationsWithinStoryline(storyline) {
     const relations = {};
     const storylinePrefix = storyline + '/';
